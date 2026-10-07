@@ -164,6 +164,16 @@ export function SiteHeader({ home }: { home: HomeContent }) {
                             {home.navCta.label}
                         </a>
                     )}
+                    <a
+                        href="/admin"
+                        className="inline-flex min-h-10 items-center gap-2 rounded-full px-3 text-sm text-white/70 transition-colors hover:text-white max-sm:hidden"
+                    >
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                            <circle cx="8" cy="5.5" r="2.7" stroke="currentColor" strokeWidth="1.3" />
+                            <path d="M2.5 14c.6-2.6 2.8-4 5.5-4s4.9 1.4 5.5 4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+                        </svg>
+                        Panel
+                    </a>
                     <button
                         type="button"
                         className="-mr-2 p-2 text-white lg:hidden"
@@ -217,15 +227,20 @@ export function SiteHeader({ home }: { home: HomeContent }) {
                             </li>
                         ))}
                     </ul>
-                    {home.navCta && (
-                        <a
-                            href={home.navCta.url}
-                            onClick={() => setMenuOpen(false)}
-                            className={`${pillClass} mt-8`}
-                        >
-                            {home.navCta.label}
+                    <div className="mt-8 flex flex-wrap items-center gap-4">
+                        {home.navCta && (
+                            <a
+                                href={home.navCta.url}
+                                onClick={() => setMenuOpen(false)}
+                                className={pillClass}
+                            >
+                                {home.navCta.label}
+                            </a>
+                        )}
+                        <a href="/admin" className="text-sm text-white/70 underline underline-offset-4">
+                            Panel de administración
                         </a>
-                    )}
+                    </div>
                 </nav>
             )}
         </header>
