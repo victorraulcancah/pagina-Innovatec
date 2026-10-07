@@ -13,8 +13,13 @@ export default defineConfig({
             input: ['resources/css/app.css', 'resources/js/app.tsx'],
             refresh: true,
             fonts: [
-                bunny('Instrument Sans', {
+                bunny('Michroma', {
+                    weights: [400],
+                    variable: '--font-michroma',
+                }),
+                bunny('Sora', {
                     weights: [400, 500, 600],
+                    variable: '--font-sora',
                 }),
             ],
         }),

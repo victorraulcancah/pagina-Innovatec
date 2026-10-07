@@ -5,7 +5,62 @@
 
 @theme {
     --font-sans:
-        'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
-        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-        'Noto Color Emoji';
+        var(--font-sora), 'Sora', ui-sans-serif, system-ui, sans-serif;
+    --font-display:
+        var(--font-michroma), 'Michroma', 'Eurostile', 'Arial Narrow', sans-serif;
+
+    --color-night: #050b1a;
+    --color-night-2: #0a1630;
+    --color-signal: #06c2f0;
+    --color-signal-deep: #1f62d9;
+
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+    html {
+        background: var(--color-night);
+        color-scheme: dark;
+    }
+
+    ::selection {
+        background: var(--color-signal);
+        color: var(--color-night);
+    }
+
+    :focus-visible {
+        outline: 2px solid var(--color-signal);
+        outline-offset: 3px;
+        border-radius: 2px;
+    }
+}
+
+@keyframes rise {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+}
+
+@keyframes fade {
+    from {
+        opacity: 0;
+    }
+}
+
+@utility animate-rise {
+    animation: rise 0.9s var(--ease-out-expo) backwards;
+    animation-delay: var(--delay, 0ms);
+}
+
+@utility animate-fade {
+    animation: fade 1.4s ease-out backwards;
+    animation-delay: var(--delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .animate-rise,
+    .animate-fade {
+        animation: none;
+    }
 }

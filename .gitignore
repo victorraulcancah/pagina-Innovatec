@@ -41,3 +41,8 @@ yarn-error.log
 /boost.json
 /opencode.json
 /opencode.jsonc
+
+# Impeccable (diseño)
+/.impeccable/tmp
+/.impeccable/review
+/.impeccable/build
