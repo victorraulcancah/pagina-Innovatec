@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Support\SiteContent;
+use App\Support\SiteSections;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
@@ -19,10 +21,13 @@ use Illuminate\Support\Facades\Storage;
  * @property list<array{label: string, url: string, variant: string}> $buttons
  * @property list<array{label: string, url: string, children: list<array{label: string, url: string}>}> $menu
  * @property array{label: string, url: string}|null $nav_cta
+ * @property array<string, array<string, string>>|null $sections
+ * @property string|null $experience_bg_path
  */
 #[Fillable([
     'brand_name', 'logo_path', 'video_path', 'poster_path',
     'title', 'subtitle', 'buttons', 'menu', 'nav_cta',
+    'sections', 'experience_bg_path',
 ])]
 class HomeSetting extends Model
 {
@@ -34,6 +39,7 @@ class HomeSetting extends Model
             'buttons' => 'array',
             'menu' => 'array',
             'nav_cta' => 'array',
+            'sections' => 'array',
         ];
     }
 
@@ -65,8 +71,8 @@ class HomeSetting extends Model
                     ['label' => 'Ciberseguridad', 'url' => '#soluciones'],
                     ['label' => 'Networking', 'url' => '#soluciones'],
                     ['label' => 'Infraestructura TI', 'url' => '#soluciones'],
-                    ['label' => 'Servicios Profesionales', 'url' => '#soluciones'],
                     ['label' => 'Seguridad Electrónica', 'url' => '#soluciones'],
+                    ['label' => 'Servicios Profesionales', 'url' => '#servicios'],
                 ]],
                 ['label' => 'Nosotros', 'url' => '#nosotros', 'children' => []],
                 ['label' => 'Experiencia', 'url' => '#experiencia', 'children' => []],
@@ -74,6 +80,16 @@ class HomeSetting extends Model
             ],
             'nav_cta' => ['label' => 'Contáctanos', 'url' => '#contacto'],
         ];
+    }
+
+    /**
+     * Textos de los bloques bajo la portada: lo guardado sobre los valores por defecto.
+     *
+     * @return array<string, array<string, string>>
+     */
+    public function content(): array
+    {
+        return array_replace_recursive(SiteSections::defaults(), $this->sections ?? []);
     }
 
     /**
@@ -93,6 +109,7 @@ class HomeSetting extends Model
             'buttons' => $this->buttons ?? [],
             'menu' => $this->menu ?? [],
             'navCta' => $this->nav_cta,
+            'sections' => SiteContent::forPage($this),
         ];
     }
 }

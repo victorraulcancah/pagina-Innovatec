@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateHomeSettingRequest;
 use App\Models\HomeSetting;
+use App\Support\SiteSections;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -17,6 +18,7 @@ class HomeSettingController extends Controller
     {
         return Inertia::render('admin/home-editor', [
             'home' => HomeSetting::current()->toPageData(),
+            'pages' => SiteSections::navigation(),
         ]);
     }
 
