@@ -2,6 +2,8 @@
 
 namespace App\Support;
 
+use App\Models\ContactMessage;
+
 /**
  * Definición única del contenido editable del sitio: textos por bloque,
  * listas de elementos e imágenes de cabecera, y qué páginas del panel los
@@ -187,13 +189,15 @@ class SiteSections
     /**
      * Pestañas del panel: Inicio (portada) y una por cada página editable.
      *
-     * @return list<array{slug: string, label: string}>
+     * @return list<array{slug: string, label: string, badge?: int}>
      */
     public static function navigation(): array
     {
         return [
             ['slug' => '', 'label' => 'Inicio'],
             ...collect(static::pages())->map(fn ($p, $slug) => ['slug' => $slug, 'label' => $p['label']])->values()->all(),
+            ['slug' => 'mensajes', 'label' => 'Mensajes', 'badge' => ContactMessage::query()->whereNull('read_at')->count()],
+            ['slug' => 'cuenta', 'label' => 'Mi cuenta'],
         ];
     }
 

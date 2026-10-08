@@ -1,7 +1,9 @@
 import { Link, router, usePage } from '@inertiajs/react';
 import { useEffect, useState, type ReactNode } from 'react';
 
-export type AdminPage = { slug: string; label: string };
+export type AdminPage = { slug: string; label: string; badge?: number };
+
+const MANAGEMENT = ['mensajes', 'cuenta'];
 
 const icons: Record<string, ReactNode> = {
     '': <path d="M3 10.5L10 4l7 6.5V16a1 1 0 01-1 1h-3.5v-4.5h-5V17H4a1 1 0 01-1-1v-5.5z" />,
@@ -31,6 +33,18 @@ const icons: Record<string, ReactNode> = {
         <>
             <path d="M4 17V6.5L10 3l6 3.5V17" />
             <path d="M8 17v-4h4v4M7.5 8.5h1M11.5 8.5h1" />
+        </>
+    ),
+    mensajes: (
+        <>
+            <path d="M4 5h12a1 1 0 011 1v7a1 1 0 01-1 1H9l-4 3v-3H4a1 1 0 01-1-1V6a1 1 0 011-1z" />
+            <path d="M7 9h6M7 11.5h4" />
+        </>
+    ),
+    cuenta: (
+        <>
+            <circle cx="10" cy="7" r="3" />
+            <path d="M4 17c.6-3 3-4.5 6-4.5s5.400 1.500 6 4.500" />
         </>
     ),
     contacto: (
@@ -117,33 +131,9 @@ export function AdminLayout({
                     <img src="/brand/logo-light.png" alt="PROINNOVATEC" className="h-7 w-auto" />
                 </div>
 
-                <p className="px-6 pb-2 pt-6 text-xs font-medium text-white/45 max-lg:pt-20">Contenido del sitio</p>
-
-                <nav aria-label="Secciones del sitio" className="flex-1 overflow-y-auto px-3">
-                    <ul className="space-y-1">
-                        {pages.map((page) => {
-                            const active = page.slug === current;
-
-                            return (
-                                <li key={page.slug}>
-                                    <Link
-                                        href={page.slug ? `/admin/${page.slug}` : '/admin'}
-                                        aria-current={active ? 'page' : undefined}
-                                        className={`flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm transition-colors ${
-                                            active
-                                                ? 'bg-white/10 font-medium text-white'
-                                                : 'text-white/70 hover:bg-white/5 hover:text-white'
-                                        }`}
-                                    >
-                                        <span className={active ? 'text-signal' : 'text-white/50'}>
-                                            <NavIcon slug={page.slug} />
-                                        </span>
-                                        {page.label}
-                                    </Link>
-                                </li>
-                            );
-                        })}
-                    </ul>
+                <nav aria-label="Panel" className="flex-1 overflow-y-auto px-3 pb-4 max-lg:pt-16">
+                    <NavGroup title="Contenido del sitio" pages={pages.filter((p) => !MANAGEMENT.includes(p.slug))} current={current} />
+                    <NavGroup title="Gestión" pages={pages.filter((p) => MANAGEMENT.includes(p.slug))} current={current} />
                 </nav>
 
                 <div className="border-t border-white/10 p-3">
@@ -173,6 +163,48 @@ export function AdminLayout({
             </aside>
 
             <div className="lg:pl-64">{children}</div>
+        </div>
+    );
+}
+
+function NavGroup({ title, pages, current }: { title: string; pages: AdminPage[]; current: string }) {
+    if (pages.length === 0) {
+        return null;
+    }
+
+    return (
+        <div className="mt-6 first:mt-5">
+            <p className="px-3 pb-2 text-xs font-medium text-white/45">{title}</p>
+            <ul className="space-y-1">
+                {pages.map((page) => {
+                    const active = page.slug === current;
+
+                    return (
+                        <li key={page.slug}>
+                            <Link
+                                href={page.slug ? `/admin/${page.slug}` : '/admin'}
+                                aria-current={active ? 'page' : undefined}
+                                className={`flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm transition-colors ${
+                                    active ? 'bg-white/10 font-medium text-white' : 'text-white/70 hover:bg-white/5 hover:text-white'
+                                }`}
+                            >
+                                <span className={active ? 'text-signal' : 'text-white/50'}>
+                                    <NavIcon slug={page.slug} />
+                                </span>
+                                <span className="flex-1">{page.label}</span>
+                                {page.badge ? (
+                                    <span
+                                        className="rounded-full bg-signal px-2 py-0.5 text-xs font-semibold text-night"
+                                        aria-label={`${page.badge} sin leer`}
+                                    >
+                                        {page.badge}
+                                    </span>
+                                ) : null}
+                            </Link>
+                        </li>
+                    );
+                })}
+            </ul>
         </div>
     );
 }

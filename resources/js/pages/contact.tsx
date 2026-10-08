@@ -1,6 +1,7 @@
+import { ContactForm } from '@/components/site/contact-form';
 import { ContactDetails } from '@/components/site/contact-section';
 import { PageHero } from '@/components/site/page-hero';
-import { Reveal, sectionShell } from '@/components/site/reveal';
+import { Reveal, SectionHeading, sectionShell } from '@/components/site/reveal';
 import { SiteLayout } from '@/components/site/site-layout';
 import type { HomeContent } from '@/types';
 
@@ -17,18 +18,15 @@ export default function Contact({ home }: { home: HomeContent }) {
             />
 
             <section className="bg-night py-20 lg:py-28">
-                <div className={`${sectionShell} grid gap-12 lg:grid-cols-[1fr_minmax(0,620px)] lg:gap-20`}>
+                <div className={`${sectionShell} grid gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,480px)] lg:gap-20`}>
                     <Reveal>
-                        {c.email && (
-                            <a
-                                href={`mailto:${c.email}`}
-                                className="inline-flex min-h-12 items-center rounded-full border border-signal bg-signal px-8 text-sm font-medium text-night transition-colors hover:border-white hover:bg-white"
-                            >
-                                Escríbenos
-                            </a>
-                        )}
+                        <SectionHeading title="Escríbenos" className="mb-8 !text-[clamp(1.25rem,2.4vw,2rem)]" />
+                        <ContactForm />
                     </Reveal>
-                    <ContactDetails contact={c} />
+                    <div>
+                        <SectionHeading title="Datos de contacto" className="mb-8 !text-[clamp(1.25rem,2.4vw,2rem)]" />
+                        <ContactDetails contact={c} />
+                    </div>
                 </div>
             </section>
         </SiteLayout>
