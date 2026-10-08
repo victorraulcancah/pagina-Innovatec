@@ -254,7 +254,7 @@ export default function HomeEditor({
                         </Section>
                     </div>
 
-                    <div className="fixed inset-x-0 bottom-0 z-20 border-t border-slate-200 bg-white/95 backdrop-blur">
+                    <div className="fixed bottom-0 left-0 right-0 z-20 border-t lg:left-64 border-slate-200 bg-white/95 backdrop-blur">
                         <div className="mx-auto flex h-16 max-w-5xl items-center justify-between gap-4 px-6">
                             <p aria-live="polite" className="text-sm text-slate-600">
                                 {form.processing && form.progress
