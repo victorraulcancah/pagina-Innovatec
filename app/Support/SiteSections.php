@@ -3,9 +3,10 @@
 namespace App\Support;
 
 /**
- * Definición única del contenido editable bajo la portada: textos por bloque,
- * listas de elementos y qué páginas del panel los muestran. De aquí salen los
- * valores por defecto, las reglas de validación y los formularios del panel.
+ * Definición única del contenido editable del sitio: textos por bloque,
+ * listas de elementos e imágenes de cabecera, y qué páginas del panel los
+ * muestran. De aquí salen los valores por defecto, las reglas de validación
+ * y los formularios del panel.
  */
 class SiteSections
 {
@@ -23,7 +24,8 @@ class SiteSections
             'about' => [
                 'title' => 'Referentes en la integración de soluciones',
                 'accent' => 'TIC',
-                'body' => 'Un equipo con más de 10 años de experiencia, respaldado por una sólida trayectoria en ingeniería y certificaciones técnicas de los principales fabricantes del sector. La pasión por la tecnología y la búsqueda constante de soluciones eficientes nos impulsan a seguir creciendo.',
+                'body' => 'Un equipo con más de 10 años de experiencia, respaldado por una sólida trayectoria en ingeniería y certificaciones técnicas de los principales fabricantes del sector.',
+                'story' => 'PROINNOVATEC se destaca como un referente en la integración de soluciones de Tecnologías de la Información y Comunicaciones. Nuestro compromiso con la excelencia y la innovación se refleja en cada proyecto que emprendemos. Contamos con un equipo altamente capacitado con más de 10 años de experiencia, respaldado por una sólida trayectoria en ingeniería y certificaciones técnicas de los principales fabricantes del sector. La pasión por la tecnología y la búsqueda constante de soluciones eficientes nos impulsan a seguir creciendo y superando expectativas en el ámbito de las TIC.',
             ],
             'solutions' => [
                 'title' => 'Soluciones',
@@ -57,30 +59,32 @@ class SiteSections
 
     /**
      * Páginas del panel. Cada campo de texto es "grupo.clave"; cada lista
-     * apunta a una `section` de section_items.
+     * apunta a una `section` de section_items; cada imagen a un `slot` de
+     * home_settings.page_images.
      *
      * @return array<string, array<string, mixed>>
      */
     public static function pages(): array
     {
-        $offeringFields = [
-            ['key' => 'title', 'label' => 'Nombre', 'type' => 'text', 'max' => 80],
-            ['key' => 'body', 'label' => 'Resumen', 'type' => 'textarea', 'max' => 400],
-            ['key' => 'rows', 'label' => 'Soluciones incluidas', 'type' => 'pairs'],
-        ];
+        $rows = ['key' => 'rows', 'label' => 'Soluciones incluidas', 'type' => 'pairs'];
+        $cover = ['key' => 'image', 'label' => 'Imagen de portada (opcional)', 'type' => 'image'];
 
         return [
             'nosotros' => [
                 'label' => 'Nosotros',
-                'description' => 'Presentación de la empresa y las dos tarjetas con imagen que llevan a Soluciones y Servicios.',
+                'description' => 'Presentación de la empresa: texto breve para la portada, historia completa para la página Nosotros y las tarjetas con imagen.',
                 'groups' => ['about' => 'Presentación'],
                 'texts' => [
                     ['group' => 'about', 'key' => 'title', 'label' => 'Título', 'type' => 'text', 'max' => 120, 'required' => true],
                     ['group' => 'about', 'key' => 'accent', 'label' => 'Palabras en color', 'type' => 'text', 'max' => 60, 'hint' => 'Se muestran al final del título con el color de la marca.'],
-                    ['group' => 'about', 'key' => 'body', 'label' => 'Texto', 'type' => 'textarea', 'max' => 600],
+                    ['group' => 'about', 'key' => 'body', 'label' => 'Texto breve (portada)', 'type' => 'textarea', 'max' => 400],
+                    ['group' => 'about', 'key' => 'story', 'label' => 'Quiénes somos (página Nosotros)', 'type' => 'textarea', 'max' => 1500],
+                ],
+                'images' => [
+                    ['key' => 'image_nosotros', 'slot' => 'nosotros', 'label' => 'Imagen de la página Nosotros', 'hint' => 'JPG, PNG o WebP. Se muestra en la cabecera y junto al texto.'],
                 ],
                 'lists' => [[
-                    'section' => 'about_card', 'label' => 'Tarjetas con imagen', 'itemLabel' => 'Tarjeta', 'max' => 2,
+                    'section' => 'about_card', 'label' => 'Tarjetas con imagen (portada)', 'itemLabel' => 'Tarjeta', 'max' => 2,
                     'fields' => [
                         ['key' => 'title', 'label' => 'Texto', 'type' => 'text', 'max' => 40],
                         ['key' => 'url', 'label' => 'Enlace', 'type' => 'url'],
@@ -90,7 +94,7 @@ class SiteSections
             ],
             'soluciones' => [
                 'label' => 'Soluciones y servicios',
-                'description' => 'Las líneas de soluciones TIC y los servicios profesionales, con el detalle de cada una.',
+                'description' => 'Cada solución y cada servicio tiene su propia página. Aquí editas sus textos, imágenes, el detalle de lo que incluyen y las marcas con las que trabajas.',
                 'groups' => ['solutions' => 'Texto de Soluciones', 'services' => 'Texto de Servicios'],
                 'texts' => [
                     ['group' => 'solutions', 'key' => 'title', 'label' => 'Título de Soluciones', 'type' => 'text', 'max' => 80, 'required' => true],
@@ -98,9 +102,24 @@ class SiteSections
                     ['group' => 'services', 'key' => 'title', 'label' => 'Título de Servicios', 'type' => 'text', 'max' => 80, 'required' => true],
                     ['group' => 'services', 'key' => 'intro', 'label' => 'Texto de Servicios', 'type' => 'textarea', 'max' => 300],
                 ],
+                'images' => [
+                    ['key' => 'image_soluciones', 'slot' => 'soluciones', 'label' => 'Imagen de la página Soluciones', 'hint' => 'JPG, PNG o WebP. Se muestra en la cabecera.'],
+                    ['key' => 'image_servicios', 'slot' => 'servicios', 'label' => 'Imagen de la página Servicios', 'hint' => 'JPG, PNG o WebP. Se muestra en la cabecera.'],
+                ],
                 'lists' => [
-                    ['section' => 'solution', 'label' => 'Líneas de soluciones', 'itemLabel' => 'Línea', 'max' => 12, 'fields' => $offeringFields],
-                    ['section' => 'service', 'label' => 'Servicios profesionales', 'itemLabel' => 'Servicio', 'max' => 12, 'fields' => $offeringFields],
+                    ['section' => 'solution', 'label' => 'Soluciones', 'itemLabel' => 'Solución', 'max' => 12, 'fields' => [
+                        ['key' => 'title', 'label' => 'Nombre', 'type' => 'text', 'max' => 80],
+                        ['key' => 'body', 'label' => 'Descripción', 'type' => 'textarea', 'max' => 600],
+                        $rows,
+                        $cover,
+                        ['key' => 'gallery', 'label' => 'Marcas con las que trabajas (logos)', 'type' => 'gallery'],
+                    ]],
+                    ['section' => 'service', 'label' => 'Servicios profesionales', 'itemLabel' => 'Servicio', 'max' => 12, 'fields' => [
+                        ['key' => 'title', 'label' => 'Nombre', 'type' => 'text', 'max' => 80],
+                        ['key' => 'body', 'label' => 'Descripción', 'type' => 'textarea', 'max' => 1200],
+                        $rows,
+                        $cover,
+                    ]],
                 ],
             ],
             'experiencia' => [
@@ -111,11 +130,13 @@ class SiteSections
                     ['group' => 'experience', 'key' => 'title', 'label' => 'Título', 'type' => 'text', 'max' => 80, 'required' => true],
                     ['group' => 'experience', 'key' => 'intro', 'label' => 'Texto', 'type' => 'textarea', 'max' => 400],
                 ],
-                'image' => ['key' => 'background', 'column' => 'experience_bg_path', 'label' => 'Imagen de fondo', 'hint' => 'Se muestra en blanco y negro, oscurecida. JPG, PNG o WebP.'],
+                'images' => [
+                    ['key' => 'image_experiencia', 'slot' => 'experiencia', 'label' => 'Imagen de fondo', 'hint' => 'Se muestra en blanco y negro, oscurecida. JPG, PNG o WebP.'],
+                ],
                 'lists' => [
                     ['section' => 'case', 'label' => 'Proyectos', 'itemLabel' => 'Proyecto', 'max' => 8, 'fields' => [
                         ['key' => 'title', 'label' => 'Cliente', 'type' => 'text', 'max' => 80],
-                        ['key' => 'body', 'label' => 'Resumen del proyecto', 'type' => 'textarea', 'max' => 400],
+                        ['key' => 'body', 'label' => 'Resumen del proyecto', 'type' => 'textarea', 'max' => 600],
                     ]],
                     ['section' => 'certification', 'label' => 'Certificaciones', 'itemLabel' => 'Certificación', 'max' => 16, 'fields' => [
                         ['key' => 'title', 'label' => 'Nombre', 'type' => 'text', 'max' => 80],
@@ -131,6 +152,9 @@ class SiteSections
                     ['group' => 'clients', 'key' => 'title', 'label' => 'Título', 'type' => 'text', 'max' => 80, 'required' => true],
                     ['group' => 'clients', 'key' => 'accent', 'label' => 'Palabras en color', 'type' => 'text', 'max' => 60],
                 ],
+                'images' => [
+                    ['key' => 'image_clientes', 'slot' => 'clientes', 'label' => 'Imagen de la página Clientes', 'hint' => 'JPG, PNG o WebP. Se muestra en la cabecera.'],
+                ],
                 'lists' => [[
                     'section' => 'client', 'label' => 'Logos', 'itemLabel' => 'Cliente', 'max' => 60,
                     'fields' => [
@@ -141,7 +165,7 @@ class SiteSections
             ],
             'contacto' => [
                 'label' => 'Contacto',
-                'description' => 'Datos de contacto que aparecen al final de la página.',
+                'description' => 'Datos de contacto de la página Contacto y del pie de página.',
                 'groups' => ['contact' => 'Datos de contacto', 'footer' => 'Pie de página'],
                 'texts' => [
                     ['group' => 'contact', 'key' => 'title', 'label' => 'Título', 'type' => 'text', 'max' => 80, 'required' => true],
@@ -151,6 +175,9 @@ class SiteSections
                     ['group' => 'contact', 'key' => 'address', 'label' => 'Dirección', 'type' => 'text', 'max' => 160],
                     ['group' => 'contact', 'key' => 'website', 'label' => 'Sitio web', 'type' => 'text', 'max' => 120],
                     ['group' => 'footer', 'key' => 'tagline', 'label' => 'Frase bajo el logo', 'type' => 'textarea', 'max' => 200],
+                ],
+                'images' => [
+                    ['key' => 'image_contacto', 'slot' => 'contacto', 'label' => 'Imagen de la página Contacto', 'hint' => 'JPG, PNG o WebP. Se muestra en la cabecera.'],
                 ],
                 'lists' => [],
             ],
@@ -189,9 +216,9 @@ class SiteSections
             ];
         }
 
-        if (isset($config['image'])) {
-            $rules[$config['image']['key']] = ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'];
-            $rules['remove_'.$config['image']['key']] = ['boolean'];
+        foreach ($config['images'] ?? [] as $img) {
+            $rules[$img['key']] = ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'];
+            $rules['remove_'.$img['key']] = ['boolean'];
         }
 
         foreach ($config['lists'] as $list) {
@@ -214,6 +241,12 @@ class SiteSections
                         $rules[$key] = ['nullable', 'array', 'max:12'],
                         $rules["$key.*.title"] = ['required', 'string', 'max:80'],
                         $rules["$key.*.description"] = ['nullable', 'string', 'max:300'],
+                    ],
+                    'gallery' => [
+                        $rules["$base.*.gallery_keep"] = ['nullable', 'array', 'max:30'],
+                        $rules["$base.*.gallery_keep.*"] = ['string', 'max:255'],
+                        $rules["$base.*.gallery_files"] = ['nullable', 'array', 'max:30'],
+                        $rules["$base.*.gallery_files.*"] = ['image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
                     ],
                 };
             }

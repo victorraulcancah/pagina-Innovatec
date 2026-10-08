@@ -25,9 +25,13 @@ export type OfferingRow = { title: string; description: string | null };
 
 export type Offering = {
     id: number;
+    slug: string | null;
+    url: string;
     title: string;
     summary: string | null;
     rows: OfferingRow[];
+    imageUrl: string | null;
+    gallery: { name: string; url: string }[];
 };
 
 export type SiteSections = {
@@ -35,10 +39,12 @@ export type SiteSections = {
         title: string;
         accent: string;
         body: string;
+        story: string;
+        imageUrl: string | null;
         cards: { id: number; label: string; url: string; imageUrl: string | null }[];
     };
-    solutions: { title: string; intro: string; items: Offering[] };
-    services: { title: string; intro: string; items: Offering[] };
+    solutions: { title: string; intro: string; imageUrl: string | null; items: Offering[] };
+    services: { title: string; intro: string; imageUrl: string | null; items: Offering[] };
     experience: {
         title: string;
         intro: string;
@@ -49,6 +55,7 @@ export type SiteSections = {
     clients: {
         title: string;
         accent: string;
+        imageUrl: string | null;
         items: { id: number; name: string; logoUrl: string | null }[];
     };
     contact: {
@@ -58,6 +65,7 @@ export type SiteSections = {
         phone: string;
         address: string;
         website: string;
+        imageUrl: string | null;
     };
     footer: { tagline: string };
 };

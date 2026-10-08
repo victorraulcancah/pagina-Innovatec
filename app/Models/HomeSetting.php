@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
 /**
- * Contenido editable de la página de inicio (una sola fila).
+ * Contenido editable del sitio (una sola fila): portada, menú y textos.
  *
  * @property int $id
  * @property string $brand_name
@@ -22,12 +22,12 @@ use Illuminate\Support\Facades\Storage;
  * @property list<array{label: string, url: string, children: list<array{label: string, url: string}>}> $menu
  * @property array{label: string, url: string}|null $nav_cta
  * @property array<string, array<string, string>>|null $sections
- * @property string|null $experience_bg_path
+ * @property array<string, string>|null $page_images
  */
 #[Fillable([
     'brand_name', 'logo_path', 'video_path', 'poster_path',
     'title', 'subtitle', 'buttons', 'menu', 'nav_cta',
-    'sections', 'experience_bg_path',
+    'sections', 'page_images',
 ])]
 class HomeSetting extends Model
 {
@@ -40,6 +40,7 @@ class HomeSetting extends Model
             'menu' => 'array',
             'nav_cta' => 'array',
             'sections' => 'array',
+            'page_images' => 'array',
         ];
     }
 
@@ -61,29 +62,29 @@ class HomeSetting extends Model
             'title' => 'Transformando la tecnología en soluciones',
             'subtitle' => 'Integración de soluciones TIC con más de 10 años de experiencia y certificaciones de los principales fabricantes.',
             'buttons' => [
-                ['label' => 'Nuestras soluciones', 'url' => '#soluciones', 'variant' => 'primary'],
-                ['label' => 'Contáctanos', 'url' => '#contacto', 'variant' => 'outline'],
+                ['label' => 'Nuestras soluciones', 'url' => '/soluciones', 'variant' => 'primary'],
+                ['label' => 'Contáctanos', 'url' => '/contacto', 'variant' => 'outline'],
             ],
             'menu' => [
                 ['label' => 'Inicio', 'url' => '/', 'children' => []],
-                ['label' => 'Soluciones', 'url' => '#soluciones', 'children' => [
-                    ['label' => 'Comunicaciones Unificadas', 'url' => '#soluciones'],
-                    ['label' => 'Ciberseguridad', 'url' => '#soluciones'],
-                    ['label' => 'Networking', 'url' => '#soluciones'],
-                    ['label' => 'Infraestructura TI', 'url' => '#soluciones'],
-                    ['label' => 'Seguridad Electrónica', 'url' => '#soluciones'],
-                    ['label' => 'Servicios Profesionales', 'url' => '#servicios'],
+                ['label' => 'Soluciones', 'url' => '/soluciones', 'children' => [
+                    ['label' => 'Comunicaciones Unificadas', 'url' => '/soluciones/comunicaciones-unificadas'],
+                    ['label' => 'Ciberseguridad', 'url' => '/soluciones/ciberseguridad'],
+                    ['label' => 'Networking', 'url' => '/soluciones/networking'],
+                    ['label' => 'Infraestructura TI', 'url' => '/soluciones/infraestructura-ti'],
+                    ['label' => 'Seguridad Electrónica', 'url' => '/soluciones/seguridad-electronica'],
+                    ['label' => 'Servicios Profesionales', 'url' => '/servicios'],
                 ]],
-                ['label' => 'Nosotros', 'url' => '#nosotros', 'children' => []],
-                ['label' => 'Experiencia', 'url' => '#experiencia', 'children' => []],
-                ['label' => 'Clientes', 'url' => '#clientes', 'children' => []],
+                ['label' => 'Nosotros', 'url' => '/nosotros', 'children' => []],
+                ['label' => 'Experiencia', 'url' => '/experiencia', 'children' => []],
+                ['label' => 'Clientes', 'url' => '/clientes', 'children' => []],
             ],
-            'nav_cta' => ['label' => 'Contáctanos', 'url' => '#contacto'],
+            'nav_cta' => ['label' => 'Contáctanos', 'url' => '/contacto'],
         ];
     }
 
     /**
-     * Textos de los bloques bajo la portada: lo guardado sobre los valores por defecto.
+     * Textos de los bloques: lo guardado sobre los valores por defecto.
      *
      * @return array<string, array<string, string>>
      */
@@ -92,8 +93,15 @@ class HomeSetting extends Model
         return array_replace_recursive(SiteSections::defaults(), $this->sections ?? []);
     }
 
+    public function pageImageUrl(string $slot): ?string
+    {
+        $path = $this->page_images[$slot] ?? null;
+
+        return $path ? Storage::disk('public')->url($path) : null;
+    }
+
     /**
-     * Datos listos para la página pública (URLs de archivos ya resueltas).
+     * Datos listos para las páginas públicas (URLs de archivos ya resueltas).
      *
      * @return array<string, mixed>
      */

@@ -33,7 +33,7 @@ function CardIcon({ index }: { index: number }) {
 
 export function AboutSection({ about }: { about: SiteSections['about'] }) {
     return (
-        <section id="nosotros" className="scroll-mt-20 bg-night py-24 lg:py-32">
+        <section className="bg-night py-24 lg:py-32">
             <div className={`${sectionShell} grid items-center gap-14 lg:grid-cols-[1fr_minmax(0,700px)] lg:gap-20`}>
                 <Reveal>
                     <SectionHeading title={about.title} accent={about.accent} />
@@ -42,6 +42,12 @@ export function AboutSection({ about }: { about: SiteSections['about'] }) {
                             {about.body}
                         </p>
                     )}
+                    <a
+                        href="/nosotros"
+                        className="mt-9 inline-flex min-h-11 items-center rounded-full border border-white/70 px-6 text-sm font-medium text-white transition-colors hover:border-white hover:bg-white hover:text-night"
+                    >
+                        Conoce más sobre nosotros
+                    </a>
                 </Reveal>
 
                 {about.cards.length > 0 && (

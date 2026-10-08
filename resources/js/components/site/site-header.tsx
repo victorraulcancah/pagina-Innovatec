@@ -152,7 +152,7 @@ export function SiteHeader({ home }: { home: HomeContent }) {
                             <DesktopItem
                                 key={`${item.label}-${i}`}
                                 item={item}
-                                current={item.url === path}
+                                current={item.url === '/' ? path === '/' : !item.url.startsWith('#') && (path === item.url || path.startsWith(`${item.url}/`))}
                             />
                         ))}
                     </ul>

@@ -9,7 +9,7 @@ import type { OfferingRow } from '@/types';
 type FieldDef = {
     key: string;
     label: string;
-    type: 'text' | 'textarea' | 'url' | 'image' | 'pairs' | 'email';
+    type: 'text' | 'textarea' | 'url' | 'image' | 'pairs' | 'email' | 'gallery';
     max?: number;
     hint?: string;
 };
@@ -30,8 +30,10 @@ type Config = {
     groups: Record<string, string>;
     texts: TextDef[];
     lists: ListDef[];
-    image?: { key: string; column: string; label: string; hint?: string };
+    images?: { key: string; slot: string; label: string; hint?: string }[];
 };
+
+type GalleryItem = { path: string; name: string; url: string };
 
 type ServerItem = {
     id: number;
@@ -40,19 +42,21 @@ type ServerItem = {
     url: string;
     rows: OfferingRow[];
     imageUrl: string | null;
+    gallery: GalleryItem[];
 };
 
 type Item = Omit<ServerItem, 'id'> & {
     id: number | null;
     image: File | null;
     remove_image: boolean;
+    gallery_files: File[];
 };
 
 type EditorForm = {
     texts: Record<string, Record<string, string>>;
     lists: Record<string, Item[]>;
-    background: File | null;
-    remove_background: boolean;
+    images: Record<string, File | null>;
+    removed: Record<string, boolean>;
 };
 
 type Props = {
@@ -61,7 +65,7 @@ type Props = {
     pages: AdminPage[];
     texts: Record<string, Record<string, string>>;
     lists: Record<string, ServerItem[]>;
-    imageUrl: string | null;
+    images: Record<string, string | null>;
 };
 
 const blankItem = (): Item => ({
@@ -71,18 +75,21 @@ const blankItem = (): Item => ({
     url: '',
     rows: [],
     imageUrl: null,
+    gallery: [],
     image: null,
     remove_image: false,
+    gallery_files: [],
 });
 
-const clean = (items: Item[]): Item[] => items.map((i) => ({ ...i, image: null, remove_image: false }));
+const clean = (items: Item[]): Item[] =>
+    items.map((i) => ({ ...i, image: null, remove_image: false, gallery_files: [] }));
 
-export default function SectionEditor({ page, config, pages, texts, lists, imageUrl }: Props) {
+export default function SectionEditor({ page, config, pages, texts, lists, images }: Props) {
     const form = useForm<EditorForm>({
         texts,
         lists: Object.fromEntries(Object.entries(lists).map(([section, items]) => [section, clean(items as Item[])])),
-        background: null,
-        remove_background: false,
+        images: Object.fromEntries((config.images ?? []).map((img) => [img.key, null])),
+        removed: Object.fromEntries((config.images ?? []).map((img) => [img.key, false])),
     });
 
     const data = form.data;
@@ -93,16 +100,35 @@ export default function SectionEditor({ page, config, pages, texts, lists, image
 
     const setList = (section: string, items: Item[]) => form.setData('lists', { ...data.lists, [section]: items });
 
-    // El servidor no necesita la URL de vista previa que ya tenía cada elemento.
-    form.transform((d) => ({
-        ...d,
-        lists: Object.fromEntries(
-            Object.entries(d.lists).map(([section, items]) => [
-                section,
-                items.map(({ imageUrl: _preview, image, ...rest }) => ({ ...rest, ...(image ? { image } : {}) })),
-            ]),
-        ),
-    }));
+    // Aplana las imágenes de página y deja en cada elemento solo lo que entiende el servidor.
+    form.transform((d) => {
+        const flat: Record<string, unknown> = {};
+
+        for (const [key, file] of Object.entries(d.images)) {
+            if (file) {
+                flat[key] = file;
+            }
+
+            flat[`remove_${key}`] = d.removed[key] ? 1 : 0;
+        }
+
+        return {
+            texts: d.texts,
+            ...flat,
+            lists: Object.fromEntries(
+                Object.entries(d.lists).map(([section, items]) => [
+                    section,
+                    items.map(({ imageUrl: _preview, gallery, gallery_files, image, ...rest }) => ({
+                        ...rest,
+                        ...(image ? { image } : {}),
+                        ...(gallery.length || gallery_files.length
+                            ? { gallery_keep: gallery.map((g) => g.path), gallery_files }
+                            : {}),
+                    })),
+                ]),
+            ),
+        };
+    });
 
     const submit = (e: FormEvent) => {
         e.preventDefault();
@@ -112,8 +138,8 @@ export default function SectionEditor({ page, config, pages, texts, lists, image
             onSuccess: () =>
                 form.setData((prev) => ({
                     ...prev,
-                    background: null,
-                    remove_background: false,
+                    images: Object.fromEntries(Object.keys(prev.images).map((k) => [k, null])),
+                    removed: Object.fromEntries(Object.keys(prev.removed).map((k) => [k, false])),
                     lists: Object.fromEntries(Object.entries(prev.lists).map(([s, items]) => [s, clean(items)])),
                 })),
         });
@@ -142,6 +168,19 @@ export default function SectionEditor({ page, config, pages, texts, lists, image
                         error={err(errKey)}
                         onFile={(file) => patch({ image: file })}
                         onRemove={(v) => patch({ remove_image: v })}
+                    />
+                );
+            }
+
+            if (f.type === 'gallery') {
+                return (
+                    <GalleryEditor
+                        key={f.key}
+                        label={f.label}
+                        existing={draft.gallery}
+                        added={draft.gallery_files}
+                        error={err(`${errKey}_files`)}
+                        onChange={(gallery, gallery_files) => patch({ gallery, gallery_files })}
                     />
                 );
             }
@@ -179,9 +218,11 @@ export default function SectionEditor({ page, config, pages, texts, lists, image
     const summaryOf = (list: ListDef, item: Item) => {
         const hasImage = list.fields.some((f) => f.type === 'image');
         const hasRows = list.fields.some((f) => f.type === 'pairs');
+        const brands = item.gallery.length + item.gallery_files.length;
         const text =
             (item.image ? 'Imagen nueva sin guardar. ' : '') +
-            (item.body || item.url || (hasRows && item.rows.length ? `${item.rows.length} elementos incluidos` : ''));
+            (item.body || item.url || (hasRows && item.rows.length ? `${item.rows.length} elementos incluidos` : '')) +
+            (brands ? ` · ${brands} marcas` : '');
 
         return {
             title: item.title,
@@ -225,22 +266,22 @@ export default function SectionEditor({ page, config, pages, texts, lists, image
                             </Section>
                         ))}
 
-                        {config.image && (
-                            <Section title={config.image.label} description={config.image.hint}>
+                        {(config.images ?? []).map((img) => (
+                            <Section key={img.key} title={img.label} description={img.hint}>
                                 <MediaPicker
-                                    label={config.image.label}
+                                    label={img.label}
                                     hint="JPG, PNG o WebP, hasta 5 MB."
                                     accept="image/jpeg,image/png,image/webp"
                                     kind="image"
-                                    currentUrl={imageUrl}
-                                    file={data.background}
-                                    removed={data.remove_background}
-                                    error={err('background')}
-                                    onFile={(f) => form.setData('background', f)}
-                                    onRemove={(v) => form.setData('remove_background', v)}
+                                    currentUrl={images[img.key] ?? null}
+                                    file={data.images[img.key] ?? null}
+                                    removed={Boolean(data.removed[img.key])}
+                                    error={err(img.key)}
+                                    onFile={(f) => form.setData('images', { ...data.images, [img.key]: f })}
+                                    onRemove={(v) => form.setData('removed', { ...data.removed, [img.key]: v })}
                                 />
                             </Section>
-                        )}
+                        ))}
 
                         {config.lists.map((list) => (
                             <Section
@@ -336,6 +377,69 @@ function PairsEditor({
                     <SmallButton onClick={() => onChange([...rows, { title: '', description: '' }])}>+ Agregar fila</SmallButton>
                 </div>
             )}
+            {error && <p role="alert" className="mt-1.5 text-xs text-red-700">{error}</p>}
+        </div>
+    );
+}
+
+/** Logos de marcas: los ya guardados (se pueden quitar) y los nuevos por subir. */
+function GalleryEditor({
+    label,
+    existing,
+    added,
+    error,
+    onChange,
+}: {
+    label: string;
+    existing: GalleryItem[];
+    added: File[];
+    error?: string;
+    onChange: (existing: GalleryItem[], added: File[]) => void;
+}) {
+    return (
+        <div>
+            <span className="mb-2 block text-sm font-medium text-slate-800">{label}</span>
+            {existing.length + added.length > 0 && (
+                <ul className="mb-3 grid grid-cols-3 gap-2 sm:grid-cols-4">
+                    {existing.map((g) => (
+                        <li key={g.path} className="group relative flex aspect-[3/2] items-center justify-center rounded-md bg-white p-2 ring-1 ring-slate-200">
+                            <img src={g.url} alt={g.name} className="max-h-full max-w-full object-contain" />
+                            <button
+                                type="button"
+                                aria-label={`Quitar ${g.name}`}
+                                onClick={() => onChange(existing.filter((x) => x.path !== g.path), added)}
+                                className="absolute -right-1.5 -top-1.5 flex size-6 items-center justify-center rounded-full bg-red-600 text-xs text-white shadow"
+                            >
+                                ×
+                            </button>
+                        </li>
+                    ))}
+                    {added.map((f, i) => (
+                        <li key={`${f.name}-${i}`} className="relative flex aspect-[3/2] items-center justify-center rounded-md bg-emerald-50 p-2 text-center text-[11px] text-emerald-800 ring-1 ring-emerald-200">
+                            <span className="line-clamp-2 break-all">{f.name}</span>
+                            <button
+                                type="button"
+                                aria-label={`Quitar ${f.name}`}
+                                onClick={() => onChange(existing, added.filter((_, k) => k !== i))}
+                                className="absolute -right-1.5 -top-1.5 flex size-6 items-center justify-center rounded-full bg-red-600 text-xs text-white shadow"
+                            >
+                                ×
+                            </button>
+                        </li>
+                    ))}
+                </ul>
+            )}
+            <input
+                type="file"
+                multiple
+                accept="image/jpeg,image/png,image/webp"
+                onChange={(e) => {
+                    onChange(existing, [...added, ...Array.from(e.target.files ?? [])]);
+                    e.target.value = '';
+                }}
+                className="block w-full text-sm text-slate-600 file:mr-3 file:cursor-pointer file:rounded-lg file:border file:border-slate-300 file:bg-white file:px-3 file:py-2 file:text-xs file:font-medium file:text-slate-700 hover:file:bg-slate-100"
+            />
+            <p className="mt-1.5 text-xs text-slate-500">Puedes elegir varios logos a la vez. JPG, PNG o WebP, hasta 3 MB cada uno. Los nuevos se guardan al pulsar "Guardar cambios".</p>
             {error && <p role="alert" className="mt-1.5 text-xs text-red-700">{error}</p>}
         </div>
     );

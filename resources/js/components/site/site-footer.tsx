@@ -50,14 +50,14 @@ export function SiteFooter({ home }: { home: HomeContent }) {
                 <Column title="Soluciones y servicios">
                     {solutions.items.map((item) => (
                         <li key={`s-${item.id}`}>
-                            <a href="#soluciones" className={link}>
+                            <a href={item.url} className={link}>
                                 {item.title}
                             </a>
                         </li>
                     ))}
                     {services.items.length > 0 && (
                         <li>
-                            <a href="#servicios" className={link}>
+                            <a href="/servicios" className={link}>
                                 {services.title}
                             </a>
                         </li>

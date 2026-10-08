@@ -7,18 +7,28 @@ use App\Models\SectionItem;
 use Illuminate\Database\Seeder;
 use Illuminate\Http\File;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 /**
  * Carga el contenido inicial tomado del brochure de PROINNOVATEC. Solo llena
- * las listas que están vacías, así que nunca pisa lo que edite el administrador.
+ * lo que está vacío, así que nunca pisa lo que edite el administrador.
  */
 class SiteContentSeeder extends Seeder
 {
+    /** Marcas (logos del brochure) por solución. */
+    private const BRANDS = [
+        'comunicaciones-unificadas' => ['audiocodes', 'yealink', 'yeastar', 'fanvil', 'poly', 'microsoft-teams', 'asterisk', 'i3-technologies', 'huawei', 'avaya'],
+        'ciberseguridad' => ['fortinet', 'huawei', 'eset', 'kaspersky', 'sophos', 'cisco'],
+        'networking' => ['huawei', 'cisco', 'ubiquiti', 'aruba', 'fortinet', 'ruckus'],
+        'infraestructura-ti' => ['vmware', 'citrix', 'veeam', 'acronis', 'lenovo', 'hpe', 'fusion', 'dell-emc', 'prtg', 'zabbix', 'solarwinds'],
+        'seguridad-electronica' => ['zkteco', 'dahua', 'hikvision', 'axis'],
+    ];
+
     public function run(): void
     {
         $this->seedList('about_card', [
-            ['title' => 'Soluciones', 'url' => '#soluciones', 'image' => 'photos/server-room.jpg'],
-            ['title' => 'Servicios', 'url' => '#servicios', 'image' => 'photos/data-center.jpg'],
+            ['title' => 'Soluciones', 'url' => '/soluciones', 'image' => 'photos/server-room.jpg'],
+            ['title' => 'Servicios', 'url' => '/servicios', 'image' => 'photos/data-center.jpg'],
         ]);
 
         $this->seedList('solution', $this->solutions());
@@ -27,11 +37,9 @@ class SiteContentSeeder extends Seeder
         $this->seedList('certification', $this->certifications());
         $this->seedList('client', $this->clients());
 
-        $home = HomeSetting::current();
-
-        if (! $home->experience_bg_path) {
-            $home->update(['experience_bg_path' => $this->copyAsset('photos/data-center.jpg')]);
-        }
+        $this->backfillOfferings();
+        $this->seedPageImages();
+        $this->upgradeLinks();
     }
 
     /**
@@ -47,6 +55,7 @@ class SiteContentSeeder extends Seeder
             SectionItem::query()->create([
                 'section' => $section,
                 'sort' => $sort,
+                'slug' => in_array($section, ['solution', 'service'], true) ? Str::slug($item['title']) : null,
                 'title' => $item['title'],
                 'body' => $item['body'] ?? null,
                 'rows' => $item['rows'] ?? null,
@@ -54,6 +63,86 @@ class SiteContentSeeder extends Seeder
                 'image_path' => isset($item['image']) ? $this->copyAsset($item['image']) : null,
             ]);
         }
+    }
+
+    /** Completa slug, descripción y marcas en soluciones y servicios ya existentes. */
+    private function backfillOfferings(): void
+    {
+        $descriptions = collect($this->solutions())->pluck('body', 'title');
+
+        SectionItem::query()->whereIn('section', ['solution', 'service'])->get()->each(function (SectionItem $item) use ($descriptions) {
+            $item->slug ??= Str::slug($item->title);
+            $item->body ??= $descriptions[$item->title] ?? null;
+
+            if ($item->section === 'solution' && empty($item->gallery) && isset(self::BRANDS[$item->slug])) {
+                $item->gallery = collect(self::BRANDS[$item->slug])->map(fn (string $brand) => [
+                    'path' => $this->copyAsset("brands/$brand.png"),
+                    'name' => Str::of($brand)->replace('-', ' ')->title()->toString(),
+                ])->all();
+            }
+
+            $item->save();
+        });
+
+        SectionItem::query()->where('section', 'about_card')->get()->each(function (SectionItem $card) {
+            $card->url = match ($card->url) {
+                '#soluciones' => '/soluciones',
+                '#servicios' => '/servicios',
+                default => $card->url,
+            };
+            $card->save();
+        });
+    }
+
+    private function seedPageImages(): void
+    {
+        $home = HomeSetting::current();
+        $images = $home->page_images ?? [];
+
+        foreach ([
+            'nosotros' => 'photos/server-room.jpg',
+            'soluciones' => 'photos/data-center.jpg',
+            'servicios' => 'photos/data-center.jpg',
+            'experiencia' => 'photos/data-center.jpg',
+            'clientes' => 'photos/server-room.jpg',
+            'contacto' => 'photos/data-center.jpg',
+        ] as $slot => $asset) {
+            $images[$slot] ??= $this->copyAsset($asset);
+        }
+
+        $home->update(['page_images' => $images]);
+    }
+
+    /** Pasa los enlaces de ancla (#soluciones...) del menú y los botones a páginas propias. */
+    private function upgradeLinks(): void
+    {
+        $home = HomeSetting::current();
+        $solutionUrls = SectionItem::query()->where('section', 'solution')->pluck('slug', 'title');
+        $top = ['Soluciones' => '/soluciones', 'Nosotros' => '/nosotros', 'Experiencia' => '/experiencia', 'Clientes' => '/clientes'];
+        $anchors = ['#soluciones' => '/soluciones', '#servicios' => '/servicios', '#nosotros' => '/nosotros', '#experiencia' => '/experiencia', '#clientes' => '/clientes', '#contacto' => '/contacto'];
+
+        $menu = collect($home->menu)->map(function (array $item) use ($top, $solutionUrls) {
+            if (str_starts_with($item['url'], '#') && isset($top[$item['label']])) {
+                $item['url'] = $top[$item['label']];
+            }
+
+            $item['children'] = collect($item['children'] ?? [])->map(function (array $child) use ($solutionUrls) {
+                if (str_starts_with($child['url'], '#')) {
+                    $child['url'] = $solutionUrls->has($child['label'])
+                        ? '/soluciones/'.$solutionUrls[$child['label']]
+                        : ($child['label'] === 'Servicios Profesionales' ? '/servicios' : $child['url']);
+                }
+
+                return $child;
+            })->all();
+
+            return $item;
+        })->all();
+
+        $buttons = collect($home->buttons)->map(fn (array $b) => [...$b, 'url' => $anchors[$b['url']] ?? $b['url']])->all();
+        $cta = $home->nav_cta ? [...$home->nav_cta, 'url' => $anchors[$home->nav_cta['url']] ?? $home->nav_cta['url']] : null;
+
+        $home->update(['menu' => $menu, 'buttons' => $buttons, 'nav_cta' => $cta]);
     }
 
     private function copyAsset(string $relative): string
@@ -67,6 +156,7 @@ class SiteContentSeeder extends Seeder
         return [
             [
                 'title' => 'Comunicaciones Unificadas',
+                'body' => 'Voz, video y colaboración integrados para que tu organización se comunique sin fronteras: telefonía IP, videoconferencia y pantallas interactivas.',
                 'rows' => [
                     ['title' => 'Soluciones VoIP', 'description' => 'Centrales telefónicas, SBC, teléfonos IP, GW VoIP, Direct Routing.'],
                     ['title' => 'Videoconferencia', 'description' => 'Equipos de videoconferencia compatibles con Zoom, Teams y Google Meet.'],
@@ -75,6 +165,7 @@ class SiteContentSeeder extends Seeder
             ],
             [
                 'title' => 'Ciberseguridad',
+                'body' => 'Protección de la red, de los equipos y de los datos de tu empresa, con monitoreo para detectar y responder a incidentes.',
                 'rows' => [
                     ['title' => 'Firewall', 'description' => 'Equipos Firewall UTM y Next-Generation Firewall (NGFW).'],
                     ['title' => 'End point', 'description' => 'Antivirus, antimalware, EDR, DLP y cifrado de datos.'],
@@ -83,6 +174,7 @@ class SiteContentSeeder extends Seeder
             ],
             [
                 'title' => 'Networking',
+                'body' => 'Redes cableadas e inalámbricas diseñadas para conectar sedes, oficinas y campus con rendimiento y continuidad.',
                 'rows' => [
                     ['title' => 'Switches y routers', 'description' => 'Switches de acceso, distribución, core, TOR, FO y SAN. Routers Edge, VPN y Core.'],
                     ['title' => 'WLAN', 'description' => 'Access points, wireless controllers, mesh access points y radioenlaces PTP y PTMP.'],
@@ -91,6 +183,7 @@ class SiteContentSeeder extends Seeder
             ],
             [
                 'title' => 'Infraestructura TI',
+                'body' => 'Servidores, almacenamiento y software de gestión para que tus aplicaciones y tus datos estén siempre disponibles.',
                 'rows' => [
                     ['title' => 'Servidores y blade', 'description' => 'Equipos y servicios para aplicaciones Microsoft, APP y virtualización convergente e hiperconvergente.'],
                     ['title' => 'Storage', 'description' => 'NAS, SAN, tape storage, hyperconverged storage, software de backup y restore, disaster recovery.'],
@@ -99,6 +192,7 @@ class SiteContentSeeder extends Seeder
             ],
             [
                 'title' => 'Seguridad Electrónica',
+                'body' => 'Videovigilancia y control de acceso para proteger tus instalaciones y gestionar quién entra y cuándo.',
                 'rows' => [
                     ['title' => 'CCTV', 'description' => 'Cámaras domo, PTZ, bullet y térmicas, NVR, DVR, XDR híbrido, software VMS y video wall.'],
                     ['title' => 'Cableado CCTV', 'description' => 'Coaxial, ethernet, fibra óptica y GPON.'],
