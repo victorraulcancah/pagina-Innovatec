@@ -132,6 +132,7 @@ class SiteSections
                         ['key' => 'body', 'label' => 'Descripción', 'type' => 'textarea', 'max' => 1200],
                         $rows,
                         $cover,
+                        ['key' => 'gallery', 'label' => 'Marcas o tecnologías (logos)', 'type' => 'gallery'],
                     ]],
                 ],
             ],

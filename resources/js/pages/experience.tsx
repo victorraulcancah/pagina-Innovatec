@@ -14,7 +14,6 @@ export default function Experience({ home }: { home: HomeContent }) {
                 title={e.title}
                 intro={e.intro}
                 imageUrl={e.bgUrl}
-                crumbs={[{ label: 'Inicio', href: '/' }, { label: 'Experiencia' }]}
             />
 
             {e.cases.length > 0 && (

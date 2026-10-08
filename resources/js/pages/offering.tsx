@@ -29,11 +29,6 @@ export default function OfferingPage({
             <PageHero
                 title={item.title}
                 intro={item.summary}
-                crumbs={[
-                    { label: 'Inicio', href: '/' },
-                    { label: block.title, href: `/${kind}` },
-                    { label: item.title },
-                ]}
                 aside={
                     item.imageUrl ? (
                         <img src={item.imageUrl} alt="" className="aspect-[4/3] w-full object-cover" />
@@ -71,7 +66,7 @@ export default function OfferingPage({
                 <section className="bg-night-2 py-20 lg:py-28">
                     <div className={sectionShell}>
                         <Reveal>
-                            <SectionHeading title="Marcas con las que trabajamos" className="!text-[clamp(1.25rem,2.4vw,2rem)]" />
+                            <SectionHeading title={kind === 'soluciones' ? 'Marcas con las que trabajamos' : 'Tecnologías con las que operamos'} className="!text-[clamp(1.25rem,2.4vw,2rem)]" />
                         </Reveal>
                         <ul className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
                             {item.gallery.map((logo, i) => (

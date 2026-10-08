@@ -32,6 +32,11 @@ class SiteContentSeeder extends Seeder
         'Colegio María de los Ángeles' => ['clients/colegio-maria-de-los-angeles', ['ubiquiti']],
     ];
 
+    /** Tecnologías que el brochure menciona en el outsourcing. */
+    private const SERVICE_BRANDS = [
+        'outsourcing-tic' => ['sophos', 'fortinet', 'cisco', 'yeastar'],
+    ];
+
     public function run(): void
     {
         $this->seedList('about_card', [
@@ -46,6 +51,7 @@ class SiteContentSeeder extends Seeder
         $this->seedList('client', $this->clients());
 
         $this->backfillOfferings();
+        $this->backfillServices();
         $this->backfillCases();
         $this->seedPageImages();
         $this->upgradeLinks();
@@ -101,6 +107,33 @@ class SiteContentSeeder extends Seeder
                 default => $card->url,
             };
             $card->save();
+        });
+    }
+
+    /** Completa foto, detalle y marcas en los servicios que aún no los tienen. */
+    private function backfillServices(): void
+    {
+        $defaults = collect($this->services())->keyBy('title');
+
+        SectionItem::query()->where('section', 'service')->get()->each(function (SectionItem $item) use ($defaults) {
+            $default = $defaults[$item->title] ?? null;
+
+            if ($default && ! $item->image_path && isset($default['image'])) {
+                $item->image_path = $this->copyAsset($default['image']);
+            }
+
+            if ($default && empty($item->rows)) {
+                $item->rows = $default['rows'];
+            }
+
+            if (empty($item->gallery) && isset(self::SERVICE_BRANDS[$item->slug])) {
+                $item->gallery = collect(self::SERVICE_BRANDS[$item->slug])->map(fn (string $brand) => [
+                    'path' => $this->copyAsset("brands/$brand.png"),
+                    'name' => Str::of($brand)->replace('-', ' ')->title()->toString(),
+                ])->all();
+            }
+
+            $item->save();
         });
     }
 
@@ -258,9 +291,37 @@ class SiteContentSeeder extends Seeder
     private function services(): array
     {
         return [
-            ['title' => 'Consultoría', 'body' => 'Consultoría estratégica en TIC: evaluamos infraestructuras, diseñamos arquitecturas y proponemos soluciones basadas en las mejores prácticas de la industria para optimizar la eficiencia y la seguridad de las operaciones empresariales.'],
-            ['title' => 'Help Desk', 'body' => 'Soporte técnico a usuarios finales: resolvemos incidencias, brindamos asistencia remota o in situ y capacitamos a los usuarios para mejorar la productividad.'],
-            ['title' => 'Outsourcing TIC', 'body' => 'Gestionamos y operamos infraestructuras TIC como centros de cómputo, networking, ciberseguridad y comunicaciones unificadas, para que las empresas se enfoquen en sus actividades principales.'],
+            [
+                'title' => 'Consultoría',
+                'image' => 'photos/data-center.jpg',
+                'body' => 'Consultoría estratégica en TIC: evaluamos infraestructuras, diseñamos arquitecturas y proponemos soluciones basadas en las mejores prácticas de la industria para optimizar la eficiencia y la seguridad de las operaciones empresariales.',
+                'rows' => [
+                    ['title' => 'Evaluación de infraestructuras', 'description' => 'Revisamos tu infraestructura TIC actual para identificar cómo mejorar su eficiencia y su seguridad.'],
+                    ['title' => 'Diseño de arquitecturas', 'description' => 'Diseñamos la arquitectura TIC que necesitan tus operaciones empresariales.'],
+                    ['title' => 'Soluciones basadas en mejores prácticas', 'description' => 'Proponemos soluciones alineadas con las mejores prácticas de la industria.'],
+                ],
+            ],
+            [
+                'title' => 'Help Desk',
+                'image' => 'photos/server-room.jpg',
+                'body' => 'Soporte técnico a usuarios finales: resolvemos incidencias, brindamos asistencia remota o in situ y capacitamos a los usuarios para mejorar la productividad.',
+                'rows' => [
+                    ['title' => 'Resolución de incidencias', 'description' => 'Atendemos y resolvemos las incidencias que reportan tus usuarios finales.'],
+                    ['title' => 'Asistencia remota o in situ', 'description' => 'Damos soporte a distancia o en el lugar, según lo que requiera cada caso.'],
+                    ['title' => 'Capacitación de usuarios', 'description' => 'Capacitamos a tus usuarios para que mejoren su productividad con la tecnología.'],
+                ],
+            ],
+            [
+                'title' => 'Outsourcing TIC',
+                'image' => 'photos/racks.jpg',
+                'body' => 'Gestionamos y operamos infraestructuras TIC como centros de cómputo, networking, ciberseguridad y comunicaciones unificadas, para que las empresas se enfoquen en sus actividades principales mientras optimizamos sus recursos tecnológicos.',
+                'rows' => [
+                    ['title' => 'Centros de cómputo', 'description' => 'Gestionamos y operamos la infraestructura de tus centros de cómputo.'],
+                    ['title' => 'Networking', 'description' => 'Operamos tu red; por ejemplo, outsourcing de networking con Cisco.'],
+                    ['title' => 'Ciberseguridad', 'description' => 'Operamos tu seguridad; por ejemplo, outsourcing de ciberseguridad con Sophos y Fortinet.'],
+                    ['title' => 'Comunicaciones unificadas', 'description' => 'Operamos tus comunicaciones; por ejemplo, outsourcing de comunicaciones con Yeastar.'],
+                ],
+            ],
         ];
     }
 

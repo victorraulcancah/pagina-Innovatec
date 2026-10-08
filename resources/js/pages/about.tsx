@@ -14,7 +14,6 @@ export default function About({ home }: { home: HomeContent }) {
             <PageHero
                 title={`${about.title} ${about.accent}`.trim()}
                 imageUrl={image}
-                crumbs={[{ label: 'Inicio', href: '/' }, { label: 'Nosotros' }]}
             />
 
             <section className="bg-night py-20 lg:py-28">

@@ -13,7 +13,6 @@ export default function Clients({ home }: { home: HomeContent }) {
             <PageHero
                 title={`${c.title} ${c.accent}`.trim()}
                 imageUrl={c.imageUrl}
-                crumbs={[{ label: 'Inicio', href: '/' }, { label: 'Clientes' }]}
             />
 
             <section className="bg-night-2 py-20 lg:py-28">

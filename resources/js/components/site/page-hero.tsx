@@ -4,20 +4,18 @@ import { sectionShell } from './reveal';
 
 /**
  * Cabecera de las páginas interiores: imagen en blanco y negro bajo un velo
- * azul noche (o la malla animada si aún no hay imagen), migas de pan, título
+ * azul noche (o la malla animada si aún no hay imagen), título
  * y texto. `aside` ocupa el lado derecho en escritorio.
  */
 export function PageHero({
     title,
     intro,
     imageUrl,
-    crumbs,
     aside,
 }: {
     title: string;
     intro?: string | null;
     imageUrl?: string | null;
-    crumbs?: { label: string; href?: string }[];
     aside?: ReactNode;
 }) {
     return (
@@ -39,24 +37,6 @@ export function PageHero({
 
             <div className={`${sectionShell} grid items-center gap-12 ${aside ? 'lg:grid-cols-[1fr_minmax(0,420px)]' : ''}`}>
                 <div>
-                    {crumbs && crumbs.length > 0 && (
-                        <nav aria-label="Ruta" className="mb-6 text-sm text-white/60">
-                            <ol className="flex flex-wrap items-center gap-2">
-                                {crumbs.map((c, i) => (
-                                    <li key={`${c.label}-${i}`} className="flex items-center gap-2">
-                                        {i > 0 && <span aria-hidden="true">/</span>}
-                                        {c.href ? (
-                                            <a href={c.href} className="transition-colors hover:text-white">
-                                                {c.label}
-                                            </a>
-                                        ) : (
-                                            <span className="text-white/85">{c.label}</span>
-                                        )}
-                                    </li>
-                                ))}
-                            </ol>
-                        </nav>
-                    )}
                     <h1 className="animate-rise font-display max-w-[20ch] text-[clamp(1.6rem,4.4vw,3.4rem)] leading-[1.12] uppercase text-balance text-white">
                         {title}
                     </h1>

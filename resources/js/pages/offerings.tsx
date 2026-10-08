@@ -16,7 +16,6 @@ export default function Offerings({ home, kind }: { home: HomeContent; kind: 'so
                 title={block.title}
                 intro={block.intro}
                 imageUrl={block.imageUrl}
-                crumbs={[{ label: 'Inicio', href: '/' }, { label: block.title }]}
             />
 
             <section className="bg-night-2 py-20 lg:py-28">

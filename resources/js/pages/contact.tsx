@@ -14,7 +14,6 @@ export default function Contact({ home }: { home: HomeContent }) {
                 title={c.title}
                 intro={c.body}
                 imageUrl={c.imageUrl}
-                crumbs={[{ label: 'Inicio', href: '/' }, { label: 'Contacto' }]}
             />
 
             <section className="bg-night py-20 lg:py-28">
