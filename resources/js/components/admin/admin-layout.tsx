@@ -23,6 +23,12 @@ const icons: Record<string, ReactNode> = {
             <rect x="11" y="11" width="6" height="6" rx="1" />
         </>
     ),
+    servicios: (
+        <>
+            <circle cx="10" cy="10" r="3" />
+            <path d="M10 2.500v2.500M10 15v2.500M2.500 10H5M15 10h2.500M4.700 4.700l1.800 1.800M13.500 13.500l1.800 1.800M4.700 15.300l1.800-1.800M13.500 6.500l1.800-1.800" />
+        </>
+    ),
     experiencia: (
         <>
             <circle cx="10" cy="8" r="4.5" />

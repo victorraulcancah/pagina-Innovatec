@@ -24,6 +24,14 @@ class SiteContentSeeder extends Seeder
         'seguridad-electronica' => ['zkteco', 'dahua', 'hikvision', 'axis'],
     ];
 
+    /** Logos de cliente y tecnologías por proyecto (título => [logo del cliente, tecnologías]). */
+    private const CASE_LOGOS = [
+        'Minera Titán' => ['clients/minera-titan', ['cisco', 'yeastar', 'yealink', 'fortinet', 'sophos']],
+        'Innova ITC · Telefónica' => ['clients/innova-itc', ['one-access', 'telefonica']],
+        'SENATI' => ['clients/senati', ['yeastar', 'yealink', 'audiocodes']],
+        'Colegio María de los Ángeles' => ['clients/colegio-maria-de-los-angeles', ['ubiquiti']],
+    ];
+
     public function run(): void
     {
         $this->seedList('about_card', [
@@ -38,8 +46,10 @@ class SiteContentSeeder extends Seeder
         $this->seedList('client', $this->clients());
 
         $this->backfillOfferings();
+        $this->backfillCases();
         $this->seedPageImages();
         $this->upgradeLinks();
+        $this->ensureServicesMenu();
     }
 
     /**
@@ -92,6 +102,48 @@ class SiteContentSeeder extends Seeder
             };
             $card->save();
         });
+    }
+
+    /** Pone logo del cliente y tecnologías a los proyectos que aún no los tienen. */
+    private function backfillCases(): void
+    {
+        SectionItem::query()->where('section', 'case')->get()->each(function (SectionItem $case) {
+            [$client, $brands] = self::CASE_LOGOS[$case->title] ?? [null, []];
+
+            if ($client && ! $case->image_path) {
+                $case->image_path = $this->copyAsset("$client.png");
+            }
+
+            if ($brands && empty($case->gallery)) {
+                $case->gallery = collect($brands)->map(fn (string $brand) => [
+                    'path' => $this->copyAsset("brands/$brand.png"),
+                    'name' => Str::of($brand)->replace('-', ' ')->title()->toString(),
+                ])->all();
+            }
+
+            $case->save();
+        });
+    }
+
+    /** Agrega "Servicios" al menú si falta y quita "Servicios Profesionales" de Soluciones. */
+    private function ensureServicesMenu(): void
+    {
+        $home = HomeSetting::current();
+        $menu = collect($home->menu)->map(function (array $item) {
+            $item['children'] = collect($item['children'] ?? [])
+                ->reject(fn (array $c) => $c['label'] === 'Servicios Profesionales')->values()->all();
+
+            return $item;
+        });
+
+        if (! $menu->contains('url', '/servicios')) {
+            $position = $menu->search(fn (array $i) => $i['url'] === '/soluciones');
+            $menu->splice($position === false ? $menu->count() : $position + 1, 0, [
+                ['label' => 'Servicios', 'url' => '/servicios', 'children' => []],
+            ]);
+        }
+
+        $home->update(['menu' => $menu->values()->all()]);
     }
 
     private function seedPageImages(): void

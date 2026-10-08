@@ -59,6 +59,8 @@ class SiteContent
                     'id' => $i->id,
                     'client' => $i->title,
                     'summary' => $i->body,
+                    'imageUrl' => $i->imageUrl(),
+                    'gallery' => collect($i->galleryItems())->map(fn ($g) => ['name' => $g['name'], 'url' => $g['url']])->all(),
                 ]),
                 'certifications' => $list('certification', fn (SectionItem $i) => [
                     'id' => $i->id,

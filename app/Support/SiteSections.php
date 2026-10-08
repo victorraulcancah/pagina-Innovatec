@@ -95,18 +95,15 @@ class SiteSections
                 ]],
             ],
             'soluciones' => [
-                'label' => 'Soluciones y servicios',
-                'description' => 'Cada solución y cada servicio tiene su propia página. Aquí editas sus textos, imágenes, el detalle de lo que incluyen y las marcas con las que trabajas.',
-                'groups' => ['solutions' => 'Texto de Soluciones', 'services' => 'Texto de Servicios'],
+                'label' => 'Soluciones',
+                'description' => 'Cada solución tiene su propia página. Aquí editas su texto, imagen, lo que incluye y las marcas con las que trabajas.',
+                'groups' => ['solutions' => 'Texto de la página Soluciones'],
                 'texts' => [
-                    ['group' => 'solutions', 'key' => 'title', 'label' => 'Título de Soluciones', 'type' => 'text', 'max' => 80, 'required' => true],
-                    ['group' => 'solutions', 'key' => 'intro', 'label' => 'Texto de Soluciones', 'type' => 'textarea', 'max' => 300],
-                    ['group' => 'services', 'key' => 'title', 'label' => 'Título de Servicios', 'type' => 'text', 'max' => 80, 'required' => true],
-                    ['group' => 'services', 'key' => 'intro', 'label' => 'Texto de Servicios', 'type' => 'textarea', 'max' => 300],
+                    ['group' => 'solutions', 'key' => 'title', 'label' => 'Título', 'type' => 'text', 'max' => 80, 'required' => true],
+                    ['group' => 'solutions', 'key' => 'intro', 'label' => 'Texto', 'type' => 'textarea', 'max' => 300],
                 ],
                 'images' => [
                     ['key' => 'image_soluciones', 'slot' => 'soluciones', 'label' => 'Imagen de la página Soluciones', 'hint' => 'JPG, PNG o WebP. Se muestra en la cabecera.'],
-                    ['key' => 'image_servicios', 'slot' => 'servicios', 'label' => 'Imagen de la página Servicios', 'hint' => 'JPG, PNG o WebP. Se muestra en la cabecera.'],
                 ],
                 'lists' => [
                     ['section' => 'solution', 'label' => 'Soluciones', 'itemLabel' => 'Solución', 'max' => 12, 'fields' => [
@@ -116,7 +113,21 @@ class SiteSections
                         $cover,
                         ['key' => 'gallery', 'label' => 'Marcas con las que trabajas (logos)', 'type' => 'gallery'],
                     ]],
-                    ['section' => 'service', 'label' => 'Servicios profesionales', 'itemLabel' => 'Servicio', 'max' => 12, 'fields' => [
+                ],
+            ],
+            'servicios' => [
+                'label' => 'Servicios',
+                'description' => 'Cada servicio profesional tiene su propia página. Aquí editas su descripción, imagen y lo que incluye.',
+                'groups' => ['services' => 'Texto de la página Servicios'],
+                'texts' => [
+                    ['group' => 'services', 'key' => 'title', 'label' => 'Título', 'type' => 'text', 'max' => 80, 'required' => true],
+                    ['group' => 'services', 'key' => 'intro', 'label' => 'Texto', 'type' => 'textarea', 'max' => 300],
+                ],
+                'images' => [
+                    ['key' => 'image_servicios', 'slot' => 'servicios', 'label' => 'Imagen de la página Servicios', 'hint' => 'JPG, PNG o WebP. Se muestra en la cabecera.'],
+                ],
+                'lists' => [
+                    ['section' => 'service', 'label' => 'Servicios', 'itemLabel' => 'Servicio', 'max' => 12, 'fields' => [
                         ['key' => 'title', 'label' => 'Nombre', 'type' => 'text', 'max' => 80],
                         ['key' => 'body', 'label' => 'Descripción', 'type' => 'textarea', 'max' => 1200],
                         $rows,
@@ -139,6 +150,8 @@ class SiteSections
                     ['section' => 'case', 'label' => 'Proyectos', 'itemLabel' => 'Proyecto', 'max' => 8, 'fields' => [
                         ['key' => 'title', 'label' => 'Cliente', 'type' => 'text', 'max' => 80],
                         ['key' => 'body', 'label' => 'Resumen del proyecto', 'type' => 'textarea', 'max' => 600],
+                        ['key' => 'image', 'label' => 'Logo del cliente o foto del proyecto', 'type' => 'image'],
+                        ['key' => 'gallery', 'label' => 'Tecnologías usadas (logos)', 'type' => 'gallery'],
                     ]],
                     ['section' => 'certification', 'label' => 'Certificaciones', 'itemLabel' => 'Certificación', 'max' => 16, 'fields' => [
                         ['key' => 'title', 'label' => 'Nombre', 'type' => 'text', 'max' => 80],

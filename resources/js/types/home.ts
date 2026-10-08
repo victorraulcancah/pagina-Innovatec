@@ -49,7 +49,13 @@ export type SiteSections = {
         title: string;
         intro: string;
         bgUrl: string | null;
-        cases: { id: number; client: string; summary: string | null }[];
+        cases: {
+            id: number;
+            client: string;
+            summary: string | null;
+            imageUrl: string | null;
+            gallery: { name: string; url: string }[];
+        }[];
         certifications: { id: number; name: string; imageUrl: string | null }[];
     };
     clients: {

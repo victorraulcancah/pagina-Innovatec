@@ -26,21 +26,57 @@ export function CertificationGrid({ items }: { items: Experience['certifications
     );
 }
 
-/** Proyectos realizados, en dos columnas con filete superior. */
+/** Proyectos realizados: logo del cliente arriba, texto y logos de las tecnologías usadas. */
 export function CaseList({ items }: { items: Experience['cases'] }) {
     if (items.length === 0) {
         return null;
     }
 
     return (
-        <ul className="grid gap-x-16 gap-y-12 md:grid-cols-2">
-            {items.map((c) => (
-                <li key={c.id} className="border-t border-white/25 pt-6">
-                    <Reveal>
-                        <h3 className="font-display text-base uppercase text-signal sm:text-lg">{c.client}</h3>
-                        {c.summary && (
-                            <p className="mt-4 max-w-[56ch] text-[15px] leading-relaxed text-white/75">{c.summary}</p>
-                        )}
+        <ul className="grid gap-6 md:grid-cols-2">
+            {items.map((c, i) => (
+                <li key={c.id}>
+                    <Reveal delay={(i % 2) * 90} className="h-full">
+                        <article className="flex h-full flex-col overflow-hidden border border-white/15 bg-night">
+                            <div className="flex h-36 items-center justify-center bg-white p-6">
+                                {c.imageUrl ? (
+                                    <img
+                                        src={c.imageUrl}
+                                        alt={`Logo de ${c.client}`}
+                                        loading="lazy"
+                                        className="max-h-full max-w-[70%] object-contain mix-blend-multiply"
+                                    />
+                                ) : (
+                                    <span className="font-display text-sm uppercase text-night">{c.client}</span>
+                                )}
+                            </div>
+                            <div className="flex flex-1 flex-col p-6 sm:p-8">
+                                <h3 className="font-display text-base uppercase text-signal sm:text-lg">{c.client}</h3>
+                                {c.summary && (
+                                    <p className="mt-4 text-[15px] leading-relaxed text-white/75">{c.summary}</p>
+                                )}
+                                {c.gallery.length > 0 && (
+                                    <div className="mt-auto pt-8">
+                                        <p className="mb-3 text-xs text-white/50">Tecnologías</p>
+                                        <ul className="flex flex-wrap gap-2">
+                                            {c.gallery.map((logo, k) => (
+                                                <li
+                                                    key={`${logo.name}-${k}`}
+                                                    className="flex h-12 w-24 items-center justify-center rounded bg-white p-2"
+                                                >
+                                                    <img
+                                                        src={logo.url}
+                                                        alt={logo.name}
+                                                        loading="lazy"
+                                                        className="max-h-full max-w-full object-contain mix-blend-multiply"
+                                                    />
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+                            </div>
+                        </article>
                     </Reveal>
                 </li>
             ))}

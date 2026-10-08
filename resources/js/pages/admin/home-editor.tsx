@@ -183,7 +183,7 @@ export default function HomeEditor({
                             />
                         </Section>
 
-                        <Section title="Menú de navegación" description="Cada opción puede tener un submenú desplegable.">
+                        <Section title="Menú de navegación" description="Las opciones Soluciones (/soluciones) y Servicios (/servicios) muestran solas sus páginas en el desplegable; las demás pueden llevar un submenú propio.">
                             <ItemList<MenuItem>
                                 items={data.menu}
                                 max={8}

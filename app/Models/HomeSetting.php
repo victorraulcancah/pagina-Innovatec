@@ -73,7 +73,11 @@ class HomeSetting extends Model
                     ['label' => 'Networking', 'url' => '/soluciones/networking'],
                     ['label' => 'Infraestructura TI', 'url' => '/soluciones/infraestructura-ti'],
                     ['label' => 'Seguridad Electrónica', 'url' => '/soluciones/seguridad-electronica'],
-                    ['label' => 'Servicios Profesionales', 'url' => '/servicios'],
+                ]],
+                ['label' => 'Servicios', 'url' => '/servicios', 'children' => [
+                    ['label' => 'Consultoría', 'url' => '/servicios/consultoria'],
+                    ['label' => 'Help Desk', 'url' => '/servicios/help-desk'],
+                    ['label' => 'Outsourcing TIC', 'url' => '/servicios/outsourcing-tic'],
                 ]],
                 ['label' => 'Nosotros', 'url' => '/nosotros', 'children' => []],
                 ['label' => 'Experiencia', 'url' => '/experiencia', 'children' => []],
@@ -107,6 +111,8 @@ class HomeSetting extends Model
      */
     public function toPageData(): array
     {
+        $sections = SiteContent::forPage($this);
+
         return [
             'brandName' => $this->brand_name,
             'logoUrl' => $this->logo_path ? Storage::disk('public')->url($this->logo_path) : self::DEFAULT_LOGO,
@@ -115,9 +121,28 @@ class HomeSetting extends Model
             'title' => $this->title,
             'subtitle' => $this->subtitle,
             'buttons' => $this->buttons ?? [],
-            'menu' => $this->menu ?? [],
+            'menu' => $this->menuWithOfferings($sections),
             'navCta' => $this->nav_cta,
-            'sections' => SiteContent::forPage($this),
+            'sections' => $sections,
         ];
+    }
+
+    /**
+     * Los desplegables de Soluciones y Servicios siempre listan las páginas
+     * que existen, así el menú nunca queda desactualizado.
+     *
+     * @param  array<string, mixed>  $sections
+     * @return list<array<string, mixed>>
+     */
+    private function menuWithOfferings(array $sections): array
+    {
+        $children = fn (string $block) => collect($sections[$block]['items'])
+            ->map(fn (array $i) => ['label' => $i['title'], 'url' => $i['url']])->all();
+
+        return collect($this->menu ?? [])->map(fn (array $item) => match ($item['url']) {
+            '/soluciones' => [...$item, 'children' => $children('solutions')],
+            '/servicios' => [...$item, 'children' => $children('services')],
+            default => $item,
+        })->all();
     }
 }

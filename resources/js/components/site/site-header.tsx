@@ -147,7 +147,7 @@ export function SiteHeader({ home }: { home: HomeContent }) {
                 </a>
 
                 <nav aria-label="Principal" className="hidden justify-center lg:flex">
-                    <ul className="flex items-center gap-9">
+                    <ul className="flex items-center gap-6 xl:gap-9">
                         {home.menu.map((item, i) => (
                             <DesktopItem
                                 key={`${item.label}-${i}`}

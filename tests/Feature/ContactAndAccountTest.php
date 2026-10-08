@@ -90,7 +90,7 @@ class ContactAndAccountTest extends TestCase
             ->component('admin/messages')
             ->where('messages.0.name', 'Ana Pérez')
             ->where('messages.0.read', false)
-            ->where('pages.6.badge', 1));
+            ->where('pages.7.badge', 1));
 
         $this->admin()->post("/admin/mensajes/{$message->id}/leida")->assertRedirect();
         $this->assertNotNull($message->fresh()->read_at);
