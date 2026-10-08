@@ -1,6 +1,7 @@
 import { Head, useForm } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import { AdminLayout, type AdminPage } from '@/components/admin/admin-layout';
+import { ItemList } from '@/components/admin/item-list';
 import { MediaPicker, move } from '@/components/admin/media-picker';
 import {
     Field,
@@ -84,6 +85,9 @@ export default function HomeEditor({
             children: data.menu[i].children.map((c, k) => (k === j ? { ...c, ...patch } : c)),
         });
 
+    const hasErrorAt = (group: string, index: number) =>
+        Object.keys(errors).some((k) => k.startsWith(`${group}.${index}.`));
+
     const videoTooBig = data.video && data.video.size > MAX_VIDEO_MB * 1024 * 1024;
 
     return (
@@ -148,83 +152,64 @@ export default function HomeEditor({
                         </Section>
 
                         <Section title="Botones" description="Hasta 3 botones debajo del texto. El de relleno es el principal.">
-                            <ul className="space-y-4">
-                                {data.buttons.map((button, i) => (
-                                    <li key={i} className="grid gap-3 rounded-lg bg-white p-4 ring-1 ring-slate-200 sm:grid-cols-[1fr_1fr_130px]">
-                                        <Field label="Texto" error={err(`buttons.${i}.label`)}>
-                                            <TextInput value={button.label} maxLength={40} onChange={(e) => setButton(i, { label: e.target.value })} />
+                            <ItemList<HeroButton>
+                                items={data.buttons}
+                                max={3}
+                                itemLabel="Botón"
+                                blank={() => ({ label: '', url: '', variant: 'outline' })}
+                                onChange={(items) => setData('buttons', items)}
+                                summary={(b) => ({
+                                    title: b.label,
+                                    subtitle: `${b.url || 'Sin enlace'} · ${b.variant === 'primary' ? 'Relleno' : 'Contorno'}`,
+                                })}
+                                errorAt={(i) => hasErrorAt('buttons', i)}
+                                canAccept={(d) => d.label.trim() !== '' && d.url.trim() !== ''}
+                                renderForm={(d, patch, i) => (
+                                    <>
+                                        <Field label="Texto" error={i === null ? undefined : err(`buttons.${i}.label`)}>
+                                            <TextInput value={d.label} maxLength={40} onChange={(e) => patch({ label: e.target.value })} />
                                         </Field>
-                                        <Field label="Enlace" error={err(`buttons.${i}.url`)}>
-                                            <TextInput value={button.url} placeholder="/contacto o #seccion" onChange={(e) => setButton(i, { url: e.target.value })} />
+                                        <Field label="Enlace" hint="Una ruta (/contacto), una sección (#contacto) o un enlace completo." error={i === null ? undefined : err(`buttons.${i}.url`)}>
+                                            <TextInput value={d.url} placeholder="/contacto o #seccion" onChange={(e) => patch({ url: e.target.value })} />
                                         </Field>
                                         <Field label="Estilo">
-                                            <Select value={button.variant} onChange={(e) => setButton(i, { variant: e.target.value as HeroButton['variant'] })}>
+                                            <Select value={d.variant} onChange={(e) => patch({ variant: e.target.value as HeroButton['variant'] })}>
                                                 <option value="primary">Relleno</option>
                                                 <option value="outline">Contorno</option>
                                             </Select>
                                         </Field>
-                                        <div className="flex gap-2 sm:col-span-3">
-                                            <SmallButton disabled={i === 0} onClick={() => setData('buttons', move(data.buttons, i, i - 1))}>Subir</SmallButton>
-                                            <SmallButton disabled={i === data.buttons.length - 1} onClick={() => setData('buttons', move(data.buttons, i, i + 1))}>Bajar</SmallButton>
-                                            <SmallButton danger onClick={() => setData('buttons', data.buttons.filter((_, k) => k !== i))}>Eliminar</SmallButton>
-                                        </div>
-                                    </li>
-                                ))}
-                            </ul>
-                            {data.buttons.length < 3 && (
-                                <SmallButton onClick={() => setData('buttons', [...data.buttons, { label: '', url: '', variant: 'outline' }])}>
-                                    + Agregar botón
-                                </SmallButton>
-                            )}
+                                    </>
+                                )}
+                            />
                         </Section>
 
                         <Section title="Menú de navegación" description="Cada opción puede tener un submenú desplegable.">
-                            <ul className="space-y-4">
-                                {data.menu.map((item, i) => (
-                                    <li key={i} className="rounded-lg bg-white p-4 ring-1 ring-slate-200">
-                                        <div className="grid gap-3 sm:grid-cols-2">
-                                            <Field label="Texto" error={err(`menu.${i}.label`)}>
-                                                <TextInput value={item.label} maxLength={40} onChange={(e) => setMenuItem(i, { label: e.target.value })} />
+                            <ItemList<MenuItem>
+                                items={data.menu}
+                                max={8}
+                                itemLabel="Opción"
+                                blank={() => ({ label: '', url: '', children: [] })}
+                                onChange={(items) => setData('menu', items)}
+                                summary={(m) => ({
+                                    title: m.label,
+                                    subtitle: `${m.url || 'Sin enlace'}${m.children.length ? ` · ${m.children.length} en el submenú` : ''}`,
+                                })}
+                                errorAt={(i) => hasErrorAt('menu', i)}
+                                canAccept={(d) => d.label.trim() !== '' && d.url.trim() !== ''}
+                                renderForm={(d, patch, i) => (
+                                    <>
+                                        <div className="grid gap-4 sm:grid-cols-2">
+                                            <Field label="Texto" error={i === null ? undefined : err(`menu.${i}.label`)}>
+                                                <TextInput value={d.label} maxLength={40} onChange={(e) => patch({ label: e.target.value })} />
                                             </Field>
-                                            <Field label="Enlace" error={err(`menu.${i}.url`)}>
-                                                <TextInput value={item.url} placeholder="/nosotros o #seccion" onChange={(e) => setMenuItem(i, { url: e.target.value })} />
+                                            <Field label="Enlace" error={i === null ? undefined : err(`menu.${i}.url`)}>
+                                                <TextInput value={d.url} placeholder="/nosotros o #seccion" onChange={(e) => patch({ url: e.target.value })} />
                                             </Field>
                                         </div>
-
-                                        {item.children.length > 0 && (
-                                            <ul className="mt-4 space-y-3 border-t border-slate-100 pt-4">
-                                                {item.children.map((child, j) => (
-                                                    <li key={j} className="grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
-                                                        <Field label="Submenú" error={err(`menu.${i}.children.${j}.label`)}>
-                                                            <TextInput value={child.label} maxLength={60} onChange={(e) => setChild(i, j, { label: e.target.value })} />
-                                                        </Field>
-                                                        <Field label="Enlace" error={err(`menu.${i}.children.${j}.url`)}>
-                                                            <TextInput value={child.url} onChange={(e) => setChild(i, j, { url: e.target.value })} />
-                                                        </Field>
-                                                        <div className="flex items-end gap-2">
-                                                            <SmallButton disabled={j === 0} onClick={() => setMenuItem(i, { children: move(item.children, j, j - 1) })}>↑</SmallButton>
-                                                            <SmallButton disabled={j === item.children.length - 1} onClick={() => setMenuItem(i, { children: move(item.children, j, j + 1) })}>↓</SmallButton>
-                                                            <SmallButton danger onClick={() => setMenuItem(i, { children: item.children.filter((_, k) => k !== j) })}>Quitar</SmallButton>
-                                                        </div>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        )}
-
-                                        <div className="mt-4 flex flex-wrap gap-2">
-                                            <SmallButton onClick={() => setMenuItem(i, { children: [...item.children, { label: '', url: '' }] })}>+ Submenú</SmallButton>
-                                            <SmallButton disabled={i === 0} onClick={() => setData('menu', move(data.menu, i, i - 1))}>Subir</SmallButton>
-                                            <SmallButton disabled={i === data.menu.length - 1} onClick={() => setData('menu', move(data.menu, i, i + 1))}>Bajar</SmallButton>
-                                            <SmallButton danger onClick={() => setData('menu', data.menu.filter((_, k) => k !== i))}>Eliminar opción</SmallButton>
-                                        </div>
-                                    </li>
-                                ))}
-                            </ul>
-                            {data.menu.length < 8 && (
-                                <SmallButton onClick={() => setData('menu', [...data.menu, { label: '', url: '', children: [] }])}>
-                                    + Agregar opción
-                                </SmallButton>
-                            )}
+                                        <SubmenuEditor items={d.children} onChange={(children) => patch({ children })} />
+                                    </>
+                                )}
+                            />
                         </Section>
 
                         <Section title="Marca y botón del menú" description="Logo y botón con contorno que aparece arriba a la derecha.">
@@ -281,5 +266,38 @@ export default function HomeEditor({
                 </form>
             </AdminLayout>
         </>
+    );
+}
+
+/** Submenú de una opción del menú, dentro del modal de edición. */
+function SubmenuEditor({ items, onChange }: { items: MenuChild[]; onChange: (items: MenuChild[]) => void }) {
+    const patch = (j: number, p: Partial<MenuChild>) => onChange(items.map((c, k) => (k === j ? { ...c, ...p } : c)));
+
+    return (
+        <div>
+            <span className="mb-2 block text-sm font-medium text-slate-800">Submenú (opcional)</span>
+            <ul className="space-y-3">
+                {items.map((child, j) => (
+                    <li key={j} className="grid gap-3 rounded-lg bg-slate-50 p-3 sm:grid-cols-2">
+                        <Field label="Texto">
+                            <TextInput value={child.label} maxLength={60} onChange={(e) => patch(j, { label: e.target.value })} />
+                        </Field>
+                        <Field label="Enlace">
+                            <TextInput value={child.url} placeholder="#seccion" onChange={(e) => patch(j, { url: e.target.value })} />
+                        </Field>
+                        <div className="flex gap-2 sm:col-span-2">
+                            <SmallButton disabled={j === 0} onClick={() => onChange(move(items, j, j - 1))}>↑</SmallButton>
+                            <SmallButton disabled={j === items.length - 1} onClick={() => onChange(move(items, j, j + 1))}>↓</SmallButton>
+                            <SmallButton danger onClick={() => onChange(items.filter((_, k) => k !== j))}>Quitar</SmallButton>
+                        </div>
+                    </li>
+                ))}
+            </ul>
+            {items.length < 10 && (
+                <div className="mt-3">
+                    <SmallButton onClick={() => onChange([...items, { label: '', url: '' }])}>+ Agregar al submenú</SmallButton>
+                </div>
+            )}
+        </div>
     );
 }

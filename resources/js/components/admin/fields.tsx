@@ -99,7 +99,7 @@ export function Section({
     children: ReactNode;
 }) {
     return (
-        <section className="grid gap-6 border-t border-slate-200 py-10 lg:grid-cols-[240px_1fr] lg:gap-12">
+        <section className="grid gap-6 border-t border-slate-200 py-10 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-12">
             <div>
                 <h2 className="text-base font-semibold text-slate-900">{title}</h2>
                 {description && (
