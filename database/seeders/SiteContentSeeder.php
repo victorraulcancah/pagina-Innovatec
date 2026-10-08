@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\BlogCategory;
 use App\Models\HomeSetting;
 use App\Models\SectionItem;
 use Illuminate\Database\Seeder;
@@ -56,6 +57,7 @@ class SiteContentSeeder extends Seeder
         $this->seedPageImages();
         $this->upgradeLinks();
         $this->ensureServicesMenu();
+        $this->seedBlog();
     }
 
     /**
@@ -177,6 +179,22 @@ class SiteContentSeeder extends Seeder
         }
 
         $home->update(['menu' => $menu->values()->all()]);
+    }
+
+    /** Categorías iniciales del blog (sin publicaciones inventadas) y su opción en el menú. */
+    private function seedBlog(): void
+    {
+        if (! BlogCategory::query()->exists()) {
+            foreach (['Eventos', 'Noticias', 'Tendencias'] as $sort => $name) {
+                BlogCategory::query()->create(['name' => $name, 'slug' => Str::slug($name), 'sort' => $sort]);
+            }
+        }
+
+        $home = HomeSetting::current();
+
+        if (! collect($home->menu)->contains('url', '/blog')) {
+            $home->update(['menu' => [...$home->menu, ['label' => 'Blog', 'url' => '/blog', 'children' => []]]]);
+        }
     }
 
     private function seedPageImages(): void

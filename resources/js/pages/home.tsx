@@ -6,9 +6,10 @@ import { Hero } from '@/components/site/hero';
 import { Reveal, SectionHeading, sectionShell } from '@/components/site/reveal';
 import { SiteLayout } from '@/components/site/site-layout';
 import { SolutionCards } from '@/components/site/solution-cards';
-import type { HomeContent } from '@/types';
+import { PostCard } from '@/components/site/post-card';
+import type { BlogCard, HomeContent } from '@/types';
 
-export default function Home({ home }: { home: HomeContent }) {
+export default function Home({ home, latestPosts }: { home: HomeContent; latestPosts: BlogCard[] }) {
     const s = home.sections;
 
     return (
@@ -37,6 +38,27 @@ export default function Home({ home }: { home: HomeContent }) {
 
             <ExperienceTeaser experience={s.experience} />
             <ClientsTeaser clients={s.clients} />
+
+            {latestPosts.length > 0 && (
+                <section className="bg-night py-24 lg:py-32">
+                    <div className={sectionShell}>
+                        <Reveal className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
+                            <SectionHeading title="Últimas publicaciones" />
+                            <a href="/blog" className="text-sm font-medium text-signal underline-offset-4 hover:underline">
+                                Ver el blog →
+                            </a>
+                        </Reveal>
+                        <ul className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                            {latestPosts.map((post, i) => (
+                                <li key={post.id}>
+                                    <PostCard post={post} delay={i * 90} />
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </section>
+            )}
+
             <CtaBand title={s.contact.title} text={s.contact.body} />
         </SiteLayout>
     );

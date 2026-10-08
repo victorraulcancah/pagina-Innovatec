@@ -75,3 +75,13 @@ export type SiteSections = {
     };
     footer: { tagline: string };
 };
+
+export type BlogCard = {
+    id: number;
+    title: string;
+    excerpt: string | null;
+    url: string;
+    coverUrl: string | null;
+    category: { name: string; url: string };
+    date: string | null;
+};

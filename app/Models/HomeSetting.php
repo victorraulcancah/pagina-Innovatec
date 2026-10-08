@@ -82,6 +82,7 @@ class HomeSetting extends Model
                 ['label' => 'Nosotros', 'url' => '/nosotros', 'children' => []],
                 ['label' => 'Experiencia', 'url' => '/experiencia', 'children' => []],
                 ['label' => 'Clientes', 'url' => '/clientes', 'children' => []],
+                ['label' => 'Blog', 'url' => '/blog', 'children' => []],
             ],
             'nav_cta' => ['label' => 'Contáctanos', 'url' => '/contacto'],
         ];
@@ -142,6 +143,8 @@ class HomeSetting extends Model
         return collect($this->menu ?? [])->map(fn (array $item) => match ($item['url']) {
             '/soluciones' => [...$item, 'children' => $children('solutions')],
             '/servicios' => [...$item, 'children' => $children('services')],
+            '/blog' => [...$item, 'children' => BlogCategory::query()->orderBy('sort')->orderBy('id')->get()
+                ->map(fn (BlogCategory $c) => ['label' => $c->name, 'url' => "/blog/{$c->slug}"])->all()],
             default => $item,
         })->all();
     }

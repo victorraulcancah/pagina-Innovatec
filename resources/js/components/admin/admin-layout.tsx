@@ -41,6 +41,12 @@ const icons: Record<string, ReactNode> = {
             <path d="M8 17v-4h4v4M7.5 8.5h1M11.5 8.5h1" />
         </>
     ),
+    blog: (
+        <>
+            <path d="M5 3h8l3 3v11H5z" />
+            <path d="M13 3v3h3M8 9h5M8 12h5M8 15h3" />
+        </>
+    ),
     mensajes: (
         <>
             <path d="M4 5h12a1 1 0 011 1v7a1 1 0 01-1 1H9l-4 3v-3H4a1 1 0 01-1-1V6a1 1 0 011-1z" />

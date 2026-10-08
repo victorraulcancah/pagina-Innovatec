@@ -210,6 +210,7 @@ class SiteSections
         return [
             ['slug' => '', 'label' => 'Inicio'],
             ...collect(static::pages())->map(fn ($p, $slug) => ['slug' => $slug, 'label' => $p['label']])->values()->all(),
+            ['slug' => 'blog', 'label' => 'Blog'],
             ['slug' => 'mensajes', 'label' => 'Mensajes', 'badge' => ContactMessage::query()->whereNull('read_at')->count()],
             ['slug' => 'cuenta', 'label' => 'Mi cuenta'],
         ];
