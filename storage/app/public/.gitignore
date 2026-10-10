@@ -1,2 +1,7 @@
-*
-!.gitignore
+# Las imagenes subidas desde el panel SI van al repositorio.
+# Los videos no: pesan mucho (GitHub rechaza archivos de mas de 100 MB).
+*.mp4
+*.webm
+*.mov
+*.avi
+*.mkv
