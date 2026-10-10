@@ -46,3 +46,6 @@ yarn-error.log
 /.impeccable/tmp
 /.impeccable/review
 /.impeccable/build
+
+# Respaldos de la base de datos (contienen datos y el hash del administrador)
+/database/dumps/
