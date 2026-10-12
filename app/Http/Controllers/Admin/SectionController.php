@@ -44,6 +44,7 @@ class SectionController extends Controller
                     'title' => $i->title,
                     'body' => $i->body ?? '',
                     'url' => $i->url ?? '',
+                    'label' => $i->label ?? '',
                     'rows' => $i->rows ?? [],
                     'imageUrl' => $i->imageUrl(),
                     'gallery' => $i->galleryItems(),
@@ -124,6 +125,10 @@ class SectionController extends Controller
             $item->title = (string) ($row['title'] ?? $item->title);
             $item->body = $row['body'] ?? null;
             $item->url = $row['url'] ?? null;
+
+            if ($keys->contains('label')) {
+                $item->label = $row['label'] ?? null;
+            }
             $item->rows = array_values($row['rows'] ?? []) ?: null;
 
             if (in_array($section, self::WITH_SLUG, true) && ! $item->slug) {

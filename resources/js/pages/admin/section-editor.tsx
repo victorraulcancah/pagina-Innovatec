@@ -40,6 +40,7 @@ type ServerItem = {
     title: string;
     body: string;
     url: string;
+    label: string;
     rows: OfferingRow[];
     imageUrl: string | null;
     gallery: GalleryItem[];
@@ -73,6 +74,7 @@ const blankItem = (): Item => ({
     title: '',
     body: '',
     url: '',
+    label: '',
     rows: [],
     imageUrl: null,
     gallery: [],
@@ -197,7 +199,7 @@ export default function SectionEditor({ page, config, pages, texts, lists, image
                 );
             }
 
-            const column = f.key as 'title' | 'body' | 'url';
+            const column = f.key as 'title' | 'body' | 'url' | 'label';
 
             return (
                 <Field key={f.key} label={f.label} error={err(errKey)}>

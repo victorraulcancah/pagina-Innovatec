@@ -17,11 +17,12 @@ use Illuminate\Support\Facades\Storage;
  * @property string|null $body
  * @property list<array{title: string, description: string|null}>|null $rows
  * @property string|null $url
+ * @property string|null $label
  * @property string|null $image_path
  * @property list<array{path: string, name: string}>|null $gallery
  * @property int $sort
  */
-#[Fillable(['section', 'slug', 'title', 'body', 'rows', 'url', 'image_path', 'gallery', 'sort'])]
+#[Fillable(['section', 'slug', 'title', 'body', 'rows', 'url', 'label', 'image_path', 'gallery', 'sort'])]
 class SectionItem extends Model
 {
     protected function casts(): array

@@ -46,7 +46,7 @@ export function AboutSection({ about }: { about: SiteSections['about'] }) {
                         href="/nosotros"
                         className="mt-9 inline-flex min-h-11 items-center rounded-full border border-white/70 px-6 text-sm font-medium text-white transition-colors hover:border-white hover:bg-white hover:text-night"
                     >
-                        Conoce más sobre nosotros
+                        {about.more_label || 'Conoce más sobre nosotros'}
                     </a>
                 </Reveal>
 

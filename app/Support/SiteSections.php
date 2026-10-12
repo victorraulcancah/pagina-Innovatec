@@ -27,6 +27,7 @@ class SiteSections
                 'title' => 'Referentes en la integración de soluciones',
                 'accent' => 'TIC',
                 'body' => 'Un equipo con más de 10 años de experiencia, respaldado por una sólida trayectoria en ingeniería y certificaciones técnicas de los principales fabricantes del sector.',
+                'more_label' => 'Conoce más sobre nosotros',
                 'story' => 'PROINNOVATEC se destaca como un referente en la integración de soluciones de Tecnologías de la Información y Comunicaciones. Nuestro compromiso con la excelencia y la innovación se refleja en cada proyecto que emprendemos. Contamos con un equipo altamente capacitado con más de 10 años de experiencia, respaldado por una sólida trayectoria en ingeniería y certificaciones técnicas de los principales fabricantes del sector. La pasión por la tecnología y la búsqueda constante de soluciones eficientes nos impulsan a seguir creciendo y superando expectativas en el ámbito de las TIC.',
             ],
             'solutions' => [
@@ -58,6 +59,8 @@ class SiteSections
                 'subtitle' => 'Soluciones TIC integrales para empresas',
                 'intro' => 'Impulsamos tu negocio con soluciones avanzadas en Comunicaciones Unificadas, Ciberseguridad, Networking, Infraestructura TI y Seguridad Electrónica.',
                 'cta_title' => '¿Interesado en optimizar la tecnología de tu empresa?',
+                'cta_label' => 'Contáctanos',
+                'cta_url' => '/contacto',
             ],
             'telcos' => [
                 'title' => 'División Telcos',
@@ -68,6 +71,7 @@ class SiteSections
                 'values_title' => 'Potenciamos tu red y servicios',
                 'values_intro' => 'Nos convertimos en una extensión de tu equipo, aportando experiencia y tecnología sin competir en tu mercado.',
                 'cta_title' => '¿Buscas potenciar tu red y maximizar tus resultados?',
+                'home_button_label' => 'Conoce la división',
             ],
             'footer' => [
                 'tagline' => 'Integración de soluciones de Tecnologías de la Información y Comunicaciones.',
@@ -96,6 +100,7 @@ class SiteSections
                     ['group' => 'about', 'key' => 'title', 'label' => 'Título', 'type' => 'text', 'max' => 120, 'required' => true],
                     ['group' => 'about', 'key' => 'accent', 'label' => 'Palabras en color', 'type' => 'text', 'max' => 60, 'hint' => 'Se muestran al final del título con el color de la marca.'],
                     ['group' => 'about', 'key' => 'body', 'label' => 'Texto breve (portada)', 'type' => 'textarea', 'max' => 400],
+                    ['group' => 'about', 'key' => 'more_label', 'label' => 'Texto del botón hacia Nosotros (portada)', 'type' => 'text', 'max' => 60],
                     ['group' => 'about', 'key' => 'story', 'label' => 'Quiénes somos (página Nosotros)', 'type' => 'textarea', 'max' => 1500],
                 ],
                 'images' => [
@@ -118,6 +123,8 @@ class SiteSections
                     ['group' => 'enterprise', 'key' => 'title', 'label' => 'Título', 'type' => 'text', 'max' => 80, 'required' => true],
                     ['group' => 'enterprise', 'key' => 'subtitle', 'label' => 'Subtítulo', 'type' => 'text', 'max' => 120],
                     ['group' => 'enterprise', 'key' => 'intro', 'label' => 'Texto de presentación', 'type' => 'textarea', 'max' => 400],
+                    ['group' => 'enterprise', 'key' => 'cta_label', 'label' => 'Texto del botón de la cabecera', 'type' => 'text', 'max' => 40],
+                    ['group' => 'enterprise', 'key' => 'cta_url', 'label' => 'Enlace del botón de la cabecera', 'type' => 'url', 'max' => 255],
                     ['group' => 'enterprise', 'key' => 'cta_title', 'label' => 'Frase del cierre', 'type' => 'text', 'max' => 120],
                     ['group' => 'services', 'key' => 'title', 'label' => 'Título de servicios', 'type' => 'text', 'max' => 80, 'required' => true],
                     ['group' => 'services', 'key' => 'intro', 'label' => 'Texto de servicios', 'type' => 'textarea', 'max' => 300],
@@ -154,6 +161,7 @@ class SiteSections
                     ['group' => 'telcos', 'key' => 'partner_text', 'label' => 'Texto del bloque "partner"', 'type' => 'textarea', 'max' => 700],
                     ['group' => 'telcos', 'key' => 'values_title', 'label' => 'Título de los valores', 'type' => 'text', 'max' => 100],
                     ['group' => 'telcos', 'key' => 'values_intro', 'label' => 'Texto de los valores', 'type' => 'textarea', 'max' => 300],
+                    ['group' => 'telcos', 'key' => 'home_button_label', 'label' => 'Texto del botón en la portada', 'type' => 'text', 'max' => 40],
                     ['group' => 'telcos', 'key' => 'cta_title', 'label' => 'Frase del cierre', 'type' => 'text', 'max' => 120],
                 ],
                 'images' => [
@@ -173,6 +181,7 @@ class SiteSections
                         ['key' => 'rows', 'label' => 'Puntos destacados (opcional)', 'type' => 'pairs'],
                         ['key' => 'image', 'label' => 'Imagen', 'type' => 'image'],
                         ['key' => 'url', 'label' => 'Enlace del botón (opcional)', 'type' => 'url'],
+                        ['key' => 'label', 'label' => 'Texto del botón (opcional)', 'type' => 'text', 'max' => 40, 'optional' => true],
                     ]],
                     ['section' => 'telcos_value', 'label' => 'Valores', 'itemLabel' => 'Valor', 'max' => 6, 'fields' => [
                         ['key' => 'title', 'label' => 'Nombre', 'type' => 'text', 'max' => 60],
@@ -280,6 +289,7 @@ class SiteSections
                 ($t['required'] ?? false) ? 'required' : 'nullable',
                 'string',
                 ...($t['type'] === 'email' ? ['email'] : []),
+                ...($t['type'] === 'url' ? ['regex:'.self::URL_PATTERN] : []),
                 'max:'.$t['max'],
             ];
         }
@@ -298,7 +308,7 @@ class SiteSections
                 $key = "$base.*.{$f['key']}";
 
                 match ($f['type']) {
-                    'text' => $rules[$key] = ['required', 'string', 'max:'.$f['max']],
+                    'text' => $rules[$key] = [($f['optional'] ?? false) ? 'nullable' : 'required', 'string', 'max:'.$f['max']],
                     'textarea' => $rules[$key] = ['nullable', 'string', 'max:'.$f['max']],
                     'url' => $rules[$key] = ['nullable', 'string', 'max:255', 'regex:'.self::URL_PATTERN],
                     'image' => [

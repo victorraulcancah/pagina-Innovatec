@@ -26,10 +26,10 @@ export default function Enterprise({ home }: { home: HomeContent }) {
                 imageUrl={enterprise.imageUrl}
                 actions={
                     <a
-                        href="/contacto"
+                        href={enterprise.cta_url || '/contacto'}
                         className="inline-flex min-h-12 items-center rounded-full border border-signal bg-signal px-8 text-sm font-medium text-night transition-colors hover:border-white hover:bg-white"
                     >
-                        Contáctanos
+                        {enterprise.cta_label || 'Contáctanos'}
                     </a>
                 }
             />

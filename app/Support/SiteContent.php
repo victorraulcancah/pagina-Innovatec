@@ -96,6 +96,7 @@ class SiteContent
                     'points' => collect($i->rows ?? [])->pluck('title')->all(),
                     'imageUrl' => $i->imageUrl(),
                     'url' => $i->url,
+                    'label' => $i->label,
                 ]),
                 'gallery' => $list('telcos_gallery', fn (SectionItem $i) => [
                     'id' => $i->id,

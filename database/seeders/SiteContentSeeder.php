@@ -52,10 +52,12 @@ class SiteContentSeeder extends Seeder
         $this->seedList('client', $this->clients());
         $this->seedList('telcos_service', $this->telcosServices());
         $this->seedList('telcos_value', $this->telcosValues());
+        $this->seedList('telcos_block', $this->telcosBlocks());
 
         $this->backfillOfferings();
         $this->backfillServices();
         $this->backfillCases();
+        $this->backfillTelcosServices();
         $this->migrateLegacyImages();
         $this->seedPageImages();
         $this->upgradeLinks();
@@ -81,6 +83,7 @@ class SiteContentSeeder extends Seeder
                 'body' => $item['body'] ?? null,
                 'rows' => $item['rows'] ?? null,
                 'url' => $item['url'] ?? null,
+                'label' => $item['label'] ?? null,
                 'image_path' => isset($item['image']) ? $this->copyAsset($item['image']) : null,
             ]);
         }
@@ -139,6 +142,20 @@ class SiteContentSeeder extends Seeder
             }
 
             $item->save();
+        });
+    }
+
+    /** Pone la imagen por defecto a los servicios de Telcos que aún no tienen una. */
+    private function backfillTelcosServices(): void
+    {
+        $defaults = collect($this->telcosServices())->keyBy('title');
+
+        SectionItem::query()->where('section', 'telcos_service')->whereNull('image_path')->get()->each(function (SectionItem $item) use ($defaults) {
+            $image = $defaults[$item->title]['image'] ?? null;
+
+            if ($image) {
+                $item->update(['image_path' => $this->copyAsset($image)]);
+            }
         });
     }
 
@@ -388,6 +405,7 @@ class SiteContentSeeder extends Seeder
         return [
             [
                 'title' => 'Consultoría en análisis y diseño de soluciones TIC',
+                'image' => 'photos/data-center.jpg',
                 'rows' => $points([
                     'Diseño de arquitecturas para redes, voz, seguridad y más',
                     'Evaluación y dimensionamiento de infraestructuras TIC',
@@ -396,6 +414,7 @@ class SiteContentSeeder extends Seeder
             ],
             [
                 'title' => 'Implementación y optimización de soluciones',
+                'image' => 'photos/racks.jpg',
                 'rows' => $points([
                     'Despliegue e integración de soluciones y plataformas',
                     'Migración de sistemas y homologación de equipos',
@@ -404,12 +423,24 @@ class SiteContentSeeder extends Seeder
             ],
             [
                 'title' => 'Soporte técnico especializado',
+                'image' => 'photos/server-room.jpg',
                 'rows' => $points([
                     'Soporte técnico avanzado con personal capacitado',
                     'Resolución de incidencias con asistencia remota o in situ',
                 ]),
             ],
         ];
+    }
+
+    /** @return list<array<string, mixed>> */
+    private function telcosBlocks(): array
+    {
+        return [[
+            'title' => 'Experiencia con operadoras',
+            'body' => 'Innova ITC · Telefónica: homologación de routers ONE ACCESS para Telefónica, con validación de MPLS, OSPF, BGP, VRRP, IPSEC, QoS, Netflow e IP SLA en maquetas y pruebas de alto tráfico.',
+            'url' => '/experiencia',
+            'label' => 'Ver casos de éxito',
+        ]];
     }
 
     /** @return list<array<string, mixed>> */

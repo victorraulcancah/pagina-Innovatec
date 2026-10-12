@@ -19,7 +19,6 @@ function Check() {
 export default function Telcos({ home }: { home: HomeContent }) {
     const t = home.sections.telcos;
     const partnerImage = t.partnerImageUrl ?? home.sections.about.imageUrl ?? home.sections.about.cards[0]?.imageUrl ?? null;
-    const telefonicaCase = home.sections.experience.cases.find((c) => /telef/i.test(c.client));
 
     return (
         <SiteLayout home={home} title={t.title} description={t.intro}>
@@ -121,7 +120,7 @@ export default function Telcos({ home }: { home: HomeContent }) {
                                     href={block.url}
                                     className="mt-8 inline-flex min-h-11 items-center rounded-full border border-white/70 px-6 text-sm font-medium text-white transition-colors hover:border-white hover:bg-white hover:text-night"
                                 >
-                                    Conocer más
+                                    {block.label || 'Conocer más'}
                                 </a>
                             )}
                         </Reveal>
@@ -185,25 +184,6 @@ export default function Telcos({ home }: { home: HomeContent }) {
                                 </li>
                             ))}
                         </ul>
-                    </div>
-                </section>
-            )}
-
-            {telefonicaCase && (
-                <section className="bg-night-2 py-16 lg:py-20">
-                    <div className={`${sectionShell} grid gap-8 lg:grid-cols-[minmax(0,420px)_1fr] lg:items-center lg:gap-16`}>
-                        <Reveal>
-                            <SectionHeading title="Experiencia con operadoras" className="!text-[clamp(1.25rem,2.4vw,2rem)]" />
-                        </Reveal>
-                        <Reveal delay={100}>
-                            <h3 className="font-display text-base uppercase text-signal">{telefonicaCase.client}</h3>
-                            {telefonicaCase.summary && (
-                                <p className="mt-3 max-w-[62ch] text-[15px] leading-relaxed text-white/75">{telefonicaCase.summary}</p>
-                            )}
-                            <a href="/experiencia" className="mt-5 inline-block text-sm font-medium text-signal hover:underline">
-                                Ver más casos de éxito →
-                            </a>
-                        </Reveal>
                     </div>
                 </section>
             )}

@@ -47,7 +47,7 @@ export default function Home({ home, latestPosts }: { home: HomeContent; latestP
                             href="/division-telcos"
                             className="inline-flex min-h-12 items-center rounded-full border border-white/70 px-8 text-sm font-medium text-white transition-colors hover:border-white hover:bg-white hover:text-night"
                         >
-                            Conoce la división
+                            {s.telcos.home_button_label || 'Conoce la división'}
                         </a>
                     </Reveal>
                 </div>

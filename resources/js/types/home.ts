@@ -40,6 +40,7 @@ export type SiteSections = {
         accent: string;
         body: string;
         story: string;
+        more_label: string;
         imageUrl: string | null;
         cards: { id: number; label: string; url: string; imageUrl: string | null }[];
     };
@@ -73,7 +74,15 @@ export type SiteSections = {
         website: string;
         imageUrl: string | null;
     };
-    enterprise: { title: string; subtitle: string; intro: string; cta_title: string; imageUrl: string | null };
+    enterprise: {
+        title: string;
+        subtitle: string;
+        intro: string;
+        cta_title: string;
+        cta_label: string;
+        cta_url: string;
+        imageUrl: string | null;
+    };
     telcos: {
         title: string;
         subtitle: string;
@@ -83,10 +92,11 @@ export type SiteSections = {
         values_title: string;
         values_intro: string;
         cta_title: string;
+        home_button_label: string;
         imageUrl: string | null;
         partnerImageUrl: string | null;
         services: { id: number; title: string; summary: string | null; points: string[]; imageUrl: string | null }[];
-        blocks: { id: number; title: string; body: string | null; points: string[]; imageUrl: string | null; url: string | null }[];
+        blocks: { id: number; title: string; body: string | null; points: string[]; imageUrl: string | null; url: string | null; label: string | null }[];
         values: { id: number; title: string; body: string | null; imageUrl: string | null }[];
         gallery: { id: number; caption: string; imageUrl: string | null }[];
     };

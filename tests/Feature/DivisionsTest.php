@@ -77,6 +77,7 @@ class DivisionsTest extends TestCase
                     'rows' => [['title' => 'Punto uno']],
                     'image' => UploadedFile::fake()->image('bloque.jpg'),
                     'url' => '/contacto',
+                    'label' => 'Hablemos',
                 ]],
                 'telcos_value' => [['title' => 'Confianza', 'image' => UploadedFile::fake()->image('valor.png')]],
                 'telcos_gallery' => [['title' => 'Torre en campo', 'image' => UploadedFile::fake()->image('galeria.jpg')]],
@@ -91,9 +92,42 @@ class DivisionsTest extends TestCase
                 ->where('home.sections.telcos.blocks.0.points', ['Punto uno'])
                 ->whereNot('home.sections.telcos.blocks.0.imageUrl', null)
                 ->where('home.sections.telcos.blocks.0.url', '/contacto')
+                ->where('home.sections.telcos.blocks.0.label', 'Hablemos')
                 ->whereNot('home.sections.telcos.values.0.imageUrl', null)
                 ->where('home.sections.telcos.gallery.0.caption', 'Torre en campo')
                 ->whereNot('home.sections.telcos.gallery.0.imageUrl', null);
         });
+    }
+
+    public function test_button_texts_and_links_are_editable_and_links_are_validated(): void
+    {
+        $this->admin()->post('/admin/enterprise', [
+            'texts' => [
+                'enterprise' => [
+                    'title' => 'División Enterprise',
+                    'cta_label' => 'Solicita una propuesta',
+                    'cta_url' => '/contacto',
+                ],
+                'services' => ['title' => 'Servicios'],
+            ],
+        ])->assertSessionHasNoErrors();
+
+        $this->get('/division-enterprise')->assertInertia(fn (Assert $p) => $p
+            ->where('home.sections.enterprise.cta_label', 'Solicita una propuesta')
+            ->where('home.sections.enterprise.cta_url', '/contacto'));
+
+        $this->admin()->post('/admin/enterprise', [
+            'texts' => [
+                'enterprise' => ['title' => 'División Enterprise', 'cta_url' => 'javascript:alert(1)'],
+                'services' => ['title' => 'Servicios'],
+            ],
+        ])->assertSessionHasErrors('texts.enterprise.cta_url');
+
+        $this->admin()->post('/admin/telcos', [
+            'texts' => ['telcos' => ['title' => 'División Telcos', 'home_button_label' => 'Ver Telcos']],
+        ])->assertSessionHasNoErrors();
+
+        $this->get('/')->assertInertia(fn (Assert $p) => $p
+            ->where('home.sections.telcos.home_button_label', 'Ver Telcos'));
     }
 }
