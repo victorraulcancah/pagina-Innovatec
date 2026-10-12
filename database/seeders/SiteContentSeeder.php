@@ -50,13 +50,16 @@ class SiteContentSeeder extends Seeder
         $this->seedList('case', $this->cases());
         $this->seedList('certification', $this->certifications());
         $this->seedList('client', $this->clients());
+        $this->seedList('telcos_service', $this->telcosServices());
+        $this->seedList('telcos_value', $this->telcosValues());
 
         $this->backfillOfferings();
         $this->backfillServices();
         $this->backfillCases();
+        $this->migrateLegacyImages();
         $this->seedPageImages();
         $this->upgradeLinks();
-        $this->ensureServicesMenu();
+        $this->upgradeToDivisions();
         $this->seedBlog();
     }
 
@@ -160,27 +163,6 @@ class SiteContentSeeder extends Seeder
         });
     }
 
-    /** Agrega "Servicios" al menú si falta y quita "Servicios Profesionales" de Soluciones. */
-    private function ensureServicesMenu(): void
-    {
-        $home = HomeSetting::current();
-        $menu = collect($home->menu)->map(function (array $item) {
-            $item['children'] = collect($item['children'] ?? [])
-                ->reject(fn (array $c) => $c['label'] === 'Servicios Profesionales')->values()->all();
-
-            return $item;
-        });
-
-        if (! $menu->contains('url', '/servicios')) {
-            $position = $menu->search(fn (array $i) => $i['url'] === '/soluciones');
-            $menu->splice($position === false ? $menu->count() : $position + 1, 0, [
-                ['label' => 'Servicios', 'url' => '/servicios', 'children' => []],
-            ]);
-        }
-
-        $home->update(['menu' => $menu->values()->all()]);
-    }
-
     /** Categorías iniciales del blog (sin publicaciones inventadas) y su opción en el menú. */
     private function seedBlog(): void
     {
@@ -197,6 +179,61 @@ class SiteContentSeeder extends Seeder
         }
     }
 
+    /** Soluciones y Servicios se reunieron en la División Enterprise: su imagen de cabecera pasa a ese lugar. */
+    private function migrateLegacyImages(): void
+    {
+        $home = HomeSetting::current();
+        $images = $home->page_images ?? [];
+
+        if (! isset($images['soluciones']) && ! isset($images['servicios'])) {
+            return;
+        }
+
+        if (isset($images['soluciones']) && ! isset($images['enterprise'])) {
+            $images['enterprise'] = $images['soluciones'];
+        } elseif (isset($images['soluciones'])) {
+            Storage::disk('public')->delete($images['soluciones']);
+        }
+
+        if (isset($images['servicios'])) {
+            Storage::disk('public')->delete($images['servicios']);
+        }
+
+        unset($images['soluciones'], $images['servicios']);
+        $home->update(['page_images' => $images]);
+    }
+
+    /** Una sola vez: menú, botones y tarjetas de la portada pasan a las dos divisiones. */
+    private function upgradeToDivisions(): void
+    {
+        $home = HomeSetting::current();
+
+        if (collect($home->menu)->contains('url', '/division-enterprise')) {
+            return;
+        }
+
+        $buttons = collect($home->buttons)->map(fn (array $b) => [
+            ...$b,
+            'url' => in_array($b['url'], ['/soluciones', '/servicios'], true) ? '/division-enterprise' : $b['url'],
+        ])->all();
+
+        $home->update([
+            'menu' => HomeSetting::defaults()['menu'],
+            'nav_cta' => null,
+            'buttons' => $buttons,
+        ]);
+
+        SectionItem::query()->where('section', 'about_card')->get()->each(function (SectionItem $card) {
+            [$title, $url] = match ($card->url) {
+                '/soluciones' => ['División Enterprise', '/division-enterprise'],
+                '/servicios' => ['División Telcos', '/division-telcos'],
+                default => [$card->title, $card->url],
+            };
+
+            $card->update(['title' => $title, 'url' => $url]);
+        });
+    }
+
     private function seedPageImages(): void
     {
         $home = HomeSetting::current();
@@ -204,8 +241,8 @@ class SiteContentSeeder extends Seeder
 
         foreach ([
             'nosotros' => 'photos/server-room.jpg',
-            'soluciones' => 'photos/data-center.jpg',
-            'servicios' => 'photos/data-center.jpg',
+            'enterprise' => 'photos/data-center.jpg',
+            'telcos_partner' => 'photos/data-center.jpg',
             'experiencia' => 'photos/data-center.jpg',
             'clientes' => 'photos/server-room.jpg',
             'contacto' => 'photos/data-center.jpg',
@@ -340,6 +377,48 @@ class SiteContentSeeder extends Seeder
                     ['title' => 'Comunicaciones unificadas', 'description' => 'Operamos tus comunicaciones; por ejemplo, outsourcing de comunicaciones con Yeastar.'],
                 ],
             ],
+        ];
+    }
+
+    /** @return list<array<string, mixed>> */
+    private function telcosServices(): array
+    {
+        $points = fn (array $titles) => array_map(fn (string $t) => ['title' => $t, 'description' => null], $titles);
+
+        return [
+            [
+                'title' => 'Consultoría en análisis y diseño de soluciones TIC',
+                'rows' => $points([
+                    'Diseño de arquitecturas para redes, voz, seguridad y más',
+                    'Evaluación y dimensionamiento de infraestructuras TIC',
+                    'Asesoramiento técnico en mejores prácticas y tecnologías emergentes',
+                ]),
+            ],
+            [
+                'title' => 'Implementación y optimización de soluciones',
+                'rows' => $points([
+                    'Despliegue e integración de soluciones y plataformas',
+                    'Migración de sistemas y homologación de equipos',
+                    'Optimización y actualización de infraestructuras',
+                ]),
+            ],
+            [
+                'title' => 'Soporte técnico especializado',
+                'rows' => $points([
+                    'Soporte técnico avanzado con personal capacitado',
+                    'Resolución de incidencias con asistencia remota o in situ',
+                ]),
+            ],
+        ];
+    }
+
+    /** @return list<array<string, mixed>> */
+    private function telcosValues(): array
+    {
+        return [
+            ['title' => 'Expertise certificado', 'body' => 'Especialistas certificados en las principales tecnologías TIC.'],
+            ['title' => 'Flexibilidad y eficiencia', 'body' => 'Nos adaptamos a tus necesidades y tiempos, asegurando resultados óptimos.'],
+            ['title' => 'Confianza y compromiso', 'body' => 'Trabajamos en paralelo con tu equipo para fortalecer tus operaciones.'],
         ];
     }
 

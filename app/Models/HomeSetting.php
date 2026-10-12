@@ -62,29 +62,24 @@ class HomeSetting extends Model
             'title' => 'Transformando la tecnología en soluciones',
             'subtitle' => 'Integración de soluciones TIC con más de 10 años de experiencia y certificaciones de los principales fabricantes.',
             'buttons' => [
-                ['label' => 'Nuestras soluciones', 'url' => '/soluciones', 'variant' => 'primary'],
+                ['label' => 'Nuestras soluciones', 'url' => '/division-enterprise', 'variant' => 'primary'],
                 ['label' => 'Contáctanos', 'url' => '/contacto', 'variant' => 'outline'],
             ],
             'menu' => [
-                ['label' => 'Inicio', 'url' => '/', 'children' => []],
-                ['label' => 'Soluciones', 'url' => '/soluciones', 'children' => [
+                ['label' => 'Nosotros', 'url' => '/nosotros', 'children' => []],
+                ['label' => 'División Enterprise', 'url' => '/division-enterprise', 'children' => [
                     ['label' => 'Comunicaciones Unificadas', 'url' => '/soluciones/comunicaciones-unificadas'],
                     ['label' => 'Ciberseguridad', 'url' => '/soluciones/ciberseguridad'],
                     ['label' => 'Networking', 'url' => '/soluciones/networking'],
                     ['label' => 'Infraestructura TI', 'url' => '/soluciones/infraestructura-ti'],
                     ['label' => 'Seguridad Electrónica', 'url' => '/soluciones/seguridad-electronica'],
                 ]],
-                ['label' => 'Servicios', 'url' => '/servicios', 'children' => [
-                    ['label' => 'Consultoría', 'url' => '/servicios/consultoria'],
-                    ['label' => 'Help Desk', 'url' => '/servicios/help-desk'],
-                    ['label' => 'Outsourcing TIC', 'url' => '/servicios/outsourcing-tic'],
-                ]],
-                ['label' => 'Nosotros', 'url' => '/nosotros', 'children' => []],
-                ['label' => 'Experiencia', 'url' => '/experiencia', 'children' => []],
-                ['label' => 'Clientes', 'url' => '/clientes', 'children' => []],
+                ['label' => 'División Telcos', 'url' => '/division-telcos', 'children' => []],
+                ['label' => 'Casos de Éxito', 'url' => '/experiencia', 'children' => []],
                 ['label' => 'Blog', 'url' => '/blog', 'children' => []],
+                ['label' => 'Contacto', 'url' => '/contacto', 'children' => []],
             ],
-            'nav_cta' => ['label' => 'Contáctanos', 'url' => '/contacto'],
+            'nav_cta' => null,
         ];
     }
 
@@ -141,8 +136,7 @@ class HomeSetting extends Model
             ->map(fn (array $i) => ['label' => $i['title'], 'url' => $i['url']])->all();
 
         return collect($this->menu ?? [])->map(fn (array $item) => match ($item['url']) {
-            '/soluciones' => [...$item, 'children' => $children('solutions')],
-            '/servicios' => [...$item, 'children' => $children('services')],
+            '/division-enterprise' => [...$item, 'children' => $children('solutions')],
             '/blog' => [...$item, 'children' => BlogCategory::query()->orderBy('sort')->orderBy('id')->get()
                 ->map(fn (BlogCategory $c) => ['label' => $c->name, 'url' => "/blog/{$c->slug}"])->all()],
             default => $item,

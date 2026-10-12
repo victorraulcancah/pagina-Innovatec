@@ -77,6 +77,23 @@ class SiteContent
                     'logoUrl' => $i->imageUrl(),
                 ]),
             ],
+            'enterprise' => [...$text['enterprise'], 'imageUrl' => $home->pageImageUrl('enterprise')],
+            'telcos' => [
+                ...$text['telcos'],
+                'imageUrl' => $home->pageImageUrl('telcos'),
+                'partnerImageUrl' => $home->pageImageUrl('telcos_partner'),
+                'services' => $list('telcos_service', fn (SectionItem $i) => [
+                    'id' => $i->id,
+                    'title' => $i->title,
+                    'summary' => $i->body,
+                    'points' => collect($i->rows ?? [])->pluck('title')->all(),
+                ]),
+                'values' => $list('telcos_value', fn (SectionItem $i) => [
+                    'id' => $i->id,
+                    'title' => $i->title,
+                    'body' => $i->body,
+                ]),
+            ],
             'contact' => [...$text['contact'], 'imageUrl' => $home->pageImageUrl('contacto')],
             'footer' => $text['footer'],
         ];

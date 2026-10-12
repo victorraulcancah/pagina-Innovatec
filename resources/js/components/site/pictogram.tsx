@@ -66,6 +66,39 @@ const paths: Record<string, ReactNode> = {
     ),
 };
 
+paths['analisis'] = (
+    <>
+        <circle cx="27" cy="27" r="14" />
+        <path d="M37 37l15 15M21 27h12M27 21v12" />
+    </>
+);
+paths['implementacion'] = (
+    <>
+        <circle cx="32" cy="32" r="7" />
+        <path d="M32 8v8M32 48v8M8 32h8M48 32h8M15 15l6 6M43 43l6 6M15 49l6-6M43 21l6-6" />
+    </>
+);
+paths['soporte'] = paths['comunicaciones-unificadas'];
+paths['expertise'] = (
+    <>
+        <circle cx="32" cy="27" r="16" />
+        <path d="M24 28l6 6 11-12M24 42l-4 14 12-6 12 6-4-14" />
+    </>
+);
+paths['flexibilidad'] = (
+    <>
+        <path d="M8 22h30M46 22h10M8 42h10M26 42h30" />
+        <circle cx="42" cy="22" r="4" />
+        <circle cx="22" cy="42" r="4" />
+    </>
+);
+paths['confianza'] = (
+    <>
+        <circle cx="24" cy="32" r="14" />
+        <circle cx="40" cy="32" r="14" />
+    </>
+);
+
 const fallback = (
     <>
         <path d="M32 6l22 12.500v27L32 58 10 45.500v-27L32 6z" />

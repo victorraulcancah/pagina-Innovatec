@@ -13,16 +13,6 @@ class OfferingController extends Controller
     /** Prefijo de URL => sección de section_items. */
     private const KINDS = ['soluciones' => 'solution', 'servicios' => 'service'];
 
-    public function index(string $kind): Response
-    {
-        abort_unless(isset(self::KINDS[$kind]), 404);
-
-        return Inertia::render('offerings', [
-            'home' => HomeSetting::current()->toPageData(),
-            'kind' => $kind,
-        ]);
-    }
-
     public function show(string $kind, string $slug): Response
     {
         $section = self::KINDS[$kind] ?? abort(404);

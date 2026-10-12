@@ -22,19 +22,36 @@ export default function Home({ home, latestPosts }: { home: HomeContent; latestP
                     <div className={sectionShell}>
                         <Reveal className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
                             <div>
-                                <SectionHeading title={s.solutions.title} />
-                                {s.solutions.intro && (
-                                    <p className="mt-5 max-w-[48ch] text-base leading-relaxed text-white/70">{s.solutions.intro}</p>
+                                <SectionHeading title={s.enterprise.title} />
+                                {s.enterprise.subtitle && (
+                                    <p className="mt-5 max-w-[48ch] text-base leading-relaxed text-white/70">{s.enterprise.subtitle}</p>
                                 )}
                             </div>
-                            <a href="/soluciones" className="text-sm font-medium text-signal underline-offset-4 hover:underline">
-                                Ver todas las soluciones →
+                            <a href="/division-enterprise" className="text-sm font-medium text-signal underline-offset-4 hover:underline">
+                                Ver la división →
                             </a>
                         </Reveal>
                         <SolutionCards items={s.solutions.items} className="mt-14" />
                     </div>
                 </section>
             )}
+
+            <section className="bg-night py-24 lg:py-28">
+                <div className={`${sectionShell} grid items-center gap-10 lg:grid-cols-[1fr_auto] lg:gap-20`}>
+                    <Reveal>
+                        <SectionHeading title={s.telcos.title} />
+                        <p className="mt-5 max-w-[52ch] text-base leading-relaxed text-white/75 sm:text-lg">{s.telcos.subtitle}</p>
+                    </Reveal>
+                    <Reveal delay={100}>
+                        <a
+                            href="/division-telcos"
+                            className="inline-flex min-h-12 items-center rounded-full border border-white/70 px-8 text-sm font-medium text-white transition-colors hover:border-white hover:bg-white hover:text-night"
+                        >
+                            Conoce la división
+                        </a>
+                    </Reveal>
+                </div>
+            </section>
 
             <ExperienceTeaser experience={s.experience} />
             <ClientsTeaser clients={s.clients} />

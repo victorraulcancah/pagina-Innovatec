@@ -73,6 +73,21 @@ export type SiteSections = {
         website: string;
         imageUrl: string | null;
     };
+    enterprise: { title: string; subtitle: string; intro: string; cta_title: string; imageUrl: string | null };
+    telcos: {
+        title: string;
+        subtitle: string;
+        intro: string;
+        partner_title: string;
+        partner_text: string;
+        values_title: string;
+        values_intro: string;
+        cta_title: string;
+        imageUrl: string | null;
+        partnerImageUrl: string | null;
+        services: { id: number; title: string; summary: string | null; points: string[] }[];
+        values: { id: number; title: string; body: string | null }[];
+    };
     footer: { tagline: string };
 };
 

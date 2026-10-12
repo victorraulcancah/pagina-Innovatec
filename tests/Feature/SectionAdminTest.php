@@ -24,11 +24,11 @@ class SectionAdminTest extends TestCase
 
     public function test_every_section_page_requires_login_and_renders_for_admin(): void
     {
-        foreach (['nosotros', 'soluciones', 'servicios', 'experiencia', 'clientes', 'contacto'] as $page) {
+        foreach (['nosotros', 'enterprise', 'telcos', 'experiencia', 'clientes', 'contacto'] as $page) {
             $this->get("/admin/$page")->assertRedirect('/admin/login');
         }
 
-        foreach (['nosotros', 'soluciones', 'servicios', 'experiencia', 'clientes', 'contacto'] as $page) {
+        foreach (['nosotros', 'enterprise', 'telcos', 'experiencia', 'clientes', 'contacto'] as $page) {
             $this->admin()->get("/admin/$page")->assertInertia(fn (Assert $p) => $p
                 ->component('admin/section-editor')->where('page', $page));
         }
@@ -79,8 +79,8 @@ class SectionAdminTest extends TestCase
     {
         Storage::fake('public');
 
-        $this->admin()->post('/admin/soluciones', [
-            'texts' => ['solutions' => ['title' => 'Soluciones'], 'services' => ['title' => 'Servicios']],
+        $this->admin()->post('/admin/enterprise', [
+            'texts' => ['enterprise' => ['title' => 'División Enterprise'], 'services' => ['title' => 'Servicios']],
             'lists' => ['solution' => [[
                 'title' => 'Redes',
                 'body' => 'Resumen',

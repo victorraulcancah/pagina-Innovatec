@@ -14,6 +14,16 @@ class PageController extends Controller
         return $this->render('about');
     }
 
+    public function enterprise(): Response
+    {
+        return $this->render('enterprise');
+    }
+
+    public function telcos(): Response
+    {
+        return $this->render('telcos');
+    }
+
     public function experience(): Response
     {
         return $this->render('experience');

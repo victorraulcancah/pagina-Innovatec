@@ -1,3 +1,4 @@
+import { ClientGrid } from '@/components/site/clients-section';
 import { CtaBand } from '@/components/site/cta-band';
 import { CaseList, CertificationGrid } from '@/components/site/experience-section';
 import { PageHero } from '@/components/site/page-hero';
@@ -34,6 +35,20 @@ export default function Experience({ home }: { home: HomeContent }) {
                             <SectionHeading title="Certificaciones" className="mb-12 !text-[clamp(1.25rem,2.4vw,2rem)]" />
                         </Reveal>
                         <CertificationGrid items={e.certifications} />
+                    </div>
+                </section>
+            )}
+
+            {home.sections.clients.items.length > 0 && (
+                <section className="bg-night py-20 lg:py-28">
+                    <div className={sectionShell}>
+                        <Reveal>
+                            <SectionHeading
+                                title={`${home.sections.clients.title} ${home.sections.clients.accent}`.trim()}
+                                className="mb-12 !text-[clamp(1.25rem,2.4vw,2rem)]"
+                            />
+                        </Reveal>
+                        <ClientGrid items={home.sections.clients.items} />
                     </div>
                 </section>
             )}

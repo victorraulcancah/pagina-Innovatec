@@ -25,9 +25,12 @@ class PublicPagesTest extends TestCase
 
     public function test_every_public_page_renders(): void
     {
-        foreach (['/', '/nosotros', '/experiencia', '/clientes', '/contacto', '/soluciones', '/servicios'] as $url) {
+        foreach (['/', '/nosotros', '/experiencia', '/clientes', '/contacto', '/division-enterprise', '/division-telcos', '/blog'] as $url) {
             $this->get($url)->assertOk();
         }
+
+        $this->get('/soluciones')->assertRedirect('/division-enterprise')->assertStatus(301);
+        $this->get('/servicios')->assertRedirect('/division-enterprise')->assertStatus(301);
     }
 
     public function test_each_solution_has_its_own_page_and_unknown_slugs_404(): void
@@ -49,11 +52,11 @@ class PublicPagesTest extends TestCase
         $admin = $this->admin();
 
         $payload = fn (array $items) => [
-            'texts' => ['solutions' => ['title' => 'Soluciones'], 'services' => ['title' => 'Servicios']],
+            'texts' => ['enterprise' => ['title' => 'División Enterprise'], 'services' => ['title' => 'Servicios']],
             'lists' => ['solution' => $items],
         ];
 
-        $admin->post('/admin/soluciones', $payload([
+        $admin->post('/admin/enterprise', $payload([
             ['title' => 'Redes', 'gallery_files' => [UploadedFile::fake()->image('cisco.png'), UploadedFile::fake()->image('ubiquiti.png')]],
             ['title' => 'Redes'],
         ]))->assertSessionHasNoErrors();
@@ -67,7 +70,7 @@ class PublicPagesTest extends TestCase
         $keep = $items[0]->gallery[0]['path'];
         $removed = $items[0]->gallery[1]['path'];
 
-        $this->admin()->post('/admin/soluciones', $payload([
+        $this->admin()->post('/admin/enterprise', $payload([
             ['id' => $items[0]->id, 'title' => 'Redes y wifi', 'gallery_keep' => [$keep]],
             ['id' => $items[1]->id, 'title' => 'Redes'],
         ]))->assertSessionHasNoErrors();

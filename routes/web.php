@@ -24,7 +24,11 @@ Route::get('blog', [BlogController::class, 'index'])->name('blog');
 Route::get('blog/{category}', [BlogController::class, 'index'])->name('blog.category');
 Route::get('blog/{category}/{slug}', [BlogController::class, 'show'])->name('blog.post');
 Route::post('contacto', [ContactMessageController::class, 'store'])->middleware('throttle:5,1')->name('contact.store');
-Route::get('{kind}', [OfferingController::class, 'index'])->whereIn('kind', ['soluciones', 'servicios'])->name('offerings');
+Route::get('division-enterprise', [PageController::class, 'enterprise'])->name('enterprise');
+Route::get('division-telcos', [PageController::class, 'telcos'])->name('telcos');
+// Direcciones anteriores: ahora todo vive en la División Enterprise.
+Route::redirect('soluciones', '/division-enterprise', 301);
+Route::redirect('servicios', '/division-enterprise', 301);
 Route::get('{kind}/{slug}', [OfferingController::class, 'show'])->whereIn('kind', ['soluciones', 'servicios'])->name('offering');
 
 Route::prefix('admin')->name('admin.')->group(function () {

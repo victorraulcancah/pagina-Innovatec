@@ -15,7 +15,7 @@ const link =
     'transition-colors hover:text-signal focus-visible:text-signal';
 
 export function SiteFooter({ home }: { home: HomeContent }) {
-    const { contact, footer, solutions, services } = home.sections;
+    const { contact, footer, solutions } = home.sections;
     const web = contact.website.replace(/^https?:\/\//, '');
 
     return (
@@ -47,21 +47,24 @@ export function SiteFooter({ home }: { home: HomeContent }) {
                     )}
                 </Column>
 
-                <Column title="Soluciones y servicios">
+                <Column title="Divisiones">
+                    <li>
+                        <a href="/division-enterprise" className={link}>
+                            División Enterprise
+                        </a>
+                    </li>
                     {solutions.items.map((item) => (
-                        <li key={`s-${item.id}`}>
+                        <li key={`s-${item.id}`} className="pl-3">
                             <a href={item.url} className={link}>
                                 {item.title}
                             </a>
                         </li>
                     ))}
-                    {services.items.length > 0 && (
-                        <li>
-                            <a href="/servicios" className={link}>
-                                {services.title}
-                            </a>
-                        </li>
-                    )}
+                    <li>
+                        <a href="/division-telcos" className={link}>
+                            División Telcos
+                        </a>
+                    </li>
                 </Column>
 
                 <Column title="Contacto">

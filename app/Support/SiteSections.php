@@ -38,7 +38,7 @@ class SiteSections
                 'intro' => 'Acompañamos tu operación TIC de principio a fin, con ingenieros certificados.',
             ],
             'experience' => [
-                'title' => 'Experiencia certificada',
+                'title' => 'Casos de éxito',
                 'intro' => 'Contamos con ingenieros especializados y certificados por los principales fabricantes. Estos son algunos de nuestros proyectos.',
             ],
             'clients' => [
@@ -52,6 +52,22 @@ class SiteSections
                 'phone' => '+511 748-3615',
                 'address' => 'Av. Javier Prado Este Nro. 1166 Of 801 - San Isidro',
                 'website' => 'www.proinnovatec.com',
+            ],
+            'enterprise' => [
+                'title' => 'División Enterprise',
+                'subtitle' => 'Soluciones TIC integrales para empresas',
+                'intro' => 'Impulsamos tu negocio con soluciones avanzadas en Comunicaciones Unificadas, Ciberseguridad, Networking, Infraestructura TI y Seguridad Electrónica.',
+                'cta_title' => '¿Interesado en optimizar la tecnología de tu empresa?',
+            ],
+            'telcos' => [
+                'title' => 'División Telcos',
+                'subtitle' => 'Aliado técnico de operadoras y proveedores de telecomunicaciones',
+                'intro' => 'Potenciamos a las operadoras con servicios especializados y soporte técnico, para soluciones TIC eficientes y confiables.',
+                'partner_title' => 'Tu partner técnico para el éxito en TIC',
+                'partner_text' => 'En PROINNOVATEC by Grupo CAME no competimos con las operadoras: nos convertimos en su aliado técnico. Con la experiencia de nuestro equipo certificado y altamente capacitado, ayudamos a los proveedores a implementar soluciones TIC avanzadas y a optimizar sus redes y servicios.',
+                'values_title' => 'Potenciamos tu red y servicios',
+                'values_intro' => 'Nos convertimos en una extensión de tu equipo, aportando experiencia y tecnología sin competir en tu mercado.',
+                'cta_title' => '¿Buscas potenciar tu red y maximizar tus resultados?',
             ],
             'footer' => [
                 'tagline' => 'Integración de soluciones de Tecnologías de la Información y Comunicaciones.',
@@ -94,16 +110,20 @@ class SiteSections
                     ],
                 ]],
             ],
-            'soluciones' => [
-                'label' => 'Soluciones',
-                'description' => 'Cada solución tiene su propia página. Aquí editas su texto, imagen, lo que incluye y las marcas con las que trabajas.',
-                'groups' => ['solutions' => 'Texto de la página Soluciones'],
+            'enterprise' => [
+                'label' => 'División Enterprise',
+                'description' => 'Página de la división para empresas: cabecera, soluciones (cada una con su página de detalle) y servicios profesionales.',
+                'groups' => ['enterprise' => 'Cabecera y cierre', 'services' => 'Bloque de servicios profesionales'],
                 'texts' => [
-                    ['group' => 'solutions', 'key' => 'title', 'label' => 'Título', 'type' => 'text', 'max' => 80, 'required' => true],
-                    ['group' => 'solutions', 'key' => 'intro', 'label' => 'Texto', 'type' => 'textarea', 'max' => 300],
+                    ['group' => 'enterprise', 'key' => 'title', 'label' => 'Título', 'type' => 'text', 'max' => 80, 'required' => true],
+                    ['group' => 'enterprise', 'key' => 'subtitle', 'label' => 'Subtítulo', 'type' => 'text', 'max' => 120],
+                    ['group' => 'enterprise', 'key' => 'intro', 'label' => 'Texto de presentación', 'type' => 'textarea', 'max' => 400],
+                    ['group' => 'enterprise', 'key' => 'cta_title', 'label' => 'Frase del cierre', 'type' => 'text', 'max' => 120],
+                    ['group' => 'services', 'key' => 'title', 'label' => 'Título de servicios', 'type' => 'text', 'max' => 80, 'required' => true],
+                    ['group' => 'services', 'key' => 'intro', 'label' => 'Texto de servicios', 'type' => 'textarea', 'max' => 300],
                 ],
                 'images' => [
-                    ['key' => 'image_soluciones', 'slot' => 'soluciones', 'label' => 'Imagen de la página Soluciones', 'hint' => 'JPG, PNG o WebP. Se muestra en la cabecera.'],
+                    ['key' => 'image_enterprise', 'slot' => 'enterprise', 'label' => 'Imagen de cabecera', 'hint' => 'JPG, PNG o WebP. Se muestra en blanco y negro, oscurecida.'],
                 ],
                 'lists' => [
                     ['section' => 'solution', 'label' => 'Soluciones', 'itemLabel' => 'Solución', 'max' => 12, 'fields' => [
@@ -113,21 +133,7 @@ class SiteSections
                         $cover,
                         ['key' => 'gallery', 'label' => 'Marcas con las que trabajas (logos)', 'type' => 'gallery'],
                     ]],
-                ],
-            ],
-            'servicios' => [
-                'label' => 'Servicios',
-                'description' => 'Cada servicio profesional tiene su propia página. Aquí editas su descripción, imagen y lo que incluye.',
-                'groups' => ['services' => 'Texto de la página Servicios'],
-                'texts' => [
-                    ['group' => 'services', 'key' => 'title', 'label' => 'Título', 'type' => 'text', 'max' => 80, 'required' => true],
-                    ['group' => 'services', 'key' => 'intro', 'label' => 'Texto', 'type' => 'textarea', 'max' => 300],
-                ],
-                'images' => [
-                    ['key' => 'image_servicios', 'slot' => 'servicios', 'label' => 'Imagen de la página Servicios', 'hint' => 'JPG, PNG o WebP. Se muestra en la cabecera.'],
-                ],
-                'lists' => [
-                    ['section' => 'service', 'label' => 'Servicios', 'itemLabel' => 'Servicio', 'max' => 12, 'fields' => [
+                    ['section' => 'service', 'label' => 'Servicios profesionales', 'itemLabel' => 'Servicio', 'max' => 12, 'fields' => [
                         ['key' => 'title', 'label' => 'Nombre', 'type' => 'text', 'max' => 80],
                         ['key' => 'body', 'label' => 'Descripción', 'type' => 'textarea', 'max' => 1200],
                         $rows,
@@ -136,9 +142,39 @@ class SiteSections
                     ]],
                 ],
             ],
+            'telcos' => [
+                'label' => 'División Telcos',
+                'description' => 'Página de la división para operadoras y proveedores de telecomunicaciones.',
+                'groups' => ['telcos' => 'Textos de la página'],
+                'texts' => [
+                    ['group' => 'telcos', 'key' => 'title', 'label' => 'Título', 'type' => 'text', 'max' => 80, 'required' => true],
+                    ['group' => 'telcos', 'key' => 'subtitle', 'label' => 'Subtítulo', 'type' => 'text', 'max' => 140],
+                    ['group' => 'telcos', 'key' => 'intro', 'label' => 'Texto de presentación', 'type' => 'textarea', 'max' => 400],
+                    ['group' => 'telcos', 'key' => 'partner_title', 'label' => 'Título del bloque "partner"', 'type' => 'text', 'max' => 100],
+                    ['group' => 'telcos', 'key' => 'partner_text', 'label' => 'Texto del bloque "partner"', 'type' => 'textarea', 'max' => 700],
+                    ['group' => 'telcos', 'key' => 'values_title', 'label' => 'Título de los valores', 'type' => 'text', 'max' => 100],
+                    ['group' => 'telcos', 'key' => 'values_intro', 'label' => 'Texto de los valores', 'type' => 'textarea', 'max' => 300],
+                    ['group' => 'telcos', 'key' => 'cta_title', 'label' => 'Frase del cierre', 'type' => 'text', 'max' => 120],
+                ],
+                'images' => [
+                    ['key' => 'image_telcos', 'slot' => 'telcos', 'label' => 'Imagen de cabecera', 'hint' => 'JPG, PNG o WebP. Sin imagen se muestra la malla animada.'],
+                    ['key' => 'image_telcos_partner', 'slot' => 'telcos_partner', 'label' => 'Foto junto al bloque "partner"', 'hint' => 'JPG, PNG o WebP.'],
+                ],
+                'lists' => [
+                    ['section' => 'telcos_service', 'label' => 'Servicios para operadoras', 'itemLabel' => 'Servicio', 'max' => 6, 'fields' => [
+                        ['key' => 'title', 'label' => 'Nombre', 'type' => 'text', 'max' => 100],
+                        ['key' => 'body', 'label' => 'Descripción (opcional)', 'type' => 'textarea', 'max' => 400],
+                        ['key' => 'rows', 'label' => 'Puntos que incluye', 'type' => 'pairs'],
+                    ]],
+                    ['section' => 'telcos_value', 'label' => 'Valores', 'itemLabel' => 'Valor', 'max' => 6, 'fields' => [
+                        ['key' => 'title', 'label' => 'Nombre', 'type' => 'text', 'max' => 60],
+                        ['key' => 'body', 'label' => 'Descripción', 'type' => 'textarea', 'max' => 300],
+                    ]],
+                ],
+            ],
             'experiencia' => [
-                'label' => 'Experiencia',
-                'description' => 'Proyectos realizados y certificaciones del equipo.',
+                'label' => 'Casos de éxito',
+                'description' => 'Proyectos realizados, certificaciones del equipo y clientes.',
                 'groups' => ['experience' => 'Texto'],
                 'texts' => [
                     ['group' => 'experience', 'key' => 'title', 'label' => 'Título', 'type' => 'text', 'max' => 80, 'required' => true],

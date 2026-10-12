@@ -9,14 +9,18 @@ import { sectionShell } from './reveal';
  */
 export function PageHero({
     title,
+    subtitle,
     intro,
     imageUrl,
     aside,
+    actions,
 }: {
     title: string;
+    subtitle?: string | null;
     intro?: string | null;
     imageUrl?: string | null;
     aside?: ReactNode;
+    actions?: ReactNode;
 }) {
     return (
         <section className="relative isolate overflow-hidden bg-night pb-16 pt-36 sm:pb-24 sm:pt-44">
@@ -40,6 +44,14 @@ export function PageHero({
                     <h1 className="animate-rise font-display max-w-[20ch] text-[clamp(1.6rem,4.4vw,3.4rem)] leading-[1.12] uppercase text-balance text-white">
                         {title}
                     </h1>
+                    {subtitle && (
+                        <p
+                            className="animate-rise mt-5 max-w-[34ch] text-xl leading-snug text-white sm:text-2xl"
+                            style={{ ['--delay' as string]: '100ms' }}
+                        >
+                            {subtitle}
+                        </p>
+                    )}
                     {intro && (
                         <p
                             className="animate-rise mt-6 max-w-[58ch] text-base leading-relaxed text-white/75 sm:text-lg"
@@ -48,6 +60,7 @@ export function PageHero({
                             {intro}
                         </p>
                     )}
+                    {actions && <div className="animate-rise mt-9" style={{ ['--delay' as string]: '250ms' }}>{actions}</div>}
                 </div>
                 {aside}
             </div>

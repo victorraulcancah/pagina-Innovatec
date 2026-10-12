@@ -49,8 +49,8 @@ class BlogTest extends TestCase
             ->component('blog')
             ->has('posts.data', 1)
             ->where('posts.data.0.url', '/blog/noticias/nueva-era-de-redes')
-            ->where('home.menu.6.label', 'Blog')
-            ->where('home.menu.6.children.0.url', '/blog/noticias'));
+            ->where('home.menu.4.label', 'Blog')
+            ->where('home.menu.4.children.0.url', '/blog/noticias'));
 
         $this->get('/blog/noticias')->assertOk();
         $this->get('/blog/noticias/nueva-era-de-redes')->assertInertia(fn (Assert $p) => $p->component('blog-post'));
