@@ -1,3 +1,5 @@
+cd /var/www/html/osotex && php artisan config:clear && php artisan cache:clear && chown -R apache:apache storage bootstrap/cache
+
 # Product
 
 <!-- impeccable:product-schema 1 -->
