@@ -46,6 +46,18 @@ class SiteSections
                 'title' => 'Clientes que nos',
                 'accent' => 'respaldan',
             ],
+            'company' => [
+                'name' => 'PROINNOVATEC',
+                'legal_name' => '',
+                'tax_id' => '',
+            ],
+            'social' => [
+                'facebook' => '',
+                'linkedin' => '',
+                'instagram' => '',
+                'youtube' => '',
+                'tiktok' => '',
+            ],
             'contact' => [
                 'title' => 'Contáctanos',
                 'body' => 'No dudes en escribirnos si tienes alguna pregunta.',
@@ -53,6 +65,8 @@ class SiteSections
                 'phone' => '+511 748-3615',
                 'address' => 'Av. Javier Prado Este Nro. 1166 Of 801 - San Isidro',
                 'website' => 'www.proinnovatec.com',
+                'whatsapp' => '',
+                'hours' => '',
             ],
             'enterprise' => [
                 'title' => 'División Enterprise',
@@ -75,6 +89,7 @@ class SiteSections
             ],
             'footer' => [
                 'tagline' => 'Integración de soluciones de Tecnologías de la Información y Comunicaciones.',
+                'copyright' => '',
             ],
         ];
     }
@@ -239,19 +254,48 @@ class SiteSections
             ],
             'contacto' => [
                 'label' => 'Contacto',
-                'description' => 'Datos de contacto de la página Contacto y del pie de página.',
-                'groups' => ['contact' => 'Datos de contacto', 'footer' => 'Pie de página'],
+                'description' => 'Textos e imagen de la página Contacto. Los datos (correo, teléfono, dirección...) se editan en "Datos de la empresa".',
+                'groups' => ['contact' => 'Textos de la página'],
                 'texts' => [
                     ['group' => 'contact', 'key' => 'title', 'label' => 'Título', 'type' => 'text', 'max' => 80, 'required' => true],
                     ['group' => 'contact', 'key' => 'body', 'label' => 'Texto', 'type' => 'textarea', 'max' => 300],
-                    ['group' => 'contact', 'key' => 'email', 'label' => 'Correo', 'type' => 'email', 'max' => 120],
-                    ['group' => 'contact', 'key' => 'phone', 'label' => 'Teléfono', 'type' => 'text', 'max' => 40],
-                    ['group' => 'contact', 'key' => 'address', 'label' => 'Dirección', 'type' => 'text', 'max' => 160],
-                    ['group' => 'contact', 'key' => 'website', 'label' => 'Sitio web', 'type' => 'text', 'max' => 120],
-                    ['group' => 'footer', 'key' => 'tagline', 'label' => 'Frase bajo el logo', 'type' => 'textarea', 'max' => 200],
                 ],
                 'images' => [
                     ['key' => 'image_contacto', 'slot' => 'contacto', 'label' => 'Imagen de la página Contacto', 'hint' => 'JPG, PNG o WebP. Se muestra en la cabecera.'],
+                ],
+                'lists' => [],
+            ],
+            'empresa' => [
+                'label' => 'Datos de la empresa',
+                'description' => 'Logo, nombre, datos de contacto, redes sociales y pie de página. Se usan en todo el sitio.',
+                'groups' => [
+                    'company' => 'Identidad',
+                    'contact' => 'Contacto',
+                    'social' => 'Redes sociales',
+                    'footer' => 'Pie de página',
+                ],
+                'texts' => [
+                    ['group' => 'company', 'key' => 'name', 'label' => 'Nombre comercial', 'type' => 'text', 'max' => 80, 'required' => true, 'hint' => 'Se usa en el logo (texto alternativo), el pie de página y el título de las pestañas.'],
+                    ['group' => 'company', 'key' => 'legal_name', 'label' => 'Razón social', 'type' => 'text', 'max' => 160],
+                    ['group' => 'company', 'key' => 'tax_id', 'label' => 'RUC', 'type' => 'text', 'max' => 30],
+                    ['group' => 'contact', 'key' => 'email', 'label' => 'Correo', 'type' => 'email', 'max' => 120, 'hint' => 'También recibe el aviso de los mensajes del formulario.'],
+                    ['group' => 'contact', 'key' => 'phone', 'label' => 'Teléfono', 'type' => 'text', 'max' => 40],
+                    ['group' => 'contact', 'key' => 'whatsapp', 'label' => 'WhatsApp', 'type' => 'text', 'max' => 30, 'hint' => 'Con código de país, por ejemplo +51 999 888 777. Si lo completas, aparece un botón flotante de WhatsApp.'],
+                    ['group' => 'contact', 'key' => 'address', 'label' => 'Dirección', 'type' => 'text', 'max' => 160],
+                    ['group' => 'contact', 'key' => 'hours', 'label' => 'Horario de atención', 'type' => 'text', 'max' => 120],
+                    ['group' => 'contact', 'key' => 'website', 'label' => 'Sitio web', 'type' => 'text', 'max' => 120],
+                    ['group' => 'social', 'key' => 'facebook', 'label' => 'Facebook', 'type' => 'url', 'max' => 255],
+                    ['group' => 'social', 'key' => 'linkedin', 'label' => 'LinkedIn', 'type' => 'url', 'max' => 255],
+                    ['group' => 'social', 'key' => 'instagram', 'label' => 'Instagram', 'type' => 'url', 'max' => 255],
+                    ['group' => 'social', 'key' => 'youtube', 'label' => 'YouTube', 'type' => 'url', 'max' => 255],
+                    ['group' => 'social', 'key' => 'tiktok', 'label' => 'TikTok', 'type' => 'url', 'max' => 255],
+                    ['group' => 'footer', 'key' => 'tagline', 'label' => 'Frase bajo el logo', 'type' => 'textarea', 'max' => 200],
+                    ['group' => 'footer', 'key' => 'copyright', 'label' => 'Texto de derechos', 'type' => 'text', 'max' => 160, 'hint' => 'Déjalo vacío para usar "© año Nombre. Todos los derechos reservados."'],
+                ],
+                'images' => [
+                    ['key' => 'image_logo', 'slot' => 'logo', 'label' => 'Logo', 'hint' => 'PNG, WebP o JPG con fondo transparente y letras claras (se ve sobre fondo oscuro). Sin logo se usa el de PROINNOVATEC.'],
+                    ['key' => 'image_favicon', 'slot' => 'favicon', 'label' => 'Favicon (ícono de la pestaña)', 'hint' => 'Imagen cuadrada, PNG o WebP, de al menos 64 × 64 px.'],
+                    ['key' => 'image_og', 'slot' => 'og', 'label' => 'Imagen al compartir en redes', 'hint' => 'Se ve al compartir el sitio por WhatsApp, Facebook o LinkedIn. Recomendado: 1200 × 630 px.'],
                 ],
                 'lists' => [],
             ],

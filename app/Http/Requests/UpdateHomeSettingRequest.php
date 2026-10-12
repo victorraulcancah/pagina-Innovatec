@@ -21,12 +21,9 @@ class UpdateHomeSettingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'brand_name' => ['required', 'string', 'max:80'],
             'title' => ['required', 'string', 'max:120'],
             'subtitle' => ['nullable', 'string', 'max:300'],
 
-            'logo' => ['nullable', 'file', 'mimes:png,webp,svg', 'max:2048'],
-            'remove_logo' => ['boolean'],
             'video' => ['nullable', 'file', 'mimetypes:video/mp4,video/webm', 'max:102400'],
             'remove_video' => ['boolean'],
             'poster' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],

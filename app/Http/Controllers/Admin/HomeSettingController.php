@@ -26,10 +26,10 @@ class HomeSettingController extends Controller
     {
         $home = HomeSetting::current();
         $data = $request->safe()->except([
-            'logo', 'remove_logo', 'video', 'remove_video', 'poster', 'remove_poster',
+            'video', 'remove_video', 'poster', 'remove_poster',
         ]);
 
-        foreach (['logo' => 'brand', 'video' => 'hero', 'poster' => 'hero'] as $field => $folder) {
+        foreach (['video' => 'hero', 'poster' => 'hero'] as $field => $folder) {
             $column = $field.'_path';
 
             if ($request->hasFile($field)) {

@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import type { HomeContent } from '@/types';
 import { SiteFooter } from './site-footer';
 import { SiteHeader } from './site-header';
+import { WhatsappButton } from './whatsapp-button';
 
 /** Marco común de las páginas públicas: cabecera, contenido y pie. */
 export function SiteLayout({
@@ -22,6 +23,7 @@ export function SiteLayout({
             <SiteHeader home={home} />
             <main>{children}</main>
             <SiteFooter home={home} />
+            <WhatsappButton number={home.sections.contact.whatsapp} />
         </>
     );
 }

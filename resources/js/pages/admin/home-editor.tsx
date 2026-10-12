@@ -14,14 +14,11 @@ import {
 import type { HeroButton, HomeContent, MenuChild, MenuItem } from '@/types';
 
 type EditorData = {
-    brand_name: string;
     title: string;
     subtitle: string;
     buttons: HeroButton[];
     menu: MenuItem[];
     nav_cta: MenuChild;
-    logo: File | null;
-    remove_logo: boolean;
     video: File | null;
     remove_video: boolean;
     poster: File | null;
@@ -38,14 +35,11 @@ export default function HomeEditor({
     pages: AdminPage[];
 }) {
     const form = useForm<EditorData>({
-        brand_name: home.brandName,
         title: home.title,
         subtitle: home.subtitle ?? '',
         buttons: home.buttons,
         menu: home.menu,
         nav_cta: home.navCta ?? { label: '', url: '' },
-        logo: null,
-        remove_logo: false,
         video: null,
         remove_video: false,
         poster: null,
@@ -63,10 +57,8 @@ export default function HomeEditor({
             onSuccess: () => {
                 form.setData((prev) => ({
                     ...prev,
-                    logo: null,
                     video: null,
                     poster: null,
-                    remove_logo: false,
                     remove_video: false,
                     remove_poster: false,
                 }));
@@ -212,22 +204,7 @@ export default function HomeEditor({
                             />
                         </Section>
 
-                        <Section title="Marca y botón del menú" description="Logo y botón con contorno que aparece arriba a la derecha.">
-                            <Field label="Nombre de la marca" error={errors.brand_name} hint="Se usa como texto alternativo del logo y título de la pestaña.">
-                                <TextInput value={data.brand_name} maxLength={80} invalid={!!errors.brand_name} onChange={(e) => setData('brand_name', e.target.value)} />
-                            </Field>
-                            <MediaPicker
-                                label="Logo"
-                                hint="PNG, WebP o SVG con fondo transparente y letras claras (se ve sobre el video). Sin logo se usa el de PROINNOVATEC."
-                                accept="image/png,image/webp,image/svg+xml"
-                                kind="image"
-                                currentUrl={home.logoUrl}
-                                file={data.logo}
-                                removed={data.remove_logo}
-                                error={err('logo')}
-                                onFile={(f) => setData('logo', f)}
-                                onRemove={(v) => setData('remove_logo', v)}
-                            />
+                        <Section title="Botón del menú" description="Botón con contorno que aparece arriba a la derecha. El logo y el nombre de la marca se cambian en &quot;Datos de la empresa&quot;.">
                             <div className="grid gap-3 sm:grid-cols-2">
                                 <Field label="Texto del botón" error={err('nav_cta.label')} hint="Déjalo vacío para ocultar el botón.">
                                     <TextInput value={data.nav_cta.label} maxLength={40} onChange={(e) => setData('nav_cta', { ...data.nav_cta, label: e.target.value })} />

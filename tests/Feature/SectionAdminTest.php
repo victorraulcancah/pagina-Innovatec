@@ -24,11 +24,11 @@ class SectionAdminTest extends TestCase
 
     public function test_every_section_page_requires_login_and_renders_for_admin(): void
     {
-        foreach (['nosotros', 'enterprise', 'telcos', 'experiencia', 'clientes', 'contacto'] as $page) {
+        foreach (['nosotros', 'enterprise', 'telcos', 'experiencia', 'clientes', 'contacto', 'empresa'] as $page) {
             $this->get("/admin/$page")->assertRedirect('/admin/login');
         }
 
-        foreach (['nosotros', 'enterprise', 'telcos', 'experiencia', 'clientes', 'contacto'] as $page) {
+        foreach (['nosotros', 'enterprise', 'telcos', 'experiencia', 'clientes', 'contacto', 'empresa'] as $page) {
             $this->admin()->get("/admin/$page")->assertInertia(fn (Assert $p) => $p
                 ->component('admin/section-editor')->where('page', $page));
         }
@@ -39,13 +39,12 @@ class SectionAdminTest extends TestCase
     public function test_texts_are_saved_and_shown_on_the_public_home(): void
     {
         $this->admin()->post('/admin/contacto', [
-            'texts' => ['contact' => ['title' => 'Hablemos', 'email' => 'hola@ejemplo.com'], 'footer' => ['tagline' => 'Frase']],
+            'texts' => ['contact' => ['title' => 'Hablemos', 'body' => 'Escríbenos']],
         ])->assertSessionHasNoErrors();
 
         $this->get('/')->assertInertia(fn (Assert $p) => $p
             ->where('home.sections.contact.title', 'Hablemos')
-            ->where('home.sections.contact.email', 'hola@ejemplo.com')
-            ->where('home.sections.footer.tagline', 'Frase'));
+            ->where('home.sections.contact.body', 'Escríbenos'));
     }
 
     public function test_list_items_are_created_reordered_and_deleted(): void

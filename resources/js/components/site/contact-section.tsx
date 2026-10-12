@@ -7,7 +7,13 @@ export function ContactDetails({ contact }: { contact: SiteSections['contact'] }
     const rows = [
         contact.email && { label: 'Correo', text: contact.email, href: `mailto:${contact.email}` },
         contact.phone && { label: 'Teléfono', text: contact.phone, href: `tel:${contact.phone.replace(/[^+\d]/g, '')}` },
+        contact.whatsapp && {
+            label: 'WhatsApp',
+            text: contact.whatsapp,
+            href: `https://wa.me/${contact.whatsapp.replace(/\D/g, '')}`,
+        },
         contact.address && { label: 'Dirección', text: contact.address, href: null },
+        contact.hours && { label: 'Horario', text: contact.hours, href: null },
         web && { label: 'Web', text: web, href: `https://${web}` },
     ].filter(Boolean) as { label: string; text: string; href: string | null }[];
 

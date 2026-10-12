@@ -93,6 +93,32 @@ class HomeSetting extends Model
         return array_replace_recursive(SiteSections::defaults(), $this->sections ?? []);
     }
 
+    /** Nombre comercial: el de "Datos de la empresa" y, si falta, el guardado en la portada. */
+    public function brandName(): string
+    {
+        return trim((string) ($this->content()['company']['name'] ?? '')) ?: $this->brand_name;
+    }
+
+    public function logoUrl(): string
+    {
+        return $this->pageImageUrl('logo')
+            ?? ($this->logo_path ? Storage::disk('public')->url($this->logo_path) : self::DEFAULT_LOGO);
+    }
+
+    /**
+     * Datos que necesita el <head> del documento (favicon e imagen para compartir).
+     *
+     * @return array{siteName: string, favicon: string|null, ogImage: string|null}
+     */
+    public function headBranding(): array
+    {
+        return [
+            'siteName' => $this->brandName(),
+            'favicon' => $this->pageImageUrl('favicon'),
+            'ogImage' => $this->pageImageUrl('og'),
+        ];
+    }
+
     public function pageImageUrl(string $slot): ?string
     {
         $path = $this->page_images[$slot] ?? null;
@@ -110,8 +136,8 @@ class HomeSetting extends Model
         $sections = SiteContent::forPage($this);
 
         return [
-            'brandName' => $this->brand_name,
-            'logoUrl' => $this->logo_path ? Storage::disk('public')->url($this->logo_path) : self::DEFAULT_LOGO,
+            'brandName' => $this->brandName(),
+            'logoUrl' => $this->logoUrl(),
             'videoUrl' => $this->video_path ? Storage::disk('public')->url($this->video_path) : null,
             'posterUrl' => $this->poster_path ? Storage::disk('public')->url($this->poster_path) : null,
             'title' => $this->title,

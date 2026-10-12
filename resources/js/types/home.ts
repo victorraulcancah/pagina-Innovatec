@@ -72,6 +72,8 @@ export type SiteSections = {
         phone: string;
         address: string;
         website: string;
+        whatsapp: string;
+        hours: string;
         imageUrl: string | null;
     };
     enterprise: {
@@ -100,7 +102,9 @@ export type SiteSections = {
         values: { id: number; title: string; body: string | null; imageUrl: string | null }[];
         gallery: { id: number; caption: string; imageUrl: string | null }[];
     };
-    footer: { tagline: string };
+    footer: { tagline: string; copyright: string };
+    company: { name: string; legal_name: string; tax_id: string };
+    social: { facebook: string; linkedin: string; instagram: string; youtube: string; tiktok: string };
 };
 
 export type BlogCard = {

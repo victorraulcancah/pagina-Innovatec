@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\HomeSetting;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -24,6 +26,15 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+
+        // Favicon e imagen para compartir: vienen de "Datos de la empresa".
+        View::composer('app', function ($view): void {
+            try {
+                $view->with('brand', HomeSetting::current()->headBranding());
+            } catch (\Throwable) {
+                $view->with('brand', null);
+            }
+        });
     }
 
     /**

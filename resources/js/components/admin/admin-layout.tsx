@@ -3,7 +3,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 
 export type AdminPage = { slug: string; label: string; badge?: number };
 
-const MANAGEMENT = ['mensajes', 'cuenta'];
+const MANAGEMENT = ['empresa', 'mensajes', 'cuenta'];
 
 const icons: Record<string, ReactNode> = {
     '': <path d="M3 10.5L10 4l7 6.5V16a1 1 0 01-1 1h-3.5v-4.5h-5V17H4a1 1 0 01-1-1v-5.5z" />,
@@ -45,6 +45,12 @@ const icons: Record<string, ReactNode> = {
         <>
             <path d="M5 3h8l3 3v11H5z" />
             <path d="M13 3v3h3M8 9h5M8 12h5M8 15h3" />
+        </>
+    ),
+    empresa: (
+        <>
+            <path d="M4 17V6.500L10 3l6 3.500V17" />
+            <path d="M8 17v-4h4v4M7.500 8.500h1M11.500 8.500h1" />
         </>
     ),
     mensajes: (

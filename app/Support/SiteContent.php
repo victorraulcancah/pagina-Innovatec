@@ -112,6 +112,8 @@ class SiteContent
             ],
             'contact' => [...$text['contact'], 'imageUrl' => $home->pageImageUrl('contacto')],
             'footer' => $text['footer'],
+            'company' => $text['company'],
+            'social' => $text['social'],
         ];
     }
 }

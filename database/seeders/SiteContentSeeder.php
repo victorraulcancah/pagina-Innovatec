@@ -59,6 +59,7 @@ class SiteContentSeeder extends Seeder
         $this->backfillCases();
         $this->backfillTelcosServices();
         $this->migrateLegacyImages();
+        $this->migrateCompanyData();
         $this->seedPageImages();
         $this->upgradeLinks();
         $this->upgradeToDivisions();
@@ -193,6 +194,30 @@ class SiteContentSeeder extends Seeder
 
         if (! collect($home->menu)->contains('url', '/blog')) {
             $home->update(['menu' => [...$home->menu, ['label' => 'Blog', 'url' => '/blog', 'children' => []]]]);
+        }
+    }
+
+    /** El nombre y el logo ahora se editan en "Datos de la empresa": se copian desde la portada. */
+    private function migrateCompanyData(): void
+    {
+        $home = HomeSetting::current();
+        $sections = $home->sections ?? [];
+        $images = $home->page_images ?? [];
+        $changes = [];
+
+        if (empty($sections['company']['name']) && $home->brand_name) {
+            $sections['company']['name'] = $home->brand_name;
+            $changes['sections'] = $sections;
+        }
+
+        if ($home->logo_path && empty($images['logo'])) {
+            $images['logo'] = $home->logo_path;
+            $changes['page_images'] = $images;
+            $changes['logo_path'] = null;
+        }
+
+        if ($changes) {
+            $home->update($changes);
         }
     }
 

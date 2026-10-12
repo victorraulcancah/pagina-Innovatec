@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import type { HomeContent } from '@/types';
 import { sectionShell } from './reveal';
+import { SocialLinks } from './social-links';
 
 function Column({ title, children }: { title: string; children: ReactNode }) {
     return (
@@ -15,8 +16,11 @@ const link =
     'transition-colors hover:text-signal focus-visible:text-signal';
 
 export function SiteFooter({ home }: { home: HomeContent }) {
-    const { contact, footer, solutions } = home.sections;
+    const { contact, footer, solutions, social, company } = home.sections;
     const web = contact.website.replace(/^https?:\/\//, '');
+    const rights =
+        footer.copyright || `© ${new Date().getFullYear()} ${home.brandName}. Todos los derechos reservados.`;
+    const legal = [company.legal_name, company.tax_id ? `RUC ${company.tax_id}` : ''].filter(Boolean).join(' · ');
 
     return (
         <footer className="border-t border-white/10 bg-[#030813]">
@@ -28,6 +32,7 @@ export function SiteFooter({ home }: { home: HomeContent }) {
                     {footer.tagline && (
                         <p className="mt-6 max-w-[34ch] text-sm leading-relaxed text-white/60">{footer.tagline}</p>
                     )}
+                    <SocialLinks social={social} className="mt-6" />
                 </div>
 
                 <Column title="Navegación">
@@ -82,7 +87,20 @@ export function SiteFooter({ home }: { home: HomeContent }) {
                             </a>
                         </li>
                     )}
+                    {contact.whatsapp && (
+                        <li>
+                            <a
+                                href={`https://wa.me/${contact.whatsapp.replace(/\D/g, '')}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={link}
+                            >
+                                WhatsApp {contact.whatsapp}
+                            </a>
+                        </li>
+                    )}
                     {contact.address && <li className="max-w-[30ch] leading-relaxed">{contact.address}</li>}
+                    {contact.hours && <li className="max-w-[30ch] leading-relaxed">{contact.hours}</li>}
                     {web && (
                         <li>
                             <a href={`https://${web}`} className={link}>
@@ -96,7 +114,8 @@ export function SiteFooter({ home }: { home: HomeContent }) {
             <div className="border-t border-white/10">
                 <div className={`${sectionShell} flex flex-col gap-2 py-6 text-xs text-white/45 sm:flex-row sm:items-center sm:justify-between`}>
                     <p>
-                        © {new Date().getFullYear()} {home.brandName}. Todos los derechos reservados.
+                        {rights}
+                        {legal && <span className="ml-2">{legal}</span>}
                     </p>
                     <a href="#top" className={link}>
                         Volver arriba ↑
