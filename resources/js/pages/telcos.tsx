@@ -46,28 +46,40 @@ export default function Telcos({ home }: { home: HomeContent }) {
                             {t.services.map((service, i) => (
                                 <li key={service.id}>
                                     <Reveal delay={i * 90} className="h-full">
-                                        <article className="flex h-full flex-col border border-white/15 bg-night p-7">
-                                            <Pictogram
-                                                slug={serviceIcons[i % serviceIcons.length]}
-                                                strokeWidth={1}
-                                                className="size-14 text-signal"
-                                            />
-                                            <h2 className="mt-6 font-display text-base uppercase leading-snug text-white sm:text-lg">
-                                                {service.title}
-                                            </h2>
-                                            {service.summary && (
-                                                <p className="mt-3 text-sm leading-relaxed text-white/70">{service.summary}</p>
+                                        <article className="flex h-full flex-col overflow-hidden border border-white/15 bg-night">
+                                            {service.imageUrl && (
+                                                <img
+                                                    src={service.imageUrl}
+                                                    alt=""
+                                                    loading="lazy"
+                                                    className="aspect-[16/10] w-full object-cover"
+                                                />
                                             )}
-                                            {service.points.length > 0 && (
-                                                <ul className="mt-6 space-y-3 text-sm leading-relaxed text-white/80">
-                                                    {service.points.map((point, k) => (
-                                                        <li key={`${point}-${k}`} className="flex gap-3">
-                                                            <Check />
-                                                            <span>{point}</span>
-                                                        </li>
-                                                    ))}
-                                                </ul>
-                                            )}
+                                            <div className="flex flex-1 flex-col p-7">
+                                                {!service.imageUrl && (
+                                                    <Pictogram
+                                                        slug={serviceIcons[i % serviceIcons.length]}
+                                                        strokeWidth={1}
+                                                        className="mb-6 size-14 text-signal"
+                                                    />
+                                                )}
+                                                <h2 className="font-display text-base uppercase leading-snug text-white sm:text-lg">
+                                                    {service.title}
+                                                </h2>
+                                                {service.summary && (
+                                                    <p className="mt-3 text-sm leading-relaxed text-white/70">{service.summary}</p>
+                                                )}
+                                                {service.points.length > 0 && (
+                                                    <ul className="mt-6 space-y-3 text-sm leading-relaxed text-white/80">
+                                                        {service.points.map((point, k) => (
+                                                            <li key={`${point}-${k}`} className="flex gap-3">
+                                                                <Check />
+                                                                <span>{point}</span>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                )}
+                                            </div>
                                         </article>
                                     </Reveal>
                                 </li>
@@ -76,6 +88,46 @@ export default function Telcos({ home }: { home: HomeContent }) {
                     </div>
                 </section>
             )}
+
+            {t.blocks.map((block, i) => (
+                <section key={block.id} className={i % 2 === 0 ? 'bg-night' : 'bg-night-2'}>
+                    <div
+                        className={`${sectionShell} grid items-center gap-10 py-20 lg:gap-20 lg:py-24 ${
+                            block.imageUrl ? 'lg:grid-cols-2' : ''
+                        }`}
+                    >
+                        {block.imageUrl && (
+                            <Reveal className={i % 2 === 1 ? 'lg:order-2' : ''}>
+                                <img src={block.imageUrl} alt="" loading="lazy" className="aspect-[4/3] w-full object-cover" />
+                            </Reveal>
+                        )}
+                        <Reveal delay={100}>
+                            <SectionHeading title={block.title} className="!text-[clamp(1.25rem,2.4vw,2rem)]" />
+                            {block.body && (
+                                <p className="mt-6 max-w-[60ch] whitespace-pre-line text-base leading-[1.8] text-white/75">{block.body}</p>
+                            )}
+                            {block.points.length > 0 && (
+                                <ul className="mt-6 space-y-3 text-[15px] leading-relaxed text-white/80">
+                                    {block.points.map((point, k) => (
+                                        <li key={`${point}-${k}`} className="flex gap-3">
+                                            <Check />
+                                            <span>{point}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                            {block.url && (
+                                <a
+                                    href={block.url}
+                                    className="mt-8 inline-flex min-h-11 items-center rounded-full border border-white/70 px-6 text-sm font-medium text-white transition-colors hover:border-white hover:bg-white hover:text-night"
+                                >
+                                    Conocer más
+                                </a>
+                            )}
+                        </Reveal>
+                    </div>
+                </section>
+            ))}
 
             {t.values.length > 0 && (
                 <section className="bg-night py-20 lg:py-28">
@@ -88,15 +140,47 @@ export default function Telcos({ home }: { home: HomeContent }) {
                             {t.values.map((value, i) => (
                                 <li key={value.id} className="text-center">
                                     <Reveal delay={i * 90}>
-                                        <Pictogram
-                                            slug={valueIcons[i % valueIcons.length]}
-                                            strokeWidth={1}
-                                            className="mx-auto size-16 text-signal"
-                                        />
+                                        {value.imageUrl ? (
+                                            <img
+                                                src={value.imageUrl}
+                                                alt=""
+                                                loading="lazy"
+                                                className="mx-auto size-24 rounded-full object-cover"
+                                            />
+                                        ) : (
+                                            <Pictogram
+                                                slug={valueIcons[i % valueIcons.length]}
+                                                strokeWidth={1}
+                                                className="mx-auto size-16 text-signal"
+                                            />
+                                        )}
                                         <h3 className="mt-6 font-display text-base uppercase text-white">{value.title}</h3>
                                         {value.body && (
                                             <p className="mx-auto mt-3 max-w-[32ch] text-sm leading-relaxed text-white/70">{value.body}</p>
                                         )}
+                                    </Reveal>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </section>
+            )}
+
+            {t.gallery.length > 0 && (
+                <section className="bg-night-2 py-20 lg:py-28">
+                    <div className={sectionShell}>
+                        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                            {t.gallery.map((item, i) => (
+                                <li key={item.id}>
+                                    <Reveal delay={(i % 3) * 80}>
+                                        <figure>
+                                            {item.imageUrl && (
+                                                <img src={item.imageUrl} alt={item.caption} loading="lazy" className="aspect-[4/3] w-full object-cover" />
+                                            )}
+                                            {item.caption && (
+                                                <figcaption className="mt-3 text-sm leading-relaxed text-white/70">{item.caption}</figcaption>
+                                            )}
+                                        </figure>
                                     </Reveal>
                                 </li>
                             ))}

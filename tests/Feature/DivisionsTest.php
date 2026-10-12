@@ -6,6 +6,8 @@ use App\Http\Middleware\AuthenticateAdmin;
 use App\Models\SectionItem;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
@@ -58,5 +60,40 @@ class DivisionsTest extends TestCase
             ->component('admin/section-editor')->where('page', 'enterprise'));
 
         $this->admin()->get('/admin/soluciones')->assertNotFound();
+    }
+
+    public function test_telcos_accepts_images_in_services_blocks_values_and_gallery(): void
+    {
+        Storage::fake('public');
+
+        $this->admin()->post('/admin/telcos', [
+            'texts' => ['telcos' => ['title' => 'División Telcos']],
+            'image_telcos' => UploadedFile::fake()->image('cabecera.jpg'),
+            'lists' => [
+                'telcos_service' => [['title' => 'Implementación', 'image' => UploadedFile::fake()->image('servicio.jpg')]],
+                'telcos_block' => [[
+                    'title' => 'Operación 24x7',
+                    'body' => 'Texto del bloque.',
+                    'rows' => [['title' => 'Punto uno']],
+                    'image' => UploadedFile::fake()->image('bloque.jpg'),
+                    'url' => '/contacto',
+                ]],
+                'telcos_value' => [['title' => 'Confianza', 'image' => UploadedFile::fake()->image('valor.png')]],
+                'telcos_gallery' => [['title' => 'Torre en campo', 'image' => UploadedFile::fake()->image('galeria.jpg')]],
+            ],
+        ])->assertSessionHasNoErrors();
+
+        $this->get('/division-telcos')->assertInertia(function (Assert $p) {
+            $p->component('telcos')
+                ->whereNot('home.sections.telcos.imageUrl', null)
+                ->whereNot('home.sections.telcos.services.0.imageUrl', null)
+                ->where('home.sections.telcos.blocks.0.title', 'Operación 24x7')
+                ->where('home.sections.telcos.blocks.0.points', ['Punto uno'])
+                ->whereNot('home.sections.telcos.blocks.0.imageUrl', null)
+                ->where('home.sections.telcos.blocks.0.url', '/contacto')
+                ->whereNot('home.sections.telcos.values.0.imageUrl', null)
+                ->where('home.sections.telcos.gallery.0.caption', 'Torre en campo')
+                ->whereNot('home.sections.telcos.gallery.0.imageUrl', null);
+        });
     }
 }

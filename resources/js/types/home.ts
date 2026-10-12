@@ -85,8 +85,10 @@ export type SiteSections = {
         cta_title: string;
         imageUrl: string | null;
         partnerImageUrl: string | null;
-        services: { id: number; title: string; summary: string | null; points: string[] }[];
-        values: { id: number; title: string; body: string | null }[];
+        services: { id: number; title: string; summary: string | null; points: string[]; imageUrl: string | null }[];
+        blocks: { id: number; title: string; body: string | null; points: string[]; imageUrl: string | null; url: string | null }[];
+        values: { id: number; title: string; body: string | null; imageUrl: string | null }[];
+        gallery: { id: number; caption: string; imageUrl: string | null }[];
     };
     footer: { tagline: string };
 };

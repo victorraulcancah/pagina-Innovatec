@@ -165,10 +165,23 @@ class SiteSections
                         ['key' => 'title', 'label' => 'Nombre', 'type' => 'text', 'max' => 100],
                         ['key' => 'body', 'label' => 'Descripción (opcional)', 'type' => 'textarea', 'max' => 400],
                         ['key' => 'rows', 'label' => 'Puntos que incluye', 'type' => 'pairs'],
+                        ['key' => 'image', 'label' => 'Imagen del servicio (opcional)', 'type' => 'image'],
+                    ]],
+                    ['section' => 'telcos_block', 'label' => 'Bloques de información con imagen', 'itemLabel' => 'Bloque', 'max' => 10, 'fields' => [
+                        ['key' => 'title', 'label' => 'Título', 'type' => 'text', 'max' => 120],
+                        ['key' => 'body', 'label' => 'Texto', 'type' => 'textarea', 'max' => 1500],
+                        ['key' => 'rows', 'label' => 'Puntos destacados (opcional)', 'type' => 'pairs'],
+                        ['key' => 'image', 'label' => 'Imagen', 'type' => 'image'],
+                        ['key' => 'url', 'label' => 'Enlace del botón (opcional)', 'type' => 'url'],
                     ]],
                     ['section' => 'telcos_value', 'label' => 'Valores', 'itemLabel' => 'Valor', 'max' => 6, 'fields' => [
                         ['key' => 'title', 'label' => 'Nombre', 'type' => 'text', 'max' => 60],
                         ['key' => 'body', 'label' => 'Descripción', 'type' => 'textarea', 'max' => 300],
+                        ['key' => 'image', 'label' => 'Imagen o ícono (opcional)', 'type' => 'image'],
+                    ]],
+                    ['section' => 'telcos_gallery', 'label' => 'Galería de imágenes', 'itemLabel' => 'Imagen', 'max' => 12, 'fields' => [
+                        ['key' => 'title', 'label' => 'Pie de foto', 'type' => 'text', 'max' => 120],
+                        ['key' => 'image', 'label' => 'Imagen', 'type' => 'image'],
                     ]],
                 ],
             ],
