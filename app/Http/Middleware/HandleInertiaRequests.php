@@ -39,7 +39,10 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'name' => config('app.name'),
             'auth' => [
-                'user' => $request->user(),
+                // Funciones: se evalúan al renderizar, cuando AuthenticateAdmin ya fijó el guard `api`.
+                'user' => fn () => $request->user(),
+                'role' => fn () => $request->user()?->role->label(),
+                'permissions' => fn () => $request->user()?->permissionNames() ?? [],
             ],
         ];
     }

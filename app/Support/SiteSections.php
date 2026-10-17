@@ -2,7 +2,9 @@
 
 namespace App\Support;
 
+use App\Enums\Permission;
 use App\Models\ContactMessage;
+use App\Models\User;
 
 /**
  * Definición única del contenido editable del sitio: textos por bloque,
@@ -307,15 +309,32 @@ class SiteSections
      *
      * @return list<array{slug: string, label: string, badge?: int}>
      */
-    public static function navigation(): array
+    public static function navigation(?User $user = null): array
     {
-        return [
-            ['slug' => '', 'label' => 'Inicio'],
-            ...collect(static::pages())->map(fn ($p, $slug) => ['slug' => $slug, 'label' => $p['label']])->values()->all(),
-            ['slug' => 'blog', 'label' => 'Blog'],
-            ['slug' => 'mensajes', 'label' => 'Mensajes', 'badge' => ContactMessage::query()->whereNull('read_at')->count()],
+        $user ??= auth()->user();
+        $allowed = fn (Permission $permission) => $user?->hasPermission($permission) ?? false;
+
+        $pages = collect(static::pages())
+            ->filter(fn ($p, $slug) => $allowed(static::permission($slug)))
+            ->map(fn ($p, $slug) => ['slug' => $slug, 'label' => $p['label']])
+            ->values()->all();
+
+        return array_values(array_filter([
+            $allowed(Permission::Content) ? ['slug' => '', 'label' => 'Inicio'] : null,
+            ...$pages,
+            $allowed(Permission::Blog) ? ['slug' => 'blog', 'label' => 'Blog'] : null,
+            $allowed(Permission::Messages)
+                ? ['slug' => 'mensajes', 'label' => 'Mensajes', 'badge' => ContactMessage::query()->whereNull('read_at')->count()]
+                : null,
+            $allowed(Permission::Users) ? ['slug' => 'usuarios', 'label' => 'Usuarios'] : null,
             ['slug' => 'cuenta', 'label' => 'Mi cuenta'],
-        ];
+        ]));
+    }
+
+    /** Permiso necesario para editar una página del panel. */
+    public static function permission(string $page): Permission
+    {
+        return $page === 'empresa' ? Permission::Company : Permission::Content;
     }
 
     /**

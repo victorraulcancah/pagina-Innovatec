@@ -17,7 +17,7 @@ export function CtaBand({
             <div className={`${sectionShell} flex flex-col items-start justify-between gap-8 border-t border-white/15 pt-14 lg:flex-row lg:items-center`}>
                 <Reveal>
                     <SectionHeading title={title} className="max-w-[22ch] !text-[clamp(1.25rem,2.6vw,2.1rem)]" />
-                    {text && <p className="mt-4 max-w-[52ch] text-base leading-relaxed text-white/70">{text}</p>}
+                    {text && <p className="mt-4 max-w-[52ch] text-base leading-relaxed text-white">{text}</p>}
                 </Reveal>
                 <Reveal delay={120}>
                     <a

@@ -20,7 +20,7 @@ export default function About({ home }: { home: HomeContent }) {
                 <div className={`${sectionShell} grid items-start gap-12 lg:grid-cols-[1fr_minmax(0,480px)] lg:gap-20`}>
                     <Reveal>
                         <SectionHeading title="Quiénes somos" />
-                        <p className="mt-7 max-w-[62ch] text-base leading-[1.8] text-white/75 sm:text-lg">{about.story}</p>
+                        <p className="mt-7 max-w-[62ch] text-base leading-[1.8] text-white sm:text-lg">{about.story}</p>
                     </Reveal>
                     {image && (
                         <Reveal delay={120}>

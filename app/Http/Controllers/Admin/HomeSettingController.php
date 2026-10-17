@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\Permission;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateHomeSettingRequest;
 use App\Models\HomeSetting;
 use App\Support\SiteSections;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -14,8 +16,12 @@ use Inertia\Response;
 
 class HomeSettingController extends Controller
 {
-    public function edit(): Response
+    public function edit(Request $request): Response|RedirectResponse
     {
+        if (! $request->user()->hasPermission(Permission::Content)) {
+            return redirect($request->user()->landingPath());
+        }
+
         return Inertia::render('admin/home-editor', [
             'home' => HomeSetting::current()->toPageData(),
             'pages' => SiteSections::navigation(),

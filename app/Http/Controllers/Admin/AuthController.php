@@ -18,8 +18,8 @@ class AuthController extends Controller
 {
     public function create(): Response|RedirectResponse
     {
-        if (auth('api')->check()) {
-            return redirect()->route('admin.home');
+        if (auth('api')->check() && auth('api')->user()->active) {
+            return redirect(auth('api')->user()->landingPath());
         }
 
         return Inertia::render('admin/login');
@@ -40,7 +40,15 @@ class AuthController extends Controller
             ]);
         }
 
-        return redirect()->route('admin.home')->withCookie(
+        if (! auth('api')->user()->active) {
+            auth('api')->logout();
+
+            throw ValidationException::withMessages([
+                'email' => 'Tu cuenta está desactivada. Consulta con un administrador.',
+            ]);
+        }
+
+        return redirect(auth('api')->user()->landingPath())->withCookie(
             cookie(
                 name: AuthenticateAdmin::COOKIE,
                 value: $token,

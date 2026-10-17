@@ -9,8 +9,11 @@
     --font-display:
         var(--font-michroma), 'Michroma', 'Eurostile', 'Arial Narrow', sans-serif;
 
-    --color-night: #050b1a;
-    --color-night-2: #0a1630;
+    /* Navy medio: fondos de las secciones. `deep` es solo para la portada, bajo el video. */
+    --color-deep: #0a1b44;
+    --color-night: #11285c;
+    --color-night-2: #1a3777;
+    --color-ice: #eef3fb;
     --color-signal: #06c2f0;
     --color-signal-deep: #1f62d9;
 
@@ -62,5 +65,431 @@
     .animate-rise,
     .animate-fade {
         animation: none;
+    }
+}
+
+/* ───────── Sección «Referentes» (home): banda clara con entrada por fases ───────── */
+
+/* Por defecto todo es visible; solo la fase `pre` (bajo el pliegue) oculta lo que aún no entró. */
+.about-word {
+    display: inline-block;
+    transition:
+        opacity 0.9s var(--ease-out-expo),
+        transform 0.9s var(--ease-out-expo),
+        filter 0.9s var(--ease-out-expo);
+    transition-delay: calc(var(--i, 0) * 70ms + 80ms);
+}
+
+.about[data-phase='pre'] .about-word {
+    opacity: 0;
+    transform: translateY(0.6em);
+    filter: blur(8px);
+    transition-delay: 0s;
+}
+
+.about-line {
+    transform-origin: left;
+    transition: transform 1.2s var(--ease-out-expo) 0.55s;
+}
+
+.about[data-phase='pre'] .about-line {
+    transform: scaleX(0);
+    transition-delay: 0s;
+}
+
+.about-fade {
+    transition:
+        opacity 0.9s var(--ease-out-expo),
+        transform 0.9s var(--ease-out-expo);
+    transition-delay: var(--d, 0ms);
+}
+
+.about[data-phase='pre'] .about-fade {
+    opacity: 0;
+    transform: translateY(16px);
+    transition-delay: 0s;
+}
+
+/* Tarjetas: la imagen se descubre de abajo hacia arriba y se asienta desde un zoom. */
+.about-clip {
+    clip-path: inset(0 0 0 0);
+    transition: clip-path 1.3s var(--ease-out-expo) var(--d, 0ms);
+}
+
+.about[data-phase='pre'] .about-clip {
+    clip-path: inset(100% 0 0 0);
+    transition-delay: 0s;
+}
+
+.about-img {
+    transition: transform 1.8s var(--ease-out-expo) var(--d, 0ms);
+}
+
+.about[data-phase='pre'] .about-img {
+    transform: scale(1.3);
+    transition-delay: 0s;
+}
+
+.about-bar {
+    transition: transform 0.9s var(--ease-out-expo) calc(var(--d, 0ms) + 450ms);
+}
+
+.about[data-phase='pre'] .about-bar {
+    transform: translateY(-100%);
+    transition-delay: 0s;
+}
+
+/* Inclinación 3D hacia el puntero y elevación al pasar. */
+.about-card {
+    transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(var(--lift, 0px));
+    transition: transform 0.5s var(--ease-out-expo);
+    will-change: transform;
+}
+
+.about-card:hover {
+    --lift: -8px;
+}
+
+.about-photo {
+    transition: transform 0.9s var(--ease-out-expo);
+}
+
+.about-card:hover .about-photo {
+    transform: scale(1.07);
+}
+
+/* El pictograma se redibuja al pasar el puntero. */
+.about-icon * {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+}
+
+.about-card:hover .about-icon * {
+    animation: about-draw 1.1s var(--ease-out-expo) both;
+}
+
+@keyframes about-draw {
+    from {
+        stroke-dashoffset: 1;
+    }
+}
+
+/* Ondas que se expanden y resplandores que derivan: movimiento ambiental, lento. */
+.about-ring {
+    transform-origin: 200px 200px;
+    opacity: 0;
+    animation: about-ring 7s var(--ease-out-expo) infinite;
+    animation-delay: calc(var(--i, 0) * 2.3s);
+}
+
+@keyframes about-ring {
+    0% {
+        transform: scale(0.55);
+        opacity: 0.45;
+    }
+    80%,
+    100% {
+        transform: scale(1.25);
+        opacity: 0;
+    }
+}
+
+.about-glow-a {
+    animation: about-drift-a 18s ease-in-out infinite alternate;
+}
+
+.about-glow-b {
+    animation: about-drift-b 22s ease-in-out infinite alternate;
+}
+
+@keyframes about-drift-a {
+    to {
+        transform: translate(120px, 60px) scale(1.15);
+    }
+}
+
+@keyframes about-drift-b {
+    to {
+        transform: translate(-100px, -50px) scale(1.1);
+    }
+}
+
+/* Paralaje: cada tarjeta sube a su propio ritmo mientras se hace scroll. */
+@supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+        .about-drift {
+            animation: about-parallax linear both;
+            animation-timeline: view();
+            animation-range: entry 0% exit 100%;
+        }
+
+        @keyframes about-parallax {
+            from {
+                translate: 0 var(--from, 24px);
+            }
+            to {
+                translate: 0 var(--to, -24px);
+            }
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .about-word,
+    .about-line,
+    .about-fade,
+    .about-clip,
+    .about-img,
+    .about-bar,
+    .about-card,
+    .about-photo {
+        transition: none;
+    }
+
+    .about-ring {
+        animation: none;
+        opacity: 0.18;
+        transform: scale(0.9);
+    }
+
+    .about-glow-a,
+    .about-glow-b,
+    .about-card:hover .about-icon * {
+        animation: none;
+    }
+
+    .about-card {
+        transform: none;
+    }
+}
+
+/* ───────── Página Enterprise y ilustraciones de líneas (.ent / .viz) ───────── */
+
+.ent-rise {
+    transition:
+        opacity 0.9s var(--ease-out-expo),
+        transform 0.9s var(--ease-out-expo);
+    transition-delay: var(--d, 0ms);
+}
+
+.ent[data-phase='pre'] .ent-rise {
+    opacity: 0;
+    transform: translateY(22px);
+    transition-delay: 0s;
+}
+
+.ent-line {
+    transform-origin: left;
+    transition: transform 1.1s var(--ease-out-expo) 0.25s;
+}
+
+.ent[data-phase='pre'] .ent-line {
+    transform: scaleX(0);
+    transition-delay: 0s;
+}
+
+.ent-viz {
+    clip-path: inset(0 0 0 0);
+    transition:
+        clip-path 1.3s var(--ease-out-expo) var(--d, 0ms),
+        transform 1.6s var(--ease-out-expo) var(--d, 0ms);
+}
+
+.ent[data-phase='pre'] .ent-viz {
+    clip-path: inset(0 100% 0 0);
+    transform: scale(0.96);
+    transition-delay: 0s;
+}
+
+.ent-glow {
+    animation: about-drift-a 20s ease-in-out infinite alternate;
+}
+
+.ent-chip:hover .ent-chip-icon * {
+    animation: about-draw 1s var(--ease-out-expo) both;
+    stroke-dasharray: 1;
+}
+
+.viz-photo {
+    transition: transform 1.2s var(--ease-out-expo);
+}
+
+.viz:hover .viz-photo {
+    transform: scale(1.05);
+}
+
+.viz-corner {
+    position: absolute;
+    z-index: 1;
+    width: 1.25rem;
+    height: 1.25rem;
+    border-color: var(--color-signal);
+    opacity: 0.9;
+    transition:
+        transform 0.5s var(--ease-out-expo),
+        opacity 0.5s;
+}
+
+.viz:hover .viz-corner {
+    transform: scale(1.35);
+}
+
+/* Piezas animadas de las ilustraciones */
+.viz-float {
+    animation: viz-float 6s ease-in-out infinite;
+    animation-delay: calc(var(--i, 0) * -1.3s);
+}
+
+.viz-bar {
+    transform-box: fill-box;
+    transform-origin: center bottom;
+    animation: viz-bar 1.5s ease-in-out infinite;
+    animation-delay: calc(var(--i, 0) * -0.19s);
+}
+
+.viz-blink {
+    animation: viz-blink 2.6s steps(1) infinite;
+    animation-delay: calc(var(--i, 0) * -0.37s);
+}
+
+.viz-pulse {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: viz-pulse 3.4s ease-out infinite;
+    animation-delay: calc(var(--i, 0) * -1.1s);
+}
+
+.viz-spin {
+    animation: viz-spin 24s linear infinite;
+}
+
+.viz-scan {
+    animation: viz-scan 3.2s ease-in-out infinite alternate;
+}
+
+.viz-packet {
+    offset-rotate: 0deg;
+    animation: viz-packet 3.4s linear infinite;
+    animation-delay: calc(var(--i, 0) * -0.55s);
+}
+
+.viz-sweep {
+    animation: viz-sweep 5.5s ease-in-out infinite alternate;
+}
+
+.viz-flow {
+    animation: viz-flow 1.6s linear infinite;
+}
+
+@keyframes viz-float {
+    50% {
+        transform: translateY(-9px);
+    }
+}
+
+@keyframes viz-bar {
+    0%,
+    100% {
+        transform: scaleY(0.22);
+    }
+    50% {
+        transform: scaleY(1);
+    }
+}
+
+@keyframes viz-blink {
+    50% {
+        opacity: 0.15;
+    }
+}
+
+@keyframes viz-pulse {
+    0% {
+        transform: scale(0.7);
+        opacity: 0.6;
+    }
+    100% {
+        transform: scale(1.6);
+        opacity: 0;
+    }
+}
+
+@keyframes viz-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes viz-scan {
+    from {
+        transform: translateY(-60px);
+    }
+    to {
+        transform: translateY(110px);
+    }
+}
+
+@keyframes viz-packet {
+    from {
+        offset-distance: 0%;
+    }
+    to {
+        offset-distance: 100%;
+    }
+}
+
+@keyframes viz-sweep {
+    from {
+        transform: rotate(-14deg);
+    }
+    to {
+        transform: rotate(14deg);
+    }
+}
+
+@keyframes viz-flow {
+    to {
+        stroke-dashoffset: -24;
+    }
+}
+
+/* Paralaje suave de la ilustración al hacer scroll. */
+@supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+        .ent-drift {
+            animation: about-parallax linear both;
+            animation-timeline: view();
+            animation-range: entry 0% exit 100%;
+            --from: 26px;
+            --to: -26px;
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ent-rise,
+    .ent-line,
+    .ent-viz,
+    .viz-photo,
+    .viz-corner {
+        transition: none;
+    }
+
+    .ent-glow,
+    .viz-float,
+    .viz-bar,
+    .viz-blink,
+    .viz-pulse,
+    .viz-spin,
+    .viz-scan,
+    .viz-packet,
+    .viz-sweep,
+    .viz-flow,
+    .ent-chip:hover .ent-chip-icon * {
+        animation: none;
+    }
+
+    .viz-pulse {
+        opacity: 0.35;
     }
 }

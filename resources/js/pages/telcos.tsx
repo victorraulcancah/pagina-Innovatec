@@ -33,7 +33,7 @@ export default function Telcos({ home }: { home: HomeContent }) {
                     )}
                     <Reveal delay={120} className={partnerImage ? '' : 'lg:col-span-2'}>
                         <SectionHeading title={t.partner_title} className="!text-[clamp(1.25rem,2.6vw,2.2rem)]" />
-                        <p className="mt-7 max-w-[60ch] text-base leading-[1.8] text-white/75 sm:text-lg">{t.partner_text}</p>
+                        <p className="mt-7 max-w-[60ch] text-base leading-[1.8] text-white sm:text-lg">{t.partner_text}</p>
                     </Reveal>
                 </div>
             </section>
@@ -66,10 +66,10 @@ export default function Telcos({ home }: { home: HomeContent }) {
                                                     {service.title}
                                                 </h2>
                                                 {service.summary && (
-                                                    <p className="mt-3 text-sm leading-relaxed text-white/70">{service.summary}</p>
+                                                    <p className="mt-3 text-sm leading-relaxed text-white">{service.summary}</p>
                                                 )}
                                                 {service.points.length > 0 && (
-                                                    <ul className="mt-6 space-y-3 text-sm leading-relaxed text-white/80">
+                                                    <ul className="mt-6 space-y-3 text-sm leading-relaxed text-white">
                                                         {service.points.map((point, k) => (
                                                             <li key={`${point}-${k}`} className="flex gap-3">
                                                                 <Check />
@@ -103,10 +103,10 @@ export default function Telcos({ home }: { home: HomeContent }) {
                         <Reveal delay={100}>
                             <SectionHeading title={block.title} className="!text-[clamp(1.25rem,2.4vw,2rem)]" />
                             {block.body && (
-                                <p className="mt-6 max-w-[60ch] whitespace-pre-line text-base leading-[1.8] text-white/75">{block.body}</p>
+                                <p className="mt-6 max-w-[60ch] whitespace-pre-line text-base leading-[1.8] text-white">{block.body}</p>
                             )}
                             {block.points.length > 0 && (
-                                <ul className="mt-6 space-y-3 text-[15px] leading-relaxed text-white/80">
+                                <ul className="mt-6 space-y-3 text-[15px] leading-relaxed text-white">
                                     {block.points.map((point, k) => (
                                         <li key={`${point}-${k}`} className="flex gap-3">
                                             <Check />
@@ -133,7 +133,7 @@ export default function Telcos({ home }: { home: HomeContent }) {
                     <div className={sectionShell}>
                         <Reveal className="mx-auto max-w-[56ch] text-center">
                             <SectionHeading title={t.values_title} className="!text-[clamp(1.25rem,2.6vw,2.2rem)]" />
-                            {t.values_intro && <p className="mt-5 text-base leading-relaxed text-white/70">{t.values_intro}</p>}
+                            {t.values_intro && <p className="mt-5 text-base leading-relaxed text-white">{t.values_intro}</p>}
                         </Reveal>
                         <ul className="mt-14 grid gap-10 md:grid-cols-3">
                             {t.values.map((value, i) => (
@@ -155,7 +155,7 @@ export default function Telcos({ home }: { home: HomeContent }) {
                                         )}
                                         <h3 className="mt-6 font-display text-base uppercase text-white">{value.title}</h3>
                                         {value.body && (
-                                            <p className="mx-auto mt-3 max-w-[32ch] text-sm leading-relaxed text-white/70">{value.body}</p>
+                                            <p className="mx-auto mt-3 max-w-[32ch] text-sm leading-relaxed text-white">{value.body}</p>
                                         )}
                                     </Reveal>
                                 </li>
@@ -177,7 +177,7 @@ export default function Telcos({ home }: { home: HomeContent }) {
                                                 <img src={item.imageUrl} alt={item.caption} loading="lazy" className="aspect-[4/3] w-full object-cover" />
                                             )}
                                             {item.caption && (
-                                                <figcaption className="mt-3 text-sm leading-relaxed text-white/70">{item.caption}</figcaption>
+                                                <figcaption className="mt-3 text-sm leading-relaxed text-white">{item.caption}</figcaption>
                                             )}
                                         </figure>
                                     </Reveal>

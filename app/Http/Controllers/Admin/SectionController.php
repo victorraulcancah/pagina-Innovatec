@@ -209,7 +209,15 @@ class SectionController extends Controller
      */
     private function config(string $page): array
     {
-        return SiteSections::pages()[$page] ?? abort(404);
+        $config = SiteSections::pages()[$page] ?? abort(404);
+
+        abort_unless(
+            request()->user()->hasPermission(SiteSections::permission($page)),
+            403,
+            'No tienes permiso para editar esta página.',
+        );
+
+        return $config;
     }
 
     private function storeFile(UploadedFile $file, string $folder): string

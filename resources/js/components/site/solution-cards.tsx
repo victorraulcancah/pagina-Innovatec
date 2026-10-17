@@ -21,7 +21,7 @@ export function SolutionCards({ items, className = '' }: { items: Offering[]; cl
                             href={item.url}
                             className="group relative flex h-full flex-col overflow-hidden bg-night transition-colors duration-300 hover:bg-[#081530]"
                         >
-                            <span className="relative flex aspect-[16/10] items-center justify-center overflow-hidden bg-[radial-gradient(ellipse_at_30%_20%,#0b2f78_0%,#071a45_55%,#050b1a_100%)]">
+                            <span className="relative flex aspect-[16/10] items-center justify-center overflow-hidden bg-[radial-gradient(ellipse_at_30%_20%,#1f4fb0_0%,#17358a_55%,#11285c_100%)]">
                                 {item.imageUrl ? (
                                     <img
                                         src={item.imageUrl}
@@ -42,7 +42,7 @@ export function SolutionCards({ items, className = '' }: { items: Offering[]; cl
                                     {item.title}
                                 </span>
                                 {(item.summary || item.rows.length > 0) && (
-                                    <span className="mt-3 line-clamp-3 text-sm leading-relaxed text-white/65">
+                                    <span className="mt-3 line-clamp-3 text-sm leading-relaxed text-white">
                                         {item.rows.length > 0
                                             ? item.rows.map((r) => r.title).join(' · ')
                                             : item.summary}

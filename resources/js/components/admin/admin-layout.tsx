@@ -3,7 +3,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 
 export type AdminPage = { slug: string; label: string; badge?: number };
 
-const MANAGEMENT = ['empresa', 'mensajes', 'cuenta'];
+const MANAGEMENT = ['empresa', 'mensajes', 'usuarios', 'cuenta'];
 
 const icons: Record<string, ReactNode> = {
     '': <path d="M3 10.5L10 4l7 6.5V16a1 1 0 01-1 1h-3.5v-4.5h-5V17H4a1 1 0 01-1-1v-5.5z" />,
@@ -59,6 +59,12 @@ const icons: Record<string, ReactNode> = {
             <path d="M7 9h6M7 11.5h4" />
         </>
     ),
+    usuarios: (
+        <>
+            <path d="M10 2.500l6 2.200v4.800c0 3.800-2.500 6.500-6 8-3.500-1.500-6-4.200-6-8V4.700z" />
+            <path d="M7.500 9.800l1.800 1.800 3.400-3.600" />
+        </>
+    ),
     cuenta: (
         <>
             <circle cx="10" cy="7" r="3" />
@@ -104,6 +110,7 @@ export function AdminLayout({
     const [open, setOpen] = useState(false);
     const { auth } = usePage().props;
     const email = auth?.user?.email;
+    const role = auth?.role;
 
     useEffect(() => setOpen(false), [current]);
 
@@ -176,7 +183,12 @@ export function AdminLayout({
                         </svg>
                         Salir
                     </button>
-                    {email && <p className="mt-2 truncate px-3 text-xs text-white/40">{email}</p>}
+                    {email && (
+                        <p className="mt-2 truncate px-3 text-xs text-white/40">
+                            {email}
+                            {role ? ` · ${role}` : ''}
+                        </p>
+                    )}
                 </div>
             </aside>
 

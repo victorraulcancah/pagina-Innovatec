@@ -27,7 +27,7 @@ export default function Blog({
 }) {
     const tab = (active: boolean) =>
         `whitespace-nowrap border-b-2 px-1 pb-3 text-sm transition-colors ${
-            active ? 'border-signal text-white' : 'border-transparent text-white/60 hover:text-white'
+            active ? 'border-signal text-white' : 'border-transparent text-white hover:text-white'
         }`;
 
     return (
@@ -65,7 +65,7 @@ export default function Blog({
                     </nav>
 
                     {posts.data.length === 0 ? (
-                        <p className="border border-dashed border-white/20 px-6 py-16 text-center text-white/70">
+                        <p className="border border-dashed border-white/20 px-6 py-16 text-center text-white">
                             Todavía no hay publicaciones{current ? ` en ${current.name}` : ''}. Vuelve pronto.
                         </p>
                     ) : (
@@ -87,7 +87,7 @@ export default function Blog({
                             ) : (
                                 <span />
                             )}
-                            <span className="text-white/55">
+                            <span className="text-white">
                                 Página {posts.current_page} de {posts.last_page}
                             </span>
                             {posts.next_page_url ? (

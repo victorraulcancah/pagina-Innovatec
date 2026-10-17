@@ -6,7 +6,7 @@ export function PostBody({ text }: { text: string }) {
     const blocks = text.replace(/\r\n?/g, '\n').trim().split(/\n{2,}/);
 
     return (
-        <div className="space-y-6 text-base leading-[1.85] text-white/80 sm:text-lg">
+        <div className="space-y-6 text-base leading-[1.85] text-white sm:text-lg">
             {blocks.map((block, i) => {
                 const lines = block.split('\n');
 

@@ -11,4 +11,6 @@ export type User = {
 
 export type Auth = {
     user: User;
+    role?: string;
+    permissions?: string[];
 };

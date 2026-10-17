@@ -9,7 +9,7 @@ export function PostCard({ post, delay = 0 }: { post: BlogCard; delay?: number }
                 href={post.url}
                 className="group flex h-full flex-col overflow-hidden bg-night transition-colors duration-300 hover:bg-[#081530]"
             >
-                <span className="relative block aspect-[16/10] overflow-hidden bg-[radial-gradient(ellipse_at_30%_20%,#0b2f78_0%,#071a45_55%,#050b1a_100%)]">
+                <span className="relative block aspect-[16/10] overflow-hidden bg-[radial-gradient(ellipse_at_30%_20%,#1f4fb0_0%,#17358a_55%,#11285c_100%)]">
                     {post.coverUrl ? (
                         <img
                             src={post.coverUrl}
@@ -34,7 +34,7 @@ export function PostCard({ post, delay = 0 }: { post: BlogCard; delay?: number }
                         {post.date ? ` · ${post.date}` : ''}
                     </span>
                     {post.excerpt && (
-                        <span className="mt-3 line-clamp-3 text-sm leading-relaxed text-white/65">{post.excerpt}</span>
+                        <span className="mt-3 line-clamp-3 text-sm leading-relaxed text-white">{post.excerpt}</span>
                     )}
                 </span>
             </a>

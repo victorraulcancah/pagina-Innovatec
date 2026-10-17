@@ -57,6 +57,46 @@ export function Reveal({
     );
 }
 
+/**
+ * Fase de entrada de un bloque: 'in' por defecto (visible, sin animar) y 'pre'
+ * solo si el bloque está bajo el pliegue y el navegador admite movimiento.
+ * Al entrar en pantalla pasa a 'in' y el CSS hace la animación.
+ */
+export function useSeen<T extends HTMLElement>(threshold = 0.18) {
+    const ref = useRef<T>(null);
+    const [phase, setPhase] = useState<'pre' | 'in'>('in');
+
+    useEffect(() => {
+        const el = ref.current;
+
+        if (
+            !el ||
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+            el.getBoundingClientRect().top < window.innerHeight * 0.8
+        ) {
+            return;
+        }
+
+        setPhase('pre');
+
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setPhase('in');
+                    observer.disconnect();
+                }
+            },
+            { threshold },
+        );
+
+        observer.observe(el);
+
+        return () => observer.disconnect();
+    }, [threshold]);
+
+    return { ref, phase };
+}
+
 export function SectionHeading({
     title,
     accent,

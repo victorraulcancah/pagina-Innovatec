@@ -2,6 +2,7 @@ import { ContactForm } from '@/components/site/contact-form';
 import { ContactDetails } from '@/components/site/contact-section';
 import { PageHero } from '@/components/site/page-hero';
 import { Reveal, SectionHeading, sectionShell } from '@/components/site/reveal';
+import { SocialLinks } from '@/components/site/social-links';
 import { SiteLayout } from '@/components/site/site-layout';
 import type { HomeContent } from '@/types';
 
@@ -25,6 +26,12 @@ export default function Contact({ home }: { home: HomeContent }) {
                     <div>
                         <SectionHeading title="Datos de contacto" className="mb-8 !text-[clamp(1.25rem,2.4vw,2rem)]" />
                         <ContactDetails contact={c} />
+                        {Object.values(home.sections.social).some(Boolean) && (
+                            <div className="mt-10">
+                                <h3 className="text-sm font-semibold text-white">Síguenos en redes</h3>
+                                <SocialLinks social={home.sections.social} className="mt-4" />
+                            </div>
+                        )}
                     </div>
                 </div>
             </section>

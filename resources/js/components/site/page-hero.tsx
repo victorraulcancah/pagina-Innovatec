@@ -27,7 +27,7 @@ export function PageHero({
             {imageUrl ? (
                 <img src={imageUrl} alt="" className="absolute inset-0 -z-20 size-full object-cover grayscale" />
             ) : (
-                <div className="absolute inset-0 -z-20 bg-[radial-gradient(ellipse_70%_90%_at_75%_30%,#0b2f78_0%,#071a45_40%,#050b1a_80%)]" />
+                <div className="absolute inset-0 -z-20 bg-[radial-gradient(ellipse_70%_90%_at_75%_30%,#1f4fb0_0%,#17358a_40%,#11285c_80%)]" />
             )}
             {!imageUrl && (
                 <div className="absolute inset-0 -z-10 opacity-60">
@@ -35,7 +35,7 @@ export function PageHero({
                 </div>
             )}
             <div
-                className="absolute inset-0 -z-10 bg-[linear-gradient(to_bottom,rgba(5,11,26,0.85)_0%,rgba(5,11,26,0.7)_45%,#050b1a_100%)]"
+                className="absolute inset-0 -z-10 bg-[linear-gradient(to_bottom,rgba(17,40,92,0.85)_0%,rgba(17,40,92,0.7)_45%,#11285c_100%)]"
                 aria-hidden="true"
             />
 
@@ -54,7 +54,7 @@ export function PageHero({
                     )}
                     {intro && (
                         <p
-                            className="animate-rise mt-6 max-w-[58ch] text-base leading-relaxed text-white/75 sm:text-lg"
+                            className="animate-rise mt-6 max-w-[58ch] text-base leading-relaxed text-white sm:text-lg"
                             style={{ ['--delay' as string]: '150ms' }}
                         >
                             {intro}

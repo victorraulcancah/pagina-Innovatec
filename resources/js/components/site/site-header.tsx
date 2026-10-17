@@ -46,8 +46,8 @@ function DesktopItem({ item, current }: { item: MenuItem; current: boolean }) {
         };
     }, [open]);
 
-    const linkClass = `relative inline-flex items-center gap-1.5 py-2 text-sm transition-colors ${
-        current ? 'text-white' : 'text-white/75 hover:text-white'
+    const linkClass = `relative inline-flex items-center gap-1.5 whitespace-nowrap py-2 text-[13px] transition-colors xl:text-sm ${
+        current ? 'text-white' : 'text-white hover:text-white'
     }`;
 
     return (
@@ -74,7 +74,7 @@ function DesktopItem({ item, current }: { item: MenuItem; current: boolean }) {
                         aria-expanded={open}
                         aria-label={`Abrir ${item.label}`}
                         onClick={() => setOpen((v) => !v)}
-                        className="-m-2 p-2 text-white/75 hover:text-white"
+                        className="-m-2 p-2 text-white hover:text-white"
                     >
                         <Chevron open={open} />
                     </button>
@@ -88,7 +88,7 @@ function DesktopItem({ item, current }: { item: MenuItem; current: boolean }) {
                             <li key={`${child.label}-${i}`}>
                                 <a
                                     href={child.url}
-                                    className="block rounded-lg px-3 py-2.5 text-sm text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+                                    className="block rounded-lg px-3 py-2.5 text-sm text-white transition-colors hover:bg-white/10 hover:text-white"
                                 >
                                     {child.label}
                                 </a>
@@ -147,7 +147,7 @@ export function SiteHeader({ home }: { home: HomeContent }) {
                 </a>
 
                 <nav aria-label="Principal" className="hidden justify-center lg:flex">
-                    <ul className="flex items-center gap-6 xl:gap-9">
+                    <ul className="flex items-center gap-4 xl:gap-9">
                         {home.menu.map((item, i) => (
                             <DesktopItem
                                 key={`${item.label}-${i}`}
@@ -166,13 +166,13 @@ export function SiteHeader({ home }: { home: HomeContent }) {
                     )}
                     <a
                         href="/admin"
-                        className="inline-flex min-h-10 items-center gap-2 rounded-full px-3 text-sm text-white/70 transition-colors hover:text-white max-sm:hidden"
+                        className="inline-flex min-h-10 items-center gap-2 rounded-full px-3 text-sm text-white transition-colors hover:text-white max-sm:hidden"
                     >
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                             <circle cx="8" cy="5.5" r="2.7" stroke="currentColor" strokeWidth="1.3" />
                             <path d="M2.5 14c.6-2.6 2.8-4 5.5-4s4.9 1.4 5.5 4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
                         </svg>
-                        Panel
+                        <span className="lg:max-xl:sr-only">Panel</span>
                     </a>
                     <button
                         type="button"
@@ -216,7 +216,7 @@ export function SiteHeader({ home }: { home: HomeContent }) {
                                                 <a
                                                     href={child.url}
                                                     onClick={() => setMenuOpen(false)}
-                                                    className="text-sm text-white/70"
+                                                    className="text-sm text-white"
                                                 >
                                                     {child.label}
                                                 </a>
@@ -237,7 +237,7 @@ export function SiteHeader({ home }: { home: HomeContent }) {
                                 {home.navCta.label}
                             </a>
                         )}
-                        <a href="/admin" className="text-sm text-white/70 underline underline-offset-4">
+                        <a href="/admin" className="text-sm text-white underline underline-offset-4">
                             Panel de administración
                         </a>
                     </div>

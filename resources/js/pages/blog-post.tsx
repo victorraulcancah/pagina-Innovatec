@@ -21,7 +21,7 @@ export default function BlogPost({
 
             <article className="bg-night py-16 lg:py-24">
                 <div className={`${sectionShell} max-w-[860px]`}>
-                    <p className="mb-10 flex flex-wrap items-center gap-x-3 border-b border-white/15 pb-6 text-sm text-white/60">
+                    <p className="mb-10 flex flex-wrap items-center gap-x-3 border-b border-white/15 pb-6 text-sm text-white">
                         <a href={post.category.url} className="font-medium text-signal hover:underline">
                             {post.category.name}
                         </a>

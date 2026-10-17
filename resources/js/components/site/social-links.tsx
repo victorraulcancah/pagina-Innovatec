@@ -52,7 +52,7 @@ export function SocialLinks({ social, className = '' }: { social: SiteSections['
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label={icons[key].label}
-                        className="flex size-10 items-center justify-center rounded-full border border-white/20 text-white/75 transition-colors hover:border-signal hover:text-signal"
+                        className="flex size-10 items-center justify-center rounded-full border border-white/20 text-white transition-colors hover:border-signal hover:text-signal"
                     >
                         <svg
                             width="20"

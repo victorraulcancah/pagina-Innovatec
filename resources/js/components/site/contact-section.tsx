@@ -22,7 +22,7 @@ export function ContactDetails({ contact }: { contact: SiteSections['contact'] }
             <dl className="divide-y divide-white/15 border-y border-white/15">
                 {rows.map((row) => (
                     <div key={row.label} className="grid gap-1 py-5 sm:grid-cols-[120px_1fr] sm:gap-6">
-                        <dt className="text-sm text-white/55">{row.label}</dt>
+                        <dt className="text-sm text-white">{row.label}</dt>
                         <dd className="text-base text-white">
                             {row.href ? (
                                 <a

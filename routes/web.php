@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\BlogAdminController;
 use App\Http\Controllers\Admin\HomeSettingController;
 use App\Http\Controllers\Admin\MessageController;
 use App\Http\Controllers\Admin\SectionController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ContactMessageController;
 use App\Http\Controllers\HomeController;
@@ -36,22 +37,39 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('login', [AuthController::class, 'store'])->middleware('throttle:6,1')->name('login.store');
 
     Route::middleware(AuthenticateAdmin::class)->group(function () {
+        // Mi cuenta y salir: cualquier usuario activo.
         Route::get('/', [HomeSettingController::class, 'edit'])->name('home');
-        Route::post('inicio', [HomeSettingController::class, 'update'])->name('home.update');
-        Route::get('blog', [BlogAdminController::class, 'index'])->name('blog');
-        Route::post('blog/posts', [BlogAdminController::class, 'storePost'])->name('blog.posts.store');
-        Route::post('blog/posts/{post}', [BlogAdminController::class, 'updatePost'])->name('blog.posts.update');
-        Route::delete('blog/posts/{post}', [BlogAdminController::class, 'destroyPost'])->name('blog.posts.destroy');
-        Route::post('blog/categories', [BlogAdminController::class, 'storeCategory'])->name('blog.categories.store');
-        Route::post('blog/categories/{category}', [BlogAdminController::class, 'updateCategory'])->name('blog.categories.update');
-        Route::delete('blog/categories/{category}', [BlogAdminController::class, 'destroyCategory'])->name('blog.categories.destroy');
-        Route::get('mensajes', [MessageController::class, 'index'])->name('messages');
-        Route::post('mensajes/{message}/leida', [MessageController::class, 'markRead'])->name('messages.read');
-        Route::delete('mensajes/{message}', [MessageController::class, 'destroy'])->name('messages.destroy');
         Route::get('cuenta', [AccountController::class, 'edit'])->name('account');
         Route::post('cuenta', [AccountController::class, 'update'])->name('account.update');
+        Route::post('logout', [AuthController::class, 'destroy'])->name('logout');
+
+        Route::middleware('permission:content')->post('inicio', [HomeSettingController::class, 'update'])->name('home.update');
+
+        Route::middleware('permission:blog')->group(function () {
+            Route::get('blog', [BlogAdminController::class, 'index'])->name('blog');
+            Route::post('blog/posts', [BlogAdminController::class, 'storePost'])->name('blog.posts.store');
+            Route::post('blog/posts/{post}', [BlogAdminController::class, 'updatePost'])->name('blog.posts.update');
+            Route::delete('blog/posts/{post}', [BlogAdminController::class, 'destroyPost'])->name('blog.posts.destroy');
+            Route::post('blog/categories', [BlogAdminController::class, 'storeCategory'])->name('blog.categories.store');
+            Route::post('blog/categories/{category}', [BlogAdminController::class, 'updateCategory'])->name('blog.categories.update');
+            Route::delete('blog/categories/{category}', [BlogAdminController::class, 'destroyCategory'])->name('blog.categories.destroy');
+        });
+
+        Route::middleware('permission:messages')->group(function () {
+            Route::get('mensajes', [MessageController::class, 'index'])->name('messages');
+            Route::post('mensajes/{message}/leida', [MessageController::class, 'markRead'])->name('messages.read');
+            Route::delete('mensajes/{message}', [MessageController::class, 'destroy'])->name('messages.destroy');
+        });
+
+        Route::middleware('permission:users')->group(function () {
+            Route::get('usuarios', [UserController::class, 'index'])->name('users');
+            Route::post('usuarios', [UserController::class, 'store'])->name('users.store');
+            Route::post('usuarios/{user}', [UserController::class, 'update'])->name('users.update');
+            Route::delete('usuarios/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+        });
+
+        // Páginas de contenido: el permiso (Contenido o Empresa) se comprueba en el controlador.
         Route::get('{page}', [SectionController::class, 'edit'])->whereIn('page', array_keys(SiteSections::pages()))->name('section.edit');
         Route::post('{page}', [SectionController::class, 'update'])->whereIn('page', array_keys(SiteSections::pages()))->name('section.update');
-        Route::post('logout', [AuthController::class, 'destroy'])->name('logout');
     });
 });

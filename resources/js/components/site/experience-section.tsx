@@ -53,11 +53,11 @@ export function CaseList({ items }: { items: Experience['cases'] }) {
                             <div className="flex flex-1 flex-col p-6 sm:p-8">
                                 <h3 className="font-display text-base uppercase text-signal sm:text-lg">{c.client}</h3>
                                 {c.summary && (
-                                    <p className="mt-4 text-[15px] leading-relaxed text-white/75">{c.summary}</p>
+                                    <p className="mt-4 text-[15px] leading-relaxed text-white">{c.summary}</p>
                                 )}
                                 {c.gallery.length > 0 && (
                                     <div className="mt-auto pt-8">
-                                        <p className="mb-3 text-xs text-white/50">Tecnologías</p>
+                                        <p className="mb-3 text-xs text-white">Tecnologías</p>
                                         <ul className="flex flex-wrap gap-2">
                                             {c.gallery.map((logo, k) => (
                                                 <li
@@ -97,7 +97,7 @@ export function ExperienceTeaser({ experience }: { experience: Experience }) {
                 <Reveal>
                     <SectionHeading title={experience.title} />
                     {experience.intro && (
-                        <p className="mt-6 max-w-[46ch] text-base leading-relaxed text-white/75 sm:text-lg">{experience.intro}</p>
+                        <p className="mt-6 max-w-[46ch] text-base leading-relaxed text-white sm:text-lg">{experience.intro}</p>
                     )}
                     <a
                         href="/experiencia"

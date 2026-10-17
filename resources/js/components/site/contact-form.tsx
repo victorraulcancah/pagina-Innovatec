@@ -7,7 +7,7 @@ const input =
 function Field({ label, error, children }: { label: string; error?: string; children: ReactNode }) {
     return (
         <label className="block">
-            <span className="mb-1.5 block text-sm text-white/80">{label}</span>
+            <span className="mb-1.5 block text-sm text-white">{label}</span>
             {children}
             {error && (
                 <span role="alert" className="mt-1.5 block text-sm text-red-300">
@@ -38,7 +38,7 @@ export function ContactForm() {
         return (
             <div role="status" className="border border-signal/40 bg-signal/10 p-8">
                 <h2 className="font-display text-lg uppercase text-white">Mensaje enviado</h2>
-                <p className="mt-3 text-base leading-relaxed text-white/80">
+                <p className="mt-3 text-base leading-relaxed text-white">
                     Gracias por escribirnos. Un especialista de PROINNOVATEC te responderá lo antes posible.
                 </p>
                 <button

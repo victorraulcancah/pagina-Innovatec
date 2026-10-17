@@ -24,7 +24,7 @@ export default function Home({ home, latestPosts }: { home: HomeContent; latestP
                             <div>
                                 <SectionHeading title={s.enterprise.title} />
                                 {s.enterprise.subtitle && (
-                                    <p className="mt-5 max-w-[48ch] text-base leading-relaxed text-white/70">{s.enterprise.subtitle}</p>
+                                    <p className="mt-5 max-w-[48ch] text-base leading-relaxed text-white">{s.enterprise.subtitle}</p>
                                 )}
                             </div>
                             <a href="/division-enterprise" className="text-sm font-medium text-signal underline-offset-4 hover:underline">
@@ -40,7 +40,7 @@ export default function Home({ home, latestPosts }: { home: HomeContent; latestP
                 <div className={`${sectionShell} grid items-center gap-10 lg:grid-cols-[1fr_auto] lg:gap-20`}>
                     <Reveal>
                         <SectionHeading title={s.telcos.title} />
-                        <p className="mt-5 max-w-[52ch] text-base leading-relaxed text-white/75 sm:text-lg">{s.telcos.subtitle}</p>
+                        <p className="mt-5 max-w-[52ch] text-base leading-relaxed text-white sm:text-lg">{s.telcos.subtitle}</p>
                     </Reveal>
                     <Reveal delay={100}>
                         <a

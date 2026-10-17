@@ -1,6 +1,6 @@
 import { CtaBand } from '@/components/site/cta-band';
 import { PageHero } from '@/components/site/page-hero';
-import { Pictogram } from '@/components/site/pictogram';
+import { LineVisual } from '@/components/site/line-visual';
 import { Reveal, SectionHeading, sectionShell } from '@/components/site/reveal';
 import { SiteLayout } from '@/components/site/site-layout';
 import { SolutionCards } from '@/components/site/solution-cards';
@@ -30,13 +30,7 @@ export default function OfferingPage({
                 title={item.title}
                 intro={item.summary}
                 aside={
-                    item.imageUrl ? (
-                        <img src={item.imageUrl} alt="" className="aspect-[4/3] w-full object-cover" />
-                    ) : (
-                        <div className="hidden aspect-square items-center justify-center border border-white/15 bg-night/40 lg:flex">
-                            <Pictogram slug={item.slug} strokeWidth={0.8} className="size-56 text-signal" />
-                        </div>
-                    )
+                    <LineVisual slug={item.slug} imageUrl={item.imageUrl} className="aspect-[4/3] w-full max-lg:hidden" />
                 }
             />
 
@@ -52,7 +46,7 @@ export default function OfferingPage({
                                     <Reveal>
                                         <h3 className="font-display text-lg uppercase leading-snug text-white sm:text-xl">{row.title}</h3>
                                         {row.description && (
-                                            <p className="mt-4 max-w-[62ch] text-base leading-relaxed text-white/70">{row.description}</p>
+                                            <p className="mt-4 max-w-[62ch] text-base leading-relaxed text-white">{row.description}</p>
                                         )}
                                     </Reveal>
                                 </li>

@@ -44,10 +44,10 @@ export function Hero({ home }: { home: HomeContent }) {
     }, [reducedMotion, home.videoUrl]);
 
     return (
-        <section className="relative isolate flex min-h-[640px] h-svh items-end overflow-hidden bg-night">
+        <section className="relative isolate flex min-h-[640px] h-svh items-end overflow-hidden bg-deep">
             {/* Medio de fondo */}
             <div
-                className="absolute inset-0 -z-20 bg-[radial-gradient(ellipse_70%_80%_at_72%_38%,#0b2f78_0%,#071a45_38%,#050b1a_75%)]"
+                className="absolute inset-0 -z-20 bg-[radial-gradient(ellipse_70%_80%_at_72%_38%,#1f4fb0_0%,#12307a_38%,#0a1b44_75%)]"
                 aria-hidden="true"
             />
             {home.videoUrl ? (
@@ -72,7 +72,7 @@ export function Hero({ home }: { home: HomeContent }) {
 
             {/* Velo: arriba para el menú, abajo a la izquierda para el texto */}
             <div
-                className="absolute inset-0 -z-10 bg-[linear-gradient(to_bottom,rgba(5,11,26,0.78)_0%,rgba(5,11,26,0)_24%),linear-gradient(to_top_right,rgba(5,11,26,0.88)_0%,rgba(5,11,26,0.55)_38%,rgba(5,11,26,0)_70%)]"
+                className="absolute inset-0 -z-10 bg-[linear-gradient(to_bottom,rgba(10,27,68,0.78)_0%,rgba(10,27,68,0)_24%),linear-gradient(to_top_right,rgba(10,27,68,0.88)_0%,rgba(10,27,68,0.55)_38%,rgba(10,27,68,0)_70%)]"
                 aria-hidden="true"
             />
 
@@ -86,7 +86,7 @@ export function Hero({ home }: { home: HomeContent }) {
 
                 {home.subtitle && (
                     <p
-                        className="animate-rise mt-6 max-w-[56ch] text-base leading-relaxed text-white/75 sm:text-lg"
+                        className="animate-rise mt-6 max-w-[56ch] text-base leading-relaxed text-white sm:text-lg"
                         style={{ ['--delay' as string]: '320ms' }}
                     >
                         {home.subtitle}
