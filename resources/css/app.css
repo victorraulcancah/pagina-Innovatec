@@ -604,3 +604,35 @@
         display: none;
     }
 }
+
+/* ───────── Experiencia: fichas con escala y línea de tiempo ───────── */
+
+.ent-pop {
+    transition:
+        opacity 0.7s var(--ease-out-expo),
+        transform 0.9s var(--ease-out-expo);
+    transition-delay: var(--d, 0ms);
+}
+
+.ent[data-phase='pre'] .ent-pop {
+    opacity: 0;
+    transform: scale(0.82) translateY(14px);
+    transition-delay: 0s;
+}
+
+.tl-line {
+    transform-origin: top;
+    transition: transform 2.2s var(--ease-out-expo) 0.3s;
+}
+
+.ent[data-phase='pre'] .tl-line {
+    transform: scaleY(0);
+    transition-delay: 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ent-pop,
+    .tl-line {
+        transition: none;
+    }
+}

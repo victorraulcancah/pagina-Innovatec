@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react';
 import { CtaBand } from '@/components/site/cta-band';
 import { LineVisual } from '@/components/site/line-visual';
+import { LogoMarquee } from '@/components/site/logo-marquee';
 import { PageHero } from '@/components/site/page-hero';
 import { Phased, Reveal, SectionHeading, sectionShell } from '@/components/site/reveal';
 import { SiteLayout } from '@/components/site/site-layout';
@@ -57,35 +58,6 @@ function Glyph({ index }: { index: number }) {
                 </svg>
             );
     }
-}
-
-function LogoTile({ logo, hidden = false }: { logo: { name: string; url: string }; hidden?: boolean }) {
-    return (
-        <li aria-hidden={hidden || undefined} className="mr-3 shrink-0">
-            <div className="flex h-20 w-40 items-center justify-center rounded-md bg-white px-5 shadow-[0_10px_20px_-12px_rgba(5,11,26,0.7)]">
-                <img src={logo.url} alt={hidden ? '' : logo.name} loading="lazy" className="max-h-full max-w-full object-contain" />
-            </div>
-        </li>
-    );
-}
-
-/** Marquesina de logos (se detiene al pasar el puntero; con "reducir movimiento" es una rejilla). */
-function LogoMarquee({ logos, reverse = false }: { logos: { name: string; url: string }[]; reverse?: boolean }) {
-    // Cada mitad debe cubrir una pantalla ancha (≈12 mosaicos) para que el bucle no deje huecos.
-    const set = Array.from({ length: Math.max(1, Math.ceil(12 / logos.length)) }, () => logos).flat();
-
-    return (
-        <div className={`mq ${reverse ? 'mq-rev' : ''}`}>
-            <ul className="mq-track">
-                {set.map((logo, i) => (
-                    <LogoTile key={`${logo.name}-${i}`} logo={logo} hidden={i >= logos.length} />
-                ))}
-                {set.map((logo, i) => (
-                    <LogoTile key={`${logo.name}-copy-${i}`} logo={logo} hidden />
-                ))}
-            </ul>
-        </div>
-    );
 }
 
 export default function OfferingPage({
