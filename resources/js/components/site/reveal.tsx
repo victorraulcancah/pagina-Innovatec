@@ -97,6 +97,17 @@ export function useSeen<T extends HTMLElement>(threshold = 0.18) {
     return { ref, phase };
 }
 
+/** Sección con entrada por fases (clases .ent-* en app.css): los hijos con .ent-rise, .ent-line y .ent-viz se animan al entrar. */
+export function Phased({ className = '', children }: { className?: string; children: ReactNode }) {
+    const { ref, phase } = useSeen<HTMLElement>(0.12);
+
+    return (
+        <section ref={ref} data-phase={phase} className={`ent relative overflow-hidden ${className}`}>
+            {children}
+        </section>
+    );
+}
+
 export function SectionHeading({
     title,
     accent,

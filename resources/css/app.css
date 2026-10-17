@@ -493,3 +493,114 @@
         opacity: 0.35;
     }
 }
+
+/* ───────── Detalle de solución: tarjetas «Qué incluye» y marquesina de marcas ───────── */
+
+.inc-glyph path,
+.inc-glyph circle,
+.inc-glyph rect {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 1.5s var(--ease-out-expo) calc(var(--d, 0ms) + 400ms);
+}
+
+.ent[data-phase='pre'] .inc-glyph path,
+.ent[data-phase='pre'] .inc-glyph circle,
+.ent[data-phase='pre'] .inc-glyph rect {
+    stroke-dashoffset: 1;
+    transition-delay: 0s;
+}
+
+.inc-card {
+    transition:
+        transform 0.45s var(--ease-out-expo),
+        box-shadow 0.45s var(--ease-out-expo);
+}
+
+.inc-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 26px 46px -24px rgba(31, 98, 217, 0.6);
+}
+
+.inc-tile {
+    transition:
+        background-color 0.3s,
+        transform 0.5s var(--ease-out-expo);
+}
+
+.inc-card:hover .inc-tile {
+    transform: rotate(-6deg) scale(1.06);
+}
+
+.inc-card:hover .inc-glyph * {
+    animation: about-draw 1s var(--ease-out-expo) both;
+}
+
+.inc-bar {
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.6s var(--ease-out-expo);
+}
+
+.inc-card:hover .inc-bar {
+    transform: scaleX(1);
+}
+
+.mq {
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+    mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+}
+
+.mq-track {
+    display: flex;
+    width: max-content;
+    animation: mq-run 42s linear infinite;
+}
+
+.mq-rev .mq-track {
+    animation-direction: reverse;
+}
+
+.mq:hover .mq-track {
+    animation-play-state: paused;
+}
+
+@keyframes mq-run {
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .inc-glyph path,
+    .inc-glyph circle,
+    .inc-glyph rect,
+    .inc-card,
+    .inc-tile,
+    .inc-bar {
+        transition: none;
+    }
+
+    .inc-card:hover .inc-glyph * {
+        animation: none;
+    }
+
+    .mq {
+        -webkit-mask-image: none;
+        mask-image: none;
+    }
+
+    .mq-track {
+        width: auto;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.75rem 0;
+        padding: 0 1.5rem;
+        animation: none;
+    }
+
+    .mq-track li[aria-hidden='true'] {
+        display: none;
+    }
+}

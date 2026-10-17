@@ -58,6 +58,7 @@ class SiteContentSeeder extends Seeder
         $this->backfillServices();
         $this->backfillCases();
         $this->backfillTelcosServices();
+        $this->backfillPhotos();
         $this->migrateLegacyImages();
         $this->migrateCompanyData();
         $this->seedPageImages();
@@ -144,6 +145,39 @@ class SiteContentSeeder extends Seeder
 
             $item->save();
         });
+    }
+
+    /**
+     * Fotos libres (Unsplash) acordes al texto de cada elemento. Solo rellena
+     * las que están vacías: una imagen subida desde el panel nunca se reemplaza.
+     */
+    private function backfillPhotos(): void
+    {
+        $bySlug = [
+            'comunicaciones-unificadas' => 'photos/comunicaciones-unificadas.jpg',
+            'ciberseguridad' => 'photos/ciberseguridad.jpg',
+            'networking' => 'photos/networking.jpg',
+            'infraestructura-ti' => 'photos/infraestructura-ti.jpg',
+            'seguridad-electronica' => 'photos/seguridad-electronica.jpg',
+        ];
+
+        $byTitle = [
+            'Experiencia con operadoras' => 'photos/telcos-router.jpg',
+            'Expertise certificado' => 'photos/telcos-expertise.jpg',
+            'Flexibilidad y eficiencia' => 'photos/telcos-flexibilidad.jpg',
+            'Confianza y compromiso' => 'photos/telcos-confianza.jpg',
+        ];
+
+        SectionItem::query()->whereNull('image_path')
+            ->whereIn('section', ['solution', 'telcos_block', 'telcos_value'])
+            ->get()
+            ->each(function (SectionItem $item) use ($bySlug, $byTitle) {
+                $asset = $item->section === 'solution' ? ($bySlug[$item->slug] ?? null) : ($byTitle[$item->title] ?? null);
+
+                if ($asset) {
+                    $item->update(['image_path' => $this->copyAsset($asset)]);
+                }
+            });
     }
 
     /** Pone la imagen por defecto a los servicios de Telcos que aún no tienen una. */
@@ -288,6 +322,7 @@ class SiteContentSeeder extends Seeder
             'experiencia' => 'photos/data-center.jpg',
             'clientes' => 'photos/server-room.jpg',
             'contacto' => 'photos/data-center.jpg',
+            'telcos' => 'photos/telcos-torre.jpg',
         ] as $slot => $asset) {
             $images[$slot] ??= $this->copyAsset($asset);
         }
