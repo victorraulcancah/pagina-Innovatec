@@ -22,7 +22,7 @@ export function CtaBand({
                 <Reveal delay={120}>
                     <a
                         href={href}
-                        className="inline-flex min-h-12 items-center rounded-full border border-signal bg-signal px-8 text-sm font-medium text-night transition-colors hover:border-white hover:bg-white"
+                        className="btn-sheen inline-flex min-h-12 items-center rounded-full border border-signal bg-signal px-8 text-sm font-medium text-night transition-colors hover:border-white hover:bg-white"
                     >
                         {label}
                     </a>

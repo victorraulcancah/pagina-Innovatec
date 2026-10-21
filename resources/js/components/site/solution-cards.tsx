@@ -1,4 +1,5 @@
 import type { Offering } from '@/types';
+import { trackPointer } from './motion';
 import { Pictogram } from './pictogram';
 import { Reveal } from './reveal';
 
@@ -19,7 +20,8 @@ export function SolutionCards({ items, className = '' }: { items: Offering[]; cl
                     <Reveal delay={(i % 3) * 90} className="h-full">
                         <a
                             href={item.url}
-                            className="group relative flex h-full flex-col overflow-hidden bg-night transition-colors duration-300 hover:bg-night-2"
+                            onPointerMove={trackPointer}
+                            className="card-spot group relative flex h-full flex-col overflow-hidden bg-night transition-colors duration-300 hover:bg-night-2"
                         >
                             <span className="relative flex aspect-[16/10] items-center justify-center overflow-hidden bg-[radial-gradient(ellipse_at_30%_20%,#1f4fb0_0%,#17358a_55%,#11285c_100%)]">
                                 {item.imageUrl ? (

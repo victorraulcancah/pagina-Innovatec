@@ -13,7 +13,7 @@ function Column({ title, children }: { title: string; children: ReactNode }) {
 }
 
 const link =
-    'transition-colors hover:text-signal focus-visible:text-signal';
+    'link-line transition-colors hover:text-signal focus-visible:text-signal';
 
 export function SiteFooter({ home }: { home: HomeContent }) {
     const { contact, footer, solutions, social, company } = home.sections;

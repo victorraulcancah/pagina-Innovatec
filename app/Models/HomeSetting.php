@@ -66,6 +66,7 @@ class HomeSetting extends Model
                 ['label' => 'Contáctanos', 'url' => '/contacto', 'variant' => 'outline'],
             ],
             'menu' => [
+                ['label' => 'Inicio', 'url' => '/', 'children' => []],
                 ['label' => 'Nosotros', 'url' => '/nosotros', 'children' => []],
                 ['label' => 'División Enterprise', 'url' => '/division-enterprise', 'children' => [
                     ['label' => 'Comunicaciones Unificadas', 'url' => '/soluciones/comunicaciones-unificadas'],

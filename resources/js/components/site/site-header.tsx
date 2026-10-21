@@ -1,6 +1,13 @@
 import { usePage } from '@inertiajs/react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import type { HomeContent, MenuItem } from '@/types';
+
+/** Un ítem está activo en su propia ruta y en las rutas que cuelgan de ella. */
+function isCurrent(item: MenuItem, path: string) {
+    return item.url === '/'
+        ? path === '/'
+        : !item.url.startsWith('#') && (path === item.url || path.startsWith(`${item.url}/`));
+}
 
 function Chevron({ open }: { open: boolean }) {
     return (
@@ -60,13 +67,11 @@ function DesktopItem({ item, current }: { item: MenuItem; current: boolean }) {
             <div className="flex items-center gap-1.5">
                 <a
                     href={item.url}
+                    data-nav-link
                     className={linkClass}
                     aria-current={current ? 'page' : undefined}
                 >
                     {item.label}
-                    {current && (
-                        <span className="absolute inset-x-0 -bottom-0.5 h-px bg-white" />
-                    )}
                 </a>
                 {hasChildren && (
                     <button
@@ -105,16 +110,79 @@ export function SiteHeader({ home }: { home: HomeContent }) {
     const { url } = usePage();
     const [scrolled, setScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
+    const progressRef = useRef<HTMLSpanElement>(null);
+    const navRef = useRef<HTMLUListElement>(null);
+    const [indicator, setIndicator] = useState<{ left: number; width: number } | null>(null);
     const path = url.split(/[?#]/)[0];
+    const activeIndex = home.menu.findIndex((item) => isCurrent(item, path));
 
+    // Un solo listener: fondo de la barra y avance de lectura.
     useEffect(() => {
-        const onScroll = () => setScrolled(window.scrollY > 24);
+        let raf = 0;
 
-        onScroll();
+        const update = () => {
+            raf = 0;
+            setScrolled(window.scrollY > 24);
+
+            // Se escribe directo en el DOM: el avance no necesita un render de React.
+            const max = document.documentElement.scrollHeight - window.innerHeight;
+            const ratio = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+            progressRef.current?.style.setProperty('transform', `scaleX(${ratio})`);
+        };
+
+        const onScroll = () => {
+            if (!raf) {
+                raf = requestAnimationFrame(update);
+            }
+        };
+
+        update();
         window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll);
 
-        return () => window.removeEventListener('scroll', onScroll);
+        return () => {
+            cancelAnimationFrame(raf);
+            window.removeEventListener('scroll', onScroll);
+            window.removeEventListener('resize', onScroll);
+        };
     }, []);
+
+    // El subrayado se dibuja sobre el enlace activo y se recoloca si cambia el ancho.
+    useEffect(() => {
+        const ul = navRef.current;
+
+        if (!ul) {
+            return;
+        }
+
+        const measure = () => {
+            if (activeIndex < 0) {
+                setIndicator(null);
+                return;
+            }
+
+            const link = ul.querySelectorAll<HTMLAnchorElement>('[data-nav-link]')[activeIndex];
+
+            if (!link) {
+                setIndicator(null);
+                return;
+            }
+
+            const box = ul.getBoundingClientRect();
+            const rect = link.getBoundingClientRect();
+            setIndicator({ left: rect.left - box.left, width: rect.width });
+        };
+
+        measure();
+        const raf = requestAnimationFrame(measure);
+        window.addEventListener('resize', measure);
+        void document.fonts?.ready.then(measure).catch(() => {});
+
+        return () => {
+            cancelAnimationFrame(raf);
+            window.removeEventListener('resize', measure);
+        };
+    }, [activeIndex, path, home.menu.length]);
 
     useEffect(() => {
         document.body.style.overflow = menuOpen ? 'hidden' : '';
@@ -147,12 +215,19 @@ export function SiteHeader({ home }: { home: HomeContent }) {
                 </a>
 
                 <nav aria-label="Principal" className="hidden justify-center lg:flex">
-                    <ul className="flex items-center gap-4 xl:gap-9">
+                    <ul ref={navRef} className="relative flex items-center gap-4 xl:gap-9">
+                        {indicator && (
+                            <span
+                                aria-hidden="true"
+                                className="nav-indicator"
+                                style={{ transform: `translateX(${indicator.left}px)`, width: indicator.width }}
+                            />
+                        )}
                         {home.menu.map((item, i) => (
                             <DesktopItem
                                 key={`${item.label}-${i}`}
                                 item={item}
-                                current={item.url === '/' ? path === '/' : !item.url.startsWith('#') && (path === item.url || path.startsWith(`${item.url}/`))}
+                                current={isCurrent(item, path)}
                             />
                         ))}
                     </ul>
@@ -193,15 +268,26 @@ export function SiteHeader({ home }: { home: HomeContent }) {
                 </div>
             </div>
 
+            <span
+                ref={progressRef}
+                aria-hidden="true"
+                className="scroll-progress"
+                style={{ transform: 'scaleX(0)' }}
+            />
+
             {menuOpen && (
                 <nav
                     id="mobile-menu"
                     aria-label="Principal móvil"
-                    className="fixed inset-x-0 bottom-0 top-[76px] overflow-y-auto bg-night px-6 pb-10 pt-4 lg:hidden"
+                    className="menu-panel fixed inset-x-0 bottom-0 top-[76px] overflow-y-auto bg-night px-6 pb-10 pt-4 lg:hidden"
                 >
                     <ul className="divide-y divide-white/10">
                         {home.menu.map((item, i) => (
-                            <li key={`${item.label}-${i}`} className="py-4">
+                            <li
+                                key={`${item.label}-${i}`}
+                                className="menu-item py-4"
+                                style={{ ['--i' as string]: i } as CSSProperties}
+                            >
                                 <a
                                     href={item.url}
                                     onClick={() => setMenuOpen(false)}

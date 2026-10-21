@@ -1,4 +1,4 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import type { ReactNode } from 'react';
 import type { HomeContent } from '@/types';
 import { SiteFooter } from './site-footer';
@@ -17,11 +17,16 @@ export function SiteLayout({
     description?: string | null;
     children: ReactNode;
 }) {
+    const { url } = usePage();
+
     return (
         <>
             <Head title={title}>{description && <meta name="description" content={description} />}</Head>
             <SiteHeader home={home} />
-            <main>{children}</main>
+            {/* La clave remonta el contenido al cambiar de ruta: entrada breve, sin recargar el marco. */}
+            <main key={url} className="page-enter">
+                {children}
+            </main>
             <SiteFooter home={home} />
             <WhatsappButton number={home.sections.contact.whatsapp} />
         </>

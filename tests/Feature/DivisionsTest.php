@@ -26,11 +26,13 @@ class DivisionsTest extends TestCase
 
         $this->get('/division-enterprise')->assertInertia(fn (Assert $p) => $p
             ->component('enterprise')
-            ->where('home.menu.0.label', 'Nosotros')
-            ->where('home.menu.1.label', 'División Enterprise')
-            ->where('home.menu.1.children.0.url', '/soluciones/redes')
-            ->where('home.menu.2.label', 'División Telcos')
-            ->where('home.menu.3.url', '/experiencia'));
+            ->where('home.menu.0.label', 'Inicio')
+            ->where('home.menu.0.url', '/')
+            ->where('home.menu.1.label', 'Nosotros')
+            ->where('home.menu.2.label', 'División Enterprise')
+            ->where('home.menu.2.children.0.url', '/soluciones/redes')
+            ->where('home.menu.3.label', 'División Telcos')
+            ->where('home.menu.4.url', '/experiencia'));
     }
 
     public function test_admin_manages_the_telcos_page_content(): void

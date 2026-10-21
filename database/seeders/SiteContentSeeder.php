@@ -64,6 +64,7 @@ class SiteContentSeeder extends Seeder
         $this->seedPageImages();
         $this->upgradeLinks();
         $this->upgradeToDivisions();
+        $this->addHomeToMenu();
         $this->seedBlog();
     }
 
@@ -277,6 +278,29 @@ class SiteContentSeeder extends Seeder
 
         unset($images['soluciones'], $images['servicios']);
         $home->update(['page_images' => $images]);
+    }
+
+    /**
+     * Una sola vez: agrega «Inicio» al principio del menú de quien ya tenía uno.
+     * Queda anotado para no volver a ponerlo si el administrador lo quita después.
+     */
+    private function addHomeToMenu(): void
+    {
+        $home = HomeSetting::current();
+        $sections = $home->sections ?? [];
+
+        if ($sections['meta']['menu_inicio'] ?? false) {
+            return;
+        }
+
+        $sections['meta']['menu_inicio'] = true;
+        $menu = $home->menu ?? [];
+
+        if (! collect($menu)->contains('url', '/')) {
+            array_unshift($menu, ['label' => 'Inicio', 'url' => '/', 'children' => []]);
+        }
+
+        $home->update(['menu' => $menu, 'sections' => $sections]);
     }
 
     /** Una sola vez: menú, botones y tarjetas de la portada pasan a las dos divisiones. */

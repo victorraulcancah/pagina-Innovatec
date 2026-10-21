@@ -10,7 +10,7 @@ export function ClientGrid({ items }: { items: Clients['items'] }) {
             {items.map((client, i) => (
                 <li key={client.id}>
                     <Reveal delay={(i % 7) * 50}>
-                        <div className="flex aspect-[3/2] items-center justify-center rounded-md bg-white p-4">
+                        <div className="tile-lift flex aspect-[3/2] items-center justify-center rounded-md bg-white p-4">
                             {client.logoUrl ? (
                                 <img
                                     src={client.logoUrl}

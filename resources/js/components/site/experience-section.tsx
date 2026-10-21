@@ -14,7 +14,7 @@ export function CertificationGrid({ items }: { items: Experience['certifications
             {items.map((cert, i) => (
                 <li key={cert.id}>
                     <Reveal delay={(i % 4) * 60}>
-                        <figure className="flex aspect-square flex-col items-center justify-center rounded-md bg-white p-3">
+                        <figure className="tile-lift flex aspect-square flex-col items-center justify-center rounded-md bg-white p-3">
                             {cert.imageUrl && (
                                 <img src={cert.imageUrl} alt={cert.name} loading="lazy" className="max-h-full max-w-full object-contain" />
                             )}

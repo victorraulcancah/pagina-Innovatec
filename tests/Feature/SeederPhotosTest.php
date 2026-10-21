@@ -39,4 +39,23 @@ class SeederPhotosTest extends TestCase
 
         $this->assertSame('seed/subida-por-el-admin.jpg', $item->fresh()->image_path);
     }
+
+    public function test_menu_starts_with_inicio_and_the_seeder_does_not_bring_it_back_once_removed(): void
+    {
+        Storage::fake('public');
+
+        $this->assertSame('Inicio', HomeSetting::current()->menu[0]['label']);
+
+        // Instalación previa sin «Inicio»: el seeder lo agrega una sola vez.
+        $home = HomeSetting::current();
+        $home->update(['menu' => array_slice($home->menu, 1), 'sections' => []]);
+        $this->seed(SiteContentSeeder::class);
+        $this->assertSame('Inicio', HomeSetting::current()->menu[0]['label']);
+
+        // El administrador lo quita: no vuelve a aparecer.
+        $home = HomeSetting::current();
+        $home->update(['menu' => array_slice($home->menu, 1)]);
+        $this->seed(SiteContentSeeder::class);
+        $this->assertNotContains('Inicio', array_column(HomeSetting::current()->menu, 'label'));
+    }
 }

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 
 /**
  * Aparece suave al entrar en pantalla. El contenido es visible por defecto:
@@ -47,10 +47,9 @@ export function Reveal({
     return (
         <div
             ref={ref}
-            className={`transition-[opacity,transform] duration-700 ease-out-expo ${
-                state === 'hidden' ? 'translate-y-5 opacity-0' : ''
-            } ${className}`}
-            style={{ transitionDelay: state === 'shown' ? `${delay}ms` : '0ms' }}
+            data-state={state}
+            className={`reveal ${className}`}
+            style={{ ['--rd' as string]: `${delay}ms` } as CSSProperties}
         >
             {children}
         </div>

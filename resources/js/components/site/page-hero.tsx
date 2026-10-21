@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { KineticTitle } from './kinetic-title';
 import { NetworkMesh } from './network-mesh';
 import { sectionShell } from './reveal';
 
@@ -41,9 +42,12 @@ export function PageHero({
 
             <div className={`${sectionShell} grid items-center gap-12 ${aside ? 'lg:grid-cols-[1fr_minmax(0,420px)]' : ''}`}>
                 <div>
-                    <h1 className="animate-rise font-display max-w-[20ch] text-[clamp(1.6rem,4.4vw,3.4rem)] leading-[1.12] uppercase text-balance text-white">
-                        {title}
-                    </h1>
+                    <KineticTitle
+                        as="h1"
+                        text={title}
+                        delay={100}
+                        className="font-display max-w-[20ch] text-[clamp(1.6rem,4.4vw,3.4rem)] leading-[1.12] uppercase text-balance text-white"
+                    />
                     {subtitle && (
                         <p
                             className="animate-rise mt-5 max-w-[34ch] text-xl leading-snug text-white sm:text-2xl"
