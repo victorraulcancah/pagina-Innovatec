@@ -65,6 +65,7 @@ class SiteContentSeeder extends Seeder
         $this->upgradeLinks();
         $this->upgradeToDivisions();
         $this->addHomeToMenu();
+        $this->seedWhatsapp();
         $this->seedBlog();
     }
 
@@ -278,6 +279,18 @@ class SiteContentSeeder extends Seeder
 
         unset($images['soluciones'], $images['servicios']);
         $home->update(['page_images' => $images]);
+    }
+
+    /** Número de WhatsApp de la empresa, solo si aún no hay uno cargado. */
+    private function seedWhatsapp(): void
+    {
+        $home = HomeSetting::current();
+        $sections = $home->sections ?? [];
+
+        if (blank($sections['contact']['whatsapp'] ?? null)) {
+            $sections['contact']['whatsapp'] = '+51 970 855 741';
+            $home->update(['sections' => $sections]);
+        }
     }
 
     /**

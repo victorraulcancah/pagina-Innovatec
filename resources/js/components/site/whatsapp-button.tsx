@@ -1,14 +1,16 @@
+import { whatsappUrl } from '@/lib/whatsapp';
+
 /** Botón flotante de WhatsApp: aparece solo si hay un número en "Datos de la empresa". */
 export function WhatsappButton({ number }: { number: string }) {
-    const digits = number.replace(/\D/g, '');
+    const href = whatsappUrl(number);
 
-    if (digits.length < 8) {
+    if (!href) {
         return null;
     }
 
     return (
         <a
-            href={`https://wa.me/${digits}`}
+            href={href}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Escríbenos por WhatsApp"

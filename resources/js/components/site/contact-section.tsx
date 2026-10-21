@@ -1,4 +1,5 @@
 import type { SiteSections } from '@/types';
+import { whatsappUrl } from '@/lib/whatsapp';
 import { Reveal } from './reveal';
 
 /** Lista de datos de contacto con enlaces directos (correo, teléfono, web). */
@@ -10,7 +11,7 @@ export function ContactDetails({ contact }: { contact: SiteSections['contact'] }
         contact.whatsapp && {
             label: 'WhatsApp',
             text: contact.whatsapp,
-            href: `https://wa.me/${contact.whatsapp.replace(/\D/g, '')}`,
+            href: whatsappUrl(contact.whatsapp),
         },
         contact.address && { label: 'Dirección', text: contact.address, href: null },
         contact.hours && { label: 'Horario', text: contact.hours, href: null },

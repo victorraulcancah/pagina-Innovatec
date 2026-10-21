@@ -291,7 +291,7 @@ class SiteSections
                     ['group' => 'company', 'key' => 'tax_id', 'label' => 'RUC', 'type' => 'text', 'max' => 30],
                     ['group' => 'contact', 'key' => 'email', 'label' => 'Correo', 'type' => 'email', 'max' => 120, 'hint' => 'También recibe el aviso de los mensajes del formulario.'],
                     ['group' => 'contact', 'key' => 'phone', 'label' => 'Teléfono', 'type' => 'text', 'max' => 40],
-                    ['group' => 'contact', 'key' => 'whatsapp', 'label' => 'WhatsApp', 'type' => 'text', 'max' => 30, 'hint' => 'Con código de país, por ejemplo +51 999 888 777. Si lo completas, aparece un botón flotante de WhatsApp.'],
+                    ['group' => 'contact', 'key' => 'whatsapp', 'label' => 'WhatsApp', 'type' => 'text', 'max' => 30, 'hint' => 'Puedes escribir solo los 9 dígitos (970 855 741): se agrega el +51. Si lo completas, aparece un botón flotante de WhatsApp y un enlace que abre el chat con un mensaje ya escrito.'],
                     ['group' => 'contact', 'key' => 'address', 'label' => 'Dirección', 'type' => 'text', 'max' => 160],
                     ['group' => 'contact', 'key' => 'hours', 'label' => 'Horario de atención', 'type' => 'text', 'max' => 120],
                     ['group' => 'contact', 'key' => 'website', 'label' => 'Sitio web', 'type' => 'text', 'max' => 120],

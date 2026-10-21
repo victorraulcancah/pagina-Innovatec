@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { whatsappUrl } from '@/lib/whatsapp';
 import type { HomeContent } from '@/types';
 import { sectionShell } from './reveal';
 import { SocialLinks } from './social-links';
@@ -87,10 +88,10 @@ export function SiteFooter({ home }: { home: HomeContent }) {
                             </a>
                         </li>
                     )}
-                    {contact.whatsapp && (
+                    {whatsappUrl(contact.whatsapp) && (
                         <li>
                             <a
-                                href={`https://wa.me/${contact.whatsapp.replace(/\D/g, '')}`}
+                                href={whatsappUrl(contact.whatsapp) ?? undefined}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className={link}
