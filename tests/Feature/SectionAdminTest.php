@@ -99,4 +99,42 @@ class SectionAdminTest extends TestCase
             'lists' => ['about_card' => [['title' => 'X', 'url' => 'javascript:alert(1)']]],
         ])->assertSessionHasErrors(['texts.about.title', 'lists.about_card.0.url']);
     }
+
+    public function test_mission_vision_and_objectives_texts_and_images_are_editable_from_the_panel(): void
+    {
+        Storage::fake('public');
+
+        $this->admin()->get('/admin/nosotros')->assertInertia(fn (Assert $p) => $p
+            ->where('config.images.1.key', 'image_mission')
+            ->where('config.images.2.key', 'image_vision')
+            ->where('config.images.3.key', 'image_objectives'));
+
+        $this->admin()->post('/admin/nosotros', [
+            'texts' => ['about' => ['title' => 'Nosotros', 'mission' => 'Mi misión', 'vision' => 'Mi visión', 'objectives' => "Uno
+Dos"]],
+            'image_mission' => UploadedFile::fake()->image('mision.jpg', 800, 600),
+            'image_vision' => UploadedFile::fake()->image('vision.jpg', 800, 600),
+        ])->assertSessionHasNoErrors();
+
+        $first = $this->get('/nosotros')->original->getData()['page']['props']['home']['sections']['about'];
+        $this->assertSame('Mi misión', $first['mission']);
+        $this->assertSame("Uno
+Dos", $first['objectives']);
+        $this->assertNotNull($first['missionImageUrl']);
+        $this->assertNotNull($first['visionImageUrl']);
+        $oldPath = \App\Models\HomeSetting::current()->page_images['mission'];
+        Storage::disk('public')->assertExists($oldPath);
+
+        // Reemplazar la imagen borra la anterior; quitarla la deja vacía.
+        $this->admin()->post('/admin/nosotros', [
+            'texts' => ['about' => ['title' => 'Nosotros']],
+            'image_mission' => UploadedFile::fake()->image('nueva.jpg', 800, 600),
+            'remove_image_vision' => true,
+        ])->assertSessionHasNoErrors();
+
+        $images = \App\Models\HomeSetting::current()->page_images;
+        Storage::disk('public')->assertMissing($oldPath);
+        Storage::disk('public')->assertExists($images['mission']);
+        $this->assertArrayNotHasKey('vision', $images);
+    }
 }
