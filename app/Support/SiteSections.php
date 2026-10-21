@@ -30,6 +30,9 @@ class SiteSections
                 'accent' => 'TIC',
                 'body' => 'Un equipo con más de 10 años de experiencia, respaldado por una sólida trayectoria en ingeniería y certificaciones técnicas de los principales fabricantes del sector.',
                 'more_label' => 'Conoce más sobre nosotros',
+                'mission' => '',
+                'vision' => '',
+                'objectives' => '',
                 'story' => 'PROINNOVATEC se destaca como un referente en la integración de soluciones de Tecnologías de la Información y Comunicaciones. Nuestro compromiso con la excelencia y la innovación se refleja en cada proyecto que emprendemos. Contamos con un equipo altamente capacitado con más de 10 años de experiencia, respaldado por una sólida trayectoria en ingeniería y certificaciones técnicas de los principales fabricantes del sector. La pasión por la tecnología y la búsqueda constante de soluciones eficientes nos impulsan a seguir creciendo y superando expectativas en el ámbito de las TIC.',
             ],
             'solutions' => [
@@ -119,9 +122,15 @@ class SiteSections
                     ['group' => 'about', 'key' => 'body', 'label' => 'Texto breve (portada)', 'type' => 'textarea', 'max' => 400],
                     ['group' => 'about', 'key' => 'more_label', 'label' => 'Texto del botón hacia Nosotros (portada)', 'type' => 'text', 'max' => 60],
                     ['group' => 'about', 'key' => 'story', 'label' => 'Quiénes somos (página Nosotros)', 'type' => 'textarea', 'max' => 1500],
+                    ['group' => 'about', 'key' => 'mission', 'label' => 'Misión (página Nosotros)', 'type' => 'textarea', 'max' => 800, 'hint' => 'Si dejas Misión, Visión y Objetivos vacíos, esa sección no se muestra.'],
+                    ['group' => 'about', 'key' => 'vision', 'label' => 'Visión (página Nosotros)', 'type' => 'textarea', 'max' => 800],
+                    ['group' => 'about', 'key' => 'objectives', 'label' => 'Objetivos (página Nosotros)', 'type' => 'textarea', 'max' => 1200, 'hint' => 'Escribe un objetivo por línea: se muestran como una lista.'],
                 ],
                 'images' => [
                     ['key' => 'image_nosotros', 'slot' => 'nosotros', 'label' => 'Imagen de la página Nosotros', 'hint' => 'JPG, PNG o WebP. Se muestra en la cabecera y junto al texto.'],
+                    ['key' => 'image_mission', 'slot' => 'mission', 'label' => 'Imagen de la Misión', 'hint' => 'Horizontal (4:3). Aparece junto al texto de la Misión.'],
+                    ['key' => 'image_vision', 'slot' => 'vision', 'label' => 'Imagen de la Visión', 'hint' => 'Horizontal (4:3). Aparece junto al texto de la Visión.'],
+                    ['key' => 'image_objectives', 'slot' => 'objectives', 'label' => 'Imagen de los Objetivos', 'hint' => 'Horizontal (4:3). Aparece junto a la lista de Objetivos.'],
                 ],
                 'lists' => [[
                     'section' => 'about_card', 'label' => 'Tarjetas con imagen (portada)', 'itemLabel' => 'Tarjeta', 'max' => 2,

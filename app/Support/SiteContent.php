@@ -35,6 +35,9 @@ class SiteContent
             'about' => [
                 ...$text['about'],
                 'imageUrl' => $home->pageImageUrl('nosotros'),
+                'missionImageUrl' => $home->pageImageUrl('mission'),
+                'visionImageUrl' => $home->pageImageUrl('vision'),
+                'objectivesImageUrl' => $home->pageImageUrl('objectives'),
                 'cards' => $list('about_card', fn (SectionItem $i) => [
                     'id' => $i->id,
                     'label' => $i->title,

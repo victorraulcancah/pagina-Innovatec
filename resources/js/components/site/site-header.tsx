@@ -106,6 +106,13 @@ function DesktopItem({ item, current }: { item: MenuItem; current: boolean }) {
     );
 }
 
+/**
+ * Marco del logo: fondo azul con borde cian para que se lea sobre cualquier fondo
+ * (fotos, bandas claras). Cambia estas clases para ajustar su estilo.
+ */
+const LOGO_FRAME =
+    'flex items-center rounded-xl bg-night px-3.5 py-2 ring-1 ring-signal/60 shadow-[0_10px_24px_-12px_rgba(5,11,26,0.9)] transition-[box-shadow,transform] duration-300 ease-out-expo hover:-translate-y-px hover:ring-signal hover:shadow-[0_14px_28px_-12px_rgba(6,194,240,0.55)]';
+
 export function SiteHeader({ home }: { home: HomeContent }) {
     const { url } = usePage();
     const [scrolled, setScrolled] = useState(false);
@@ -201,16 +208,16 @@ export function SiteHeader({ home }: { home: HomeContent }) {
                 menuOpen
                     ? 'bg-night'
                     : scrolled
-                      ? 'bg-night/80 backdrop-blur-md'
+                      ? 'bg-night/95 backdrop-blur-md'
                       : 'bg-transparent'
             }`}
         >
             <div className="mx-auto grid h-[76px] max-w-[1320px] grid-cols-[auto_1fr_auto] items-center gap-6 px-6 lg:px-12">
-                <a href="/" className="flex items-center" aria-label={home.brandName}>
+                <a href="/" className={LOGO_FRAME} aria-label={home.brandName}>
                     <img
                         src={home.logoUrl}
                         alt={home.brandName}
-                        className="h-8 w-auto sm:h-9"
+                        className="h-7 w-auto sm:h-8"
                     />
                 </a>
 

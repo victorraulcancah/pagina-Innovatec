@@ -40,8 +40,14 @@ export type SiteSections = {
         accent: string;
         body: string;
         story: string;
+        mission: string;
+        vision: string;
+        objectives: string;
         more_label: string;
         imageUrl: string | null;
+        missionImageUrl: string | null;
+        visionImageUrl: string | null;
+        objectivesImageUrl: string | null;
         cards: { id: number; label: string; url: string; imageUrl: string | null }[];
     };
     solutions: { title: string; intro: string; imageUrl: string | null; items: Offering[] };

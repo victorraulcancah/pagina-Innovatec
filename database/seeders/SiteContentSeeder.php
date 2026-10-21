@@ -347,6 +347,9 @@ class SiteContentSeeder extends Seeder
             'clientes' => 'photos/server-room.jpg',
             'contacto' => 'photos/data-center.jpg',
             'telcos' => 'photos/telcos-torre.jpg',
+            'mission' => 'photos/telcos-flexibilidad.jpg',
+            'vision' => 'photos/data-center.jpg',
+            'objectives' => 'photos/telcos-confianza.jpg',
         ] as $slot => $asset) {
             $images[$slot] ??= $this->copyAsset($asset);
         }
