@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Enums\Role;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -26,7 +26,7 @@ class AdminUserSeeder extends Seeder
         $user = User::query()->firstOrNew(['email' => $email]);
         $user->name = env('ADMIN_NAME', 'Administrador');
         $user->password = $password;
-        $user->role = Role::Admin;
+        $user->role_id = Role::query()->where('slug', 'admin')->value('id');
         $user->active = true;
         $user->save();
     }

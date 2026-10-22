@@ -2,7 +2,6 @@
 
 namespace App\Support;
 
-use App\Enums\Permission;
 use App\Models\ContactMessage;
 use App\Models\User;
 
@@ -321,7 +320,7 @@ class SiteSections
     public static function navigation(?User $user = null): array
     {
         $user ??= auth()->user();
-        $allowed = fn (Permission $permission) => $user?->hasPermission($permission) ?? false;
+        $allowed = fn (string $permission) => $user?->hasPermission($permission) ?? false;
 
         $pages = collect(static::pages())
             ->filter(fn ($p, $slug) => $allowed(static::permission($slug)))
@@ -329,21 +328,22 @@ class SiteSections
             ->values()->all();
 
         return array_values(array_filter([
-            $allowed(Permission::Content) ? ['slug' => '', 'label' => 'Inicio'] : null,
+            $allowed('pages.inicio') ? ['slug' => '', 'label' => 'Inicio'] : null,
             ...$pages,
-            $allowed(Permission::Blog) ? ['slug' => 'blog', 'label' => 'Blog'] : null,
-            $allowed(Permission::Messages)
+            $allowed('blog.view') ? ['slug' => 'blog', 'label' => 'Blog'] : null,
+            $allowed('messages.view')
                 ? ['slug' => 'mensajes', 'label' => 'Mensajes', 'badge' => ContactMessage::query()->whereNull('read_at')->count()]
                 : null,
-            $allowed(Permission::Users) ? ['slug' => 'usuarios', 'label' => 'Usuarios'] : null,
+            $allowed('users.view') ? ['slug' => 'usuarios', 'label' => 'Usuarios'] : null,
+            $allowed('roles.view') ? ['slug' => 'roles', 'label' => 'Roles y permisos'] : null,
             ['slug' => 'cuenta', 'label' => 'Mi cuenta'],
         ]));
     }
 
     /** Permiso necesario para editar una página del panel. */
-    public static function permission(string $page): Permission
+    public static function permission(string $page): string
     {
-        return $page === 'empresa' ? Permission::Company : Permission::Content;
+        return PermissionCatalog::paraPagina($page);
     }
 
     /**

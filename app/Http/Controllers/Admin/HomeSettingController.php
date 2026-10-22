@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Enums\Permission;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateHomeSettingRequest;
 use App\Models\HomeSetting;
@@ -18,7 +17,7 @@ class HomeSettingController extends Controller
 {
     public function edit(Request $request): Response|RedirectResponse
     {
-        if (! $request->user()->hasPermission(Permission::Content)) {
+        if (! $request->user()->hasPermission('pages.inicio')) {
             return redirect($request->user()->landingPath());
         }
 

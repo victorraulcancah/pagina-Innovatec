@@ -41,7 +41,7 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 // Funciones: se evalúan al renderizar, cuando AuthenticateAdmin ya fijó el guard `api`.
                 'user' => fn () => $request->user(),
-                'role' => fn () => $request->user()?->role->label(),
+                'role' => fn () => $request->user()?->role?->name,
                 'permissions' => fn () => $request->user()?->permissionNames() ?? [],
             ],
         ];

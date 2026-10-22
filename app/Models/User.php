@@ -3,12 +3,13 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Enums\Permission;
-use App\Enums\Role;
+use App\Support\PermissionCatalog;
+use App\Support\SiteSections;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -20,7 +21,8 @@ use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
  * @property string $email
  * @property Carbon|null $email_verified_at
  * @property string $password
- * @property Role $role
+ * @property int|null $role_id
+ * @property Role|null $role
  * @property bool $active
  * @property string|null $remember_token
  * @property Carbon|null $created_at
@@ -43,31 +45,51 @@ class User extends Authenticatable implements JWTSubject
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'role' => Role::class,
             'active' => 'boolean',
         ];
     }
 
-    public function hasPermission(Permission $permission): bool
+    /** @return BelongsTo<Role, $this> */
+    public function role(): BelongsTo
     {
-        return $this->active && $this->role->can($permission);
+        return $this->belongsTo(Role::class);
+    }
+
+    /** Una cuenta desactivada no tiene ningún permiso, aunque su rol los tenga. */
+    public function hasPermission(string $permission): bool
+    {
+        return $this->active && $this->role?->can($permission) === true;
     }
 
     /** @return list<string> */
     public function permissionNames(): array
     {
-        return $this->active ? array_map(fn (Permission $p) => $p->value, $this->role->permissions()) : [];
+        return $this->active && $this->role ? $this->role->permissionKeys() : [];
     }
 
     /** Primera pantalla del panel a la que este usuario tiene acceso. */
     public function landingPath(): string
     {
-        return match (true) {
-            $this->hasPermission(Permission::Content) => '/admin',
-            $this->hasPermission(Permission::Blog) => '/admin/blog',
-            $this->hasPermission(Permission::Messages) => '/admin/mensajes',
-            default => '/admin/cuenta',
-        };
+        $destinos = ['pages.inicio' => '/admin'];
+
+        foreach (SiteSections::pages() as $slug => $page) {
+            $destinos[PermissionCatalog::paraPagina($slug)] = "/admin/$slug";
+        }
+
+        $destinos += [
+            'blog.view' => '/admin/blog',
+            'messages.view' => '/admin/mensajes',
+            'users.view' => '/admin/usuarios',
+            'roles.view' => '/admin/roles',
+        ];
+
+        foreach ($destinos as $permiso => $ruta) {
+            if ($this->hasPermission($permiso)) {
+                return $ruta;
+            }
+        }
+
+        return '/admin/cuenta';
     }
 
     public function getJWTIdentifier(): mixed

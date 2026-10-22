@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Enums\Role;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -31,14 +31,18 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
-            'role' => Role::Admin,
+            // El rol Administrador (sembrado por la migración de roles), salvo que se pida otro con ->role().
+            'role_id' => fn () => Role::query()->where('slug', 'admin')->value('id'),
             'active' => true,
         ];
     }
 
-    public function role(Role $role): static
+    /** El rol por su identificador (`editor`, `redactor`…) o el modelo ya creado. */
+    public function role(Role|string $role): static
     {
-        return $this->state(fn () => ['role' => $role]);
+        return $this->state(fn () => [
+            'role_id' => $role instanceof Role ? $role->id : Role::query()->where('slug', $role)->value('id'),
+        ]);
     }
 
     public function inactive(): static
