@@ -59,6 +59,7 @@ class SiteContentSeeder extends Seeder
         $this->backfillCases();
         $this->backfillTelcosServices();
         $this->backfillPhotos();
+        $this->backfillClientTexts();
         $this->migrateLegacyImages();
         $this->migrateCompanyData();
         $this->seedPageImages();
@@ -280,6 +281,23 @@ class SiteContentSeeder extends Seeder
 
         unset($images['soluciones'], $images['servicios']);
         $home->update(['page_images' => $images]);
+    }
+
+    /** Texto breve de los clientes que tienen un proyecto en el brochure (resumido de ese proyecto); solo donde está vacío. */
+    private const TEXTOS_CLIENTES = [
+        'Minera Titán del Perú' => 'Redes, comunicaciones y seguridad en oficinas, plantas y campamentos mineros; hoy con outsourcing en ciberseguridad, networking y comunicaciones.',
+        'SENATI' => 'Plataforma de comunicaciones unificadas en más de 120 sedes.',
+        'Innova ITC' => 'Homologación de routers ONE ACCESS para Telefónica.',
+        'Colegio María de los Ángeles' => 'Red Wi-Fi con más de 30 puntos de acceso para aulas híbridas.',
+    ];
+
+    private function backfillClientTexts(): void
+    {
+        SectionItem::query()->where('section', 'client')->whereNull('body')->get()->each(function (SectionItem $item) {
+            if (isset(self::TEXTOS_CLIENTES[$item->title])) {
+                $item->update(['body' => self::TEXTOS_CLIENTES[$item->title]]);
+            }
+        });
     }
 
     /** El orden en que se muestran las soluciones (por nombre). */

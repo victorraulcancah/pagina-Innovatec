@@ -49,6 +49,7 @@ class SiteSections
             'clients' => [
                 'title' => 'Clientes que nos',
                 'accent' => 'respaldan',
+                'intro' => 'Empresas e instituciones de minería, educación, telecomunicaciones y comercio confían en nuestro equipo técnico para integrar y mantener sus soluciones TIC.',
             ],
             'company' => [
                 'name' => 'PROINNOVATEC',
@@ -245,19 +246,21 @@ class SiteSections
             ],
             'clientes' => [
                 'label' => 'Clientes',
-                'description' => 'Logos de las empresas que confían en PROINNOVATEC.',
+                'description' => 'Las empresas que confían en PROINNOVATEC: cada una con su logo, su nombre y, si quieres, un texto breve. La portada muestra las primeras ocho.',
                 'groups' => ['clients' => 'Título'],
                 'texts' => [
                     ['group' => 'clients', 'key' => 'title', 'label' => 'Título', 'type' => 'text', 'max' => 80, 'required' => true],
                     ['group' => 'clients', 'key' => 'accent', 'label' => 'Palabras en color', 'type' => 'text', 'max' => 60],
+                    ['group' => 'clients', 'key' => 'intro', 'label' => 'Texto informativo', 'type' => 'textarea', 'max' => 300, 'hint' => 'Se muestra bajo el título, en la portada y en la página Clientes. Déjalo vacío para no mostrarlo.'],
                 ],
                 'images' => [
                     ['key' => 'image_clientes', 'slot' => 'clientes', 'label' => 'Imagen de la página Clientes', 'hint' => 'JPG, PNG o WebP. Se muestra en la cabecera.'],
                 ],
                 'lists' => [[
-                    'section' => 'client', 'label' => 'Logos', 'itemLabel' => 'Cliente', 'max' => 60,
+                    'section' => 'client', 'label' => 'Clientes', 'itemLabel' => 'Cliente', 'max' => 60, 'toggle' => true,
                     'fields' => [
-                        ['key' => 'title', 'label' => 'Nombre', 'type' => 'text', 'max' => 80],
+                        ['key' => 'title', 'label' => 'Nombre del cliente o empresa', 'type' => 'text', 'max' => 80],
+                        ['key' => 'body', 'label' => 'Texto breve (opcional)', 'type' => 'textarea', 'max' => 160],
                         ['key' => 'image', 'label' => 'Logo', 'type' => 'image'],
                     ],
                 ]],

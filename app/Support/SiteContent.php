@@ -78,6 +78,7 @@ class SiteContent
                 'items' => $list('client', fn (SectionItem $i) => [
                     'id' => $i->id,
                     'name' => $i->title,
+                    'description' => $i->body,
                     'logoUrl' => $i->imageUrl(),
                 ]),
             ],

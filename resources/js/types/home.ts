@@ -70,7 +70,8 @@ export type SiteSections = {
         title: string;
         accent: string;
         imageUrl: string | null;
-        items: { id: number; name: string; logoUrl: string | null }[];
+        intro: string;
+        items: { id: number; name: string; description: string | null; logoUrl: string | null }[];
     };
     contact: {
         title: string;
