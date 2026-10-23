@@ -1,25 +1,60 @@
+import type { CSSProperties } from 'react';
 import type { SiteSections } from '@/types';
 import { Reveal, SectionHeading, sectionShell } from './reveal';
 
 type Experience = SiteSections['experience'];
 
-/** Insignias de certificación sobre fichas claras. */
-export function CertificationGrid({ items }: { items: Experience['certifications'] }) {
+/**
+ * Certificaciones: cada una con su insignia, su nombre y, si se escribió, una descripción. `tone` es el fondo donde
+ * se pone (oscuro o claro); `compact` deja solo insignia y nombre (para la portada).
+ */
+export function CertificationGrid({
+    items,
+    tone = 'dark',
+    compact = false,
+}: {
+    items: Experience['certifications'];
+    tone?: 'dark' | 'light';
+    compact?: boolean;
+}) {
     if (items.length === 0) {
         return null;
     }
 
+    const light = tone === 'light';
+
     return (
-        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <ul className={`grid gap-4 ${compact ? 'sm:grid-cols-2' : 'md:grid-cols-2'}`}>
             {items.map((cert, i) => (
-                <li key={cert.id}>
-                    <Reveal delay={(i % 4) * 60}>
-                        <figure className="tile-lift flex aspect-square flex-col items-center justify-center rounded-md bg-white p-3">
-                            {cert.imageUrl && (
-                                <img src={cert.imageUrl} alt={cert.name} loading="lazy" className="max-h-full max-w-full object-contain" />
+                <li key={cert.id} className="ent-pop" style={{ ['--d' as string]: `${150 + (i % 8) * 80}ms` } as CSSProperties}>
+                    <article
+                        className={`inc-card group relative flex h-full items-center gap-4 overflow-hidden rounded-xl p-4 sm:gap-5 ${
+                            compact ? '' : 'sm:p-5'
+                        } ${
+                            light
+                                ? 'bg-white shadow-[0_18px_36px_-24px_rgba(17,40,92,0.6)] ring-1 ring-night/10'
+                                : 'bg-white/[0.07] ring-1 ring-white/15 hover:bg-white/[0.11]'
+                        }`}
+                    >
+                        <span
+                            className={`flex shrink-0 items-center justify-center rounded-lg bg-white p-2 shadow-[0_10px_20px_-12px_rgba(5,11,26,0.8)] ring-1 ring-night/10 transition-transform duration-500 ease-out-expo group-hover:scale-105 group-hover:-rotate-2 ${
+                                compact ? 'size-16' : 'size-24'
+                            }`}
+                        >
+                            {cert.imageUrl ? (
+                                <img src={cert.imageUrl} alt="" loading="lazy" className="max-h-full max-w-full object-contain" />
+                            ) : (
+                                <span className="text-center text-[10px] font-semibold leading-tight text-night">{cert.name}</span>
                             )}
-                        </figure>
-                    </Reveal>
+                        </span>
+                        <div className="min-w-0">
+                            <h3 className={`font-semibold leading-snug ${compact ? 'text-sm' : 'text-base'} ${light ? 'text-night' : 'text-white'}`}>{cert.name}</h3>
+                            {!compact && cert.description && (
+                                <p className={`mt-1.5 text-sm leading-relaxed ${light ? 'text-[#2b3d66]' : 'text-white'}`}>{cert.description}</p>
+                            )}
+                        </div>
+                        <span aria-hidden="true" className={`inc-bar absolute inset-x-0 bottom-0 h-[3px] ${light ? 'bg-signal-deep' : 'bg-signal'}`} />
+                    </article>
                 </li>
             ))}
         </ul>
@@ -48,7 +83,7 @@ export function ExperienceTeaser({ experience }: { experience: Experience }) {
                         Ver proyectos
                     </a>
                 </Reveal>
-                <CertificationGrid items={experience.certifications.slice(0, 8)} />
+                <CertificationGrid items={experience.certifications.slice(0, 8)} compact />
             </div>
         </section>
     );

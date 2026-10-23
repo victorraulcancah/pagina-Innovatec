@@ -238,8 +238,9 @@ class SiteSections
                         ['key' => 'image', 'label' => 'Logo del cliente o foto del proyecto', 'type' => 'image'],
                         ['key' => 'gallery', 'label' => 'Tecnologías usadas (logos)', 'type' => 'gallery'],
                     ]],
-                    ['section' => 'certification', 'label' => 'Certificaciones', 'itemLabel' => 'Certificación', 'max' => 16, 'fields' => [
-                        ['key' => 'title', 'label' => 'Nombre', 'type' => 'text', 'max' => 80],
+                    ['section' => 'certification', 'label' => 'Certificaciones', 'itemLabel' => 'Certificación', 'max' => 16, 'toggle' => true, 'fields' => [
+                        ['key' => 'title', 'label' => 'Nombre de la certificación', 'type' => 'text', 'max' => 80],
+                        ['key' => 'body', 'label' => 'Descripción (opcional)', 'type' => 'textarea', 'max' => 160],
                         ['key' => 'image', 'label' => 'Insignia', 'type' => 'image'],
                     ]],
                 ],

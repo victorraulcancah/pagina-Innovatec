@@ -60,6 +60,7 @@ class SiteContentSeeder extends Seeder
         $this->backfillTelcosServices();
         $this->backfillPhotos();
         $this->backfillClientTexts();
+        $this->backfillCertificationTexts();
         $this->migrateLegacyImages();
         $this->migrateCompanyData();
         $this->seedPageImages();
@@ -281,6 +282,27 @@ class SiteContentSeeder extends Seeder
 
         unset($images['soluciones'], $images['servicios']);
         $home->update(['page_images' => $images]);
+    }
+
+    /** Qué es cada certificación, tomado de su propia insignia; solo donde la descripción está vacía. */
+    private const TEXTOS_CERTIFICACIONES = [
+        'Cisco CCNA' => 'Cisco Certified Network Associate: fundamentos de redes, conectividad IP y seguridad.',
+        'Huawei HCIA' => 'Huawei Certified ICT Associate en Routing & Switching.',
+        'VMware Certified Professional' => 'VMware Certified Professional en Data Center Virtualization (2023).',
+        'Fortinet Network Security Expert 4' => 'Fortinet Network Security Expert, nivel 4 (NSE 4).',
+        'Veeam Certified Engineer' => 'Veeam Certified Engineer (2023): respaldo y recuperación de datos.',
+        'Microsoft Certified Fundamentals' => 'Microsoft Certified: Fundamentals.',
+        'AudioCodes Certified Associate' => 'AudioCodes Certified Associate (ACA).',
+        'Sophos Certified Architect' => 'Sophos Certified Architect en Central Endpoint and Server.',
+    ];
+
+    private function backfillCertificationTexts(): void
+    {
+        SectionItem::query()->where('section', 'certification')->whereNull('body')->get()->each(function (SectionItem $item) {
+            if (isset(self::TEXTOS_CERTIFICACIONES[$item->title])) {
+                $item->update(['body' => self::TEXTOS_CERTIFICACIONES[$item->title]]);
+            }
+        });
     }
 
     /** Texto breve de los clientes que tienen un proyecto en el brochure (resumido de ese proyecto); solo donde está vacío. */

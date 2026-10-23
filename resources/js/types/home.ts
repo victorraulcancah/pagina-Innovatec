@@ -64,7 +64,7 @@ export type SiteSections = {
             imageUrl: string | null;
             gallery: { name: string; url: string }[];
         }[];
-        certifications: { id: number; name: string; imageUrl: string | null }[];
+        certifications: { id: number; name: string; description: string | null; imageUrl: string | null }[];
     };
     clients: {
         title: string;

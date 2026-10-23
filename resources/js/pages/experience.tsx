@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react';
 import { CtaBand } from '@/components/site/cta-band';
+import { CertificationGrid } from '@/components/site/experience-section';
 import { LogoMarquee } from '@/components/site/logo-marquee';
 import { PageHero } from '@/components/site/page-hero';
 import { Phased, sectionShell } from '@/components/site/reveal';
@@ -136,21 +137,9 @@ export default function Experience({ home }: { home: HomeContent }) {
                     <div aria-hidden="true" className="ent-glow absolute -right-32 bottom-0 size-[28rem] rounded-full bg-signal-deep/45 blur-3xl" />
                     <div className={`${sectionShell} relative`}>
                         <Title>Certificaciones</Title>
-                        <ul className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-4">
-                            {e.certifications.map((cert, i) => (
-                                <li key={cert.id} className="ent-pop" style={d(150 + i * 80)}>
-                                    <figure className="group">
-                                        <div className="flex aspect-square items-center justify-center rounded-xl bg-white p-5 shadow-[0_18px_36px_-22px_rgba(5,11,26,0.9)] transition-[transform,box-shadow] duration-500 ease-out-expo group-hover:-translate-y-1.5 group-hover:rotate-1 group-hover:shadow-[0_26px_44px_-20px_rgba(6,194,240,0.55)]">
-                                            {cert.imageUrl ? (
-                                                <img src={cert.imageUrl} alt={cert.name} loading="lazy" className="max-h-full max-w-full object-contain" />
-                                            ) : (
-                                                <span className="text-center text-sm font-medium text-night">{cert.name}</span>
-                                            )}
-                                        </div>
-                                    </figure>
-                                </li>
-                            ))}
-                        </ul>
+                        <div className="mt-12">
+                            <CertificationGrid items={e.certifications} />
+                        </div>
                     </div>
                 </Phased>
             )}

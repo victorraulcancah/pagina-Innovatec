@@ -69,6 +69,7 @@ class SiteContent
                 'certifications' => $list('certification', fn (SectionItem $i) => [
                     'id' => $i->id,
                     'name' => $i->title,
+                    'description' => $i->body,
                     'imageUrl' => $i->imageUrl(),
                 ]),
             ],
