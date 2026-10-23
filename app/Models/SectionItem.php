@@ -21,13 +21,14 @@ use Illuminate\Support\Facades\Storage;
  * @property string|null $image_path
  * @property list<array{path: string, name: string}>|null $gallery
  * @property int $sort
+ * @property bool $visible
  */
-#[Fillable(['section', 'slug', 'title', 'body', 'rows', 'url', 'label', 'image_path', 'gallery', 'sort'])]
+#[Fillable(['section', 'slug', 'title', 'body', 'rows', 'url', 'label', 'image_path', 'gallery', 'sort', 'visible'])]
 class SectionItem extends Model
 {
     protected function casts(): array
     {
-        return ['rows' => 'array', 'gallery' => 'array'];
+        return ['rows' => 'array', 'gallery' => 'array', 'visible' => 'boolean'];
     }
 
     public function imageUrl(): ?string

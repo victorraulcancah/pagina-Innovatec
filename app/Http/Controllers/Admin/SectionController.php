@@ -48,6 +48,7 @@ class SectionController extends Controller
                     'rows' => $i->rows ?? [],
                     'imageUrl' => $i->imageUrl(),
                     'gallery' => $i->galleryItems(),
+                    'visible' => $i->visible,
                 ])->all();
         }
 
@@ -122,6 +123,12 @@ class SectionController extends Controller
             $item ??= new SectionItem(['section' => $section]);
 
             $item->sort = $index;
+
+            // Mostrar u ocultar: solo en las listas que lo permiten (Soluciones y Servicios).
+            if ($list['toggle'] ?? false) {
+                $item->visible = filter_var($row['visible'] ?? true, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? true;
+            }
+
             $item->title = (string) ($row['title'] ?? $item->title);
             $item->body = $row['body'] ?? null;
             $item->url = $row['url'] ?? null;

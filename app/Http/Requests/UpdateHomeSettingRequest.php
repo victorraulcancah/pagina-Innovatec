@@ -37,9 +37,14 @@ class UpdateHomeSettingRequest extends FormRequest
             'menu' => ['array', 'max:8'],
             'menu.*.label' => ['required', 'string', 'max:40'],
             'menu.*.url' => ['required', 'string', 'max:255', 'regex:'.self::URL_RULE],
+            'menu.*.visible' => ['boolean'],
+            'menu.*.show_children' => ['boolean'],
             'menu.*.children' => ['array', 'max:10'],
             'menu.*.children.*.label' => ['required', 'string', 'max:60'],
             'menu.*.children.*.url' => ['required', 'string', 'max:255', 'regex:'.self::URL_RULE],
+            'menu.*.children.*.visible' => ['boolean'],
+
+            'show_panel_link' => ['boolean'],
 
             'nav_cta' => ['nullable', 'array'],
             'nav_cta.label' => ['required_with:nav_cta.url', 'nullable', 'string', 'max:40'],

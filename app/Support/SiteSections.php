@@ -158,14 +158,14 @@ class SiteSections
                     ['key' => 'image_enterprise', 'slot' => 'enterprise', 'label' => 'Imagen de cabecera', 'hint' => 'JPG, PNG o WebP. Se muestra en blanco y negro, oscurecida.'],
                 ],
                 'lists' => [
-                    ['section' => 'solution', 'label' => 'Soluciones', 'itemLabel' => 'Solución', 'max' => 12, 'fields' => [
+                    ['section' => 'solution', 'label' => 'Soluciones', 'itemLabel' => 'Solución', 'max' => 12, 'toggle' => true, 'fields' => [
                         ['key' => 'title', 'label' => 'Nombre', 'type' => 'text', 'max' => 80],
                         ['key' => 'body', 'label' => 'Descripción', 'type' => 'textarea', 'max' => 600],
                         $rows,
                         $cover,
                         ['key' => 'gallery', 'label' => 'Marcas con las que trabajas (logos)', 'type' => 'gallery'],
                     ]],
-                    ['section' => 'service', 'label' => 'Servicios profesionales', 'itemLabel' => 'Servicio', 'max' => 12, 'fields' => [
+                    ['section' => 'service', 'label' => 'Servicios profesionales', 'itemLabel' => 'Servicio', 'max' => 12, 'toggle' => true, 'fields' => [
                         ['key' => 'title', 'label' => 'Nombre', 'type' => 'text', 'max' => 80],
                         ['key' => 'body', 'label' => 'Descripción', 'type' => 'textarea', 'max' => 1200],
                         $rows,
@@ -375,6 +375,7 @@ class SiteSections
             $base = "lists.{$list['section']}";
             $rules[$base] = ['nullable', 'array', 'max:'.$list['max']];
             $rules["$base.*.id"] = ['nullable', 'integer'];
+            $rules["$base.*.visible"] = ['boolean'];
 
             foreach ($list['fields'] as $f) {
                 $key = "$base.*.{$f['key']}";

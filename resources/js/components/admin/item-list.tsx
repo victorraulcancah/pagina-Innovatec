@@ -21,6 +21,7 @@ export function ItemList<T>({
     renderForm,
     errorAt,
     canAccept,
+    rowExtra,
 }: {
     items: T[];
     max: number;
@@ -31,6 +32,8 @@ export function ItemList<T>({
     renderForm: (draft: T, patch: (p: Partial<T>) => void, index: number | null) => ReactNode;
     errorAt?: (index: number) => boolean;
     canAccept?: (draft: T) => boolean;
+    /** Un control extra en cada fila (por ejemplo, mostrar u ocultar), con cómo cambiar ese elemento. */
+    rowExtra?: (item: T, update: (patch: Partial<T>) => void) => ReactNode;
 }) {
     const [editing, setEditing] = useState<Editing<T> | null>(null);
 
@@ -82,6 +85,7 @@ export function ItemList<T>({
                                     )}
                                 </button>
                                 <div className="flex shrink-0 items-center gap-1.5">
+                                    {rowExtra?.(item, (patch) => onChange(items.map((it, k) => (k === i ? { ...it, ...patch } : it))))}
                                     <SmallButton aria-label="Subir" disabled={i === 0} onClick={() => onChange(move(items, i, i - 1))}>
                                         ↑
                                     </SmallButton>

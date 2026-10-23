@@ -21,12 +21,13 @@ use Illuminate\Support\Facades\Storage;
  * @property list<array{label: string, url: string, variant: string}> $buttons
  * @property list<array{label: string, url: string, children: list<array{label: string, url: string}>}> $menu
  * @property array{label: string, url: string}|null $nav_cta
+ * @property bool $show_panel_link
  * @property array<string, array<string, string>>|null $sections
  * @property array<string, string>|null $page_images
  */
 #[Fillable([
     'brand_name', 'logo_path', 'video_path', 'poster_path',
-    'title', 'subtitle', 'buttons', 'menu', 'nav_cta',
+    'title', 'subtitle', 'buttons', 'menu', 'nav_cta', 'show_panel_link',
     'sections', 'page_images',
 ])]
 class HomeSetting extends Model
@@ -39,6 +40,7 @@ class HomeSetting extends Model
             'buttons' => 'array',
             'menu' => 'array',
             'nav_cta' => 'array',
+            'show_panel_link' => 'boolean',
             'sections' => 'array',
             'page_images' => 'array',
         ];
@@ -81,6 +83,7 @@ class HomeSetting extends Model
                 ['label' => 'Contacto', 'url' => '/contacto', 'children' => []],
             ],
             'nav_cta' => null,
+            'show_panel_link' => true,
         ];
     }
 
@@ -128,11 +131,12 @@ class HomeSetting extends Model
     }
 
     /**
-     * Datos listos para las páginas públicas (URLs de archivos ya resueltas).
+     * Datos listos para las páginas públicas (URLs de archivos ya resueltas). Las opciones de menú ocultas no salen;
+     * el panel pide `$paraPanel` para verlas y poder volver a mostrarlas.
      *
      * @return array<string, mixed>
      */
-    public function toPageData(): array
+    public function toPageData(bool $paraPanel = false): array
     {
         $sections = SiteContent::forPage($this);
 
@@ -144,8 +148,9 @@ class HomeSetting extends Model
             'title' => $this->title,
             'subtitle' => $this->subtitle,
             'buttons' => $this->buttons ?? [],
-            'menu' => $this->menuWithOfferings($sections),
+            'menu' => $this->menuWithOfferings($sections, $paraPanel),
             'navCta' => $this->nav_cta,
+            'showPanelLink' => (bool) $this->show_panel_link,
             'sections' => $sections,
         ];
     }
@@ -154,19 +159,46 @@ class HomeSetting extends Model
      * Los desplegables de Soluciones y Servicios siempre listan las páginas
      * que existen, así el menú nunca queda desactualizado.
      *
+     * Cada opción puede ocultarse sola (`visible`), ocultar todo su submenú (`show_children`) o ocultar solo algunas
+     * de sus subopciones (`hidden_children`, por enlace: sirve igual para las que se generan solas). El panel recibe
+     * todo con su estado para poder volver a mostrarlo; las páginas públicas, solo lo visible.
+     *
      * @param  array<string, mixed>  $sections
      * @return list<array<string, mixed>>
      */
-    private function menuWithOfferings(array $sections): array
+    private function menuWithOfferings(array $sections, bool $incluirOcultas = false): array
     {
         $children = fn (string $block) => collect($sections[$block]['items'])
             ->map(fn (array $i) => ['label' => $i['title'], 'url' => $i['url']])->all();
 
-        return collect($this->menu ?? [])->map(fn (array $item) => match ($item['url']) {
-            '/division-enterprise' => [...$item, 'children' => $children('solutions')],
-            '/blog' => [...$item, 'children' => BlogCategory::query()->orderBy('sort')->orderBy('id')->get()
-                ->map(fn (BlogCategory $c) => ['label' => $c->name, 'url' => "/blog/{$c->slug}"])->all()],
-            default => $item,
-        })->all();
+        return collect($this->menu ?? [])
+            // Una opción sin las marcas se muestra (el menú de antes no las tenía).
+            ->filter(fn (array $item) => $incluirOcultas || ($item['visible'] ?? true))
+            ->map(function (array $item) use ($children, $incluirOcultas) {
+                $subopciones = match ($item['url']) {
+                    '/division-enterprise' => $children('solutions'),
+                    '/blog' => BlogCategory::query()->orderBy('sort')->orderBy('id')->get()
+                        ->map(fn (BlogCategory $c) => ['label' => $c->name, 'url' => "/blog/{$c->slug}"])->all(),
+                    default => $item['children'] ?? [],
+                };
+
+                $ocultas = $item['hidden_children'] ?? [];
+                $subopciones = collect($subopciones)
+                    ->map(fn (array $c) => [...$c, 'visible' => ! in_array($c['url'], $ocultas, true)]);
+                $mostrarSubmenu = (bool) ($item['show_children'] ?? true);
+
+                if (! $incluirOcultas) {
+                    $subopciones = $mostrarSubmenu ? $subopciones->filter(fn (array $c) => $c['visible']) : collect();
+                }
+
+                return [
+                    ...collect($item)->except('hidden_children')->all(),
+                    'visible' => (bool) ($item['visible'] ?? true),
+                    'show_children' => $mostrarSubmenu,
+                    'children' => $subopciones->values()->all(),
+                ];
+            })
+            ->values()
+            ->all();
     }
 }

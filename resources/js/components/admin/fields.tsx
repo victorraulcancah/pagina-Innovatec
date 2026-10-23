@@ -69,6 +69,49 @@ export function Select({
     );
 }
 
+/** Interruptor para mostrar u ocultar algo (accesible: botón con role="switch"). */
+export function Toggle({
+    checked,
+    onChange,
+    label,
+    hint,
+    compact = false,
+}: {
+    checked: boolean;
+    onChange: (value: boolean) => void;
+    label: string;
+    hint?: string;
+    /** Solo el interruptor (para filas de una lista); el texto queda como etiqueta accesible y tooltip. */
+    compact?: boolean;
+}) {
+    return (
+        <div className="flex items-start gap-3">
+            <button
+                type="button"
+                role="switch"
+                aria-checked={checked}
+                aria-label={label}
+                title={compact ? label : undefined}
+                onClick={() => onChange(!checked)}
+                className={`relative mt-0.5 inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal-deep ${
+                    checked ? 'bg-signal-deep' : 'bg-slate-300'
+                }`}
+            >
+                <span
+                    aria-hidden="true"
+                    className={`inline-block size-5 rounded-full bg-white shadow transition-transform duration-200 ${checked ? 'translate-x-[22px]' : 'translate-x-0.5'}`}
+                />
+            </button>
+            {!compact && (
+                <span className="text-sm text-slate-800">
+                    {label}
+                    {hint && <span className="block text-xs text-slate-500">{hint}</span>}
+                </span>
+            )}
+        </div>
+    );
+}
+
 export function SmallButton({
     children,
     danger,

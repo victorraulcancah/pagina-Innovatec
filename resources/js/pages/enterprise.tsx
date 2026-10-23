@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react';
 import { CtaBand } from '@/components/site/cta-band';
+import { Glyph } from '@/components/site/glyph';
 import { LineVisual } from '@/components/site/line-visual';
 import { PageHero } from '@/components/site/page-hero';
 import { Pictogram } from '@/components/site/pictogram';
@@ -49,8 +50,7 @@ function LineSection({ line, index }: { line: Offering; index: number }) {
     const light = index % 2 === 1;
     const flip = index % 2 === 1;
     const { ref, phase } = useSeen<HTMLElement>(0.15);
-    const logos = line.gallery.slice(0, 6);
-    const more = line.gallery.length - logos.length;
+    const logos = line.gallery;
 
     return (
         <section
@@ -100,38 +100,35 @@ function LineSection({ line, index }: { line: Offering; index: number }) {
                         </p>
                     )}
 
+                    {/* Palabras clave: cada una con su icono, su título y su descripción */}
                     {line.rows.length > 0 && (
-                        <ul className={`mt-8 divide-y ${light ? 'divide-night/15 border-y border-night/15' : 'divide-white/15 border-y border-white/15'}`}>
+                        <ul className="mt-8 grid gap-3">
                             {line.rows.map((row, k) => (
-                                <li key={`${row.title}-${k}`} className="ent-rise group flex gap-4 py-4" style={d(260 + k * 110)}>
-                                    <span
-                                        aria-hidden="true"
-                                        className={`ent-tick mt-2 size-2.5 shrink-0 rotate-45 border transition-transform duration-300 ease-out-expo group-hover:scale-125 ${
-                                            light ? 'border-signal-deep bg-signal-deep/15' : 'border-signal bg-signal/20'
+                                <li key={`${row.title}-${k}`} className="ent-rise" style={d(260 + k * 110)}>
+                                    <article
+                                        className={`inc-card group relative flex items-start gap-4 overflow-hidden rounded-xl p-4 sm:p-5 ${
+                                            light
+                                                ? 'bg-white shadow-[0_14px_30px_-22px_rgba(17,40,92,0.55)] ring-1 ring-night/10'
+                                                : 'bg-white/[0.07] ring-1 ring-white/15 hover:bg-white/[0.11]'
                                         }`}
-                                    />
-                                    <div>
-                                        <h3 className={`text-base font-semibold ${light ? 'text-signal-deep' : 'text-signal'}`}>{row.title}</h3>
-                                        {row.description && (
-                                            <p className={`mt-1 text-sm leading-relaxed ${light ? 'text-[#2b3d66]' : 'text-white'}`}>{row.description}</p>
-                                        )}
-                                    </div>
+                                    >
+                                        <span
+                                            className={`inc-tile flex size-12 shrink-0 items-center justify-center rounded-lg ${
+                                                light ? 'bg-night text-signal' : 'bg-signal text-night'
+                                            }`}
+                                        >
+                                            <Glyph index={k} size={28} />
+                                        </span>
+                                        <div className="min-w-0">
+                                            <h3 className={`text-base font-semibold ${light ? 'text-night' : 'text-white'}`}>{row.title}</h3>
+                                            {row.description && (
+                                                <p className={`mt-1 text-sm leading-relaxed ${light ? 'text-[#2b3d66]' : 'text-white'}`}>{row.description}</p>
+                                            )}
+                                        </div>
+                                        <span aria-hidden="true" className={`inc-bar absolute inset-x-0 bottom-0 h-[3px] ${light ? 'bg-signal-deep' : 'bg-signal'}`} />
+                                    </article>
                                 </li>
                             ))}
-                        </ul>
-                    )}
-
-                    {logos.length > 0 && (
-                        <ul className="ent-rise mt-7 flex flex-wrap items-center gap-2.5" style={d(620)} aria-label="Marcas con las que trabajamos">
-                            {logos.map((logo, k) => (
-                                <li
-                                    key={`${logo.name}-${k}`}
-                                    className="flex h-12 w-24 items-center justify-center rounded-md bg-white px-3 shadow-[0_8px_16px_-10px_rgba(5,11,26,0.6)] ring-1 ring-night/10 transition-transform duration-300 ease-out-expo hover:-translate-y-1"
-                                >
-                                    <img src={logo.url} alt={logo.name} loading="lazy" className="max-h-full max-w-full object-contain" />
-                                </li>
-                            ))}
-                            {more > 0 && <li className={`text-sm font-medium ${light ? 'text-night' : 'text-white'}`}>+{more} más</li>}
                         </ul>
                     )}
 
@@ -156,6 +153,56 @@ function LineSection({ line, index }: { line: Offering; index: number }) {
                     </div>
                 </div>
             </div>
+
+            {/* Marcas: un panel propio, a todo el ancho, con una tarjeta por marca (logo grande y su nombre en la etiqueta) */}
+            {logos.length > 0 && (
+                <div className={`${sectionShell} relative mt-14 lg:mt-20`}>
+                    <div
+                        className={`ent-rise rounded-3xl p-6 sm:p-8 lg:p-10 ${
+                            light
+                                ? 'bg-white/70 shadow-[0_30px_60px_-40px_rgba(17,40,92,0.5)] ring-1 ring-night/10'
+                                : 'bg-white/[0.06] ring-1 ring-white/15'
+                        }`}
+                        style={d(100)}
+                    >
+                        <div className="flex flex-wrap items-end justify-between gap-3">
+                            <div>
+                                <h3 className={`font-display text-lg uppercase leading-snug sm:text-xl ${light ? 'text-night' : 'text-white'}`}>
+                                    Marcas con las que trabajamos
+                                </h3>
+                                <span className={`ent-line mt-3 block h-[3px] w-16 rounded-full ${light ? 'bg-signal-deep' : 'bg-signal'}`} />
+                            </div>
+                            <span className={`text-sm font-medium ${light ? 'text-[#2b3d66]' : 'text-white'}`}>
+                                {logos.length} {logos.length === 1 ? 'marca' : 'marcas'}
+                            </span>
+                        </div>
+
+                        <ul className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+                            {logos.map((logo, k) => (
+                                <li key={`${logo.name}-${k}`} className="ent-pop" style={d(200 + k * 70)}>
+                                    <figure className="group overflow-hidden rounded-xl bg-white shadow-[0_16px_30px_-20px_rgba(5,11,26,0.75)] ring-1 ring-night/10 transition-[transform,box-shadow] duration-500 ease-out-expo hover:-translate-y-1.5 hover:shadow-[0_26px_40px_-22px_rgba(31,98,217,0.7)]">
+                                        <div className="flex h-24 items-center justify-center px-5 pt-3">
+                                            <img
+                                                src={logo.url}
+                                                alt={logo.name}
+                                                loading="lazy"
+                                                className="max-h-14 max-w-full object-contain transition-transform duration-500 ease-out-expo group-hover:scale-110"
+                                            />
+                                        </div>
+                                        <figcaption className="relative mt-3 overflow-hidden bg-night px-3 py-2.5 text-center text-[11px] font-semibold uppercase tracking-[0.12em] text-white">
+                                            <span
+                                                aria-hidden="true"
+                                                className="absolute inset-0 origin-left scale-x-0 bg-signal-deep transition-transform duration-500 ease-out-expo group-hover:scale-x-100"
+                                            />
+                                            <span className="relative">{logo.name}</span>
+                                        </figcaption>
+                                    </figure>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )}
         </section>
     );
 }

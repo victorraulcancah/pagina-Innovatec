@@ -22,7 +22,7 @@ class HomeSettingController extends Controller
         }
 
         return Inertia::render('admin/home-editor', [
-            'home' => HomeSetting::current()->toPageData(),
+            'home' => HomeSetting::current()->toPageData(paraPanel: true),
             'pages' => SiteSections::navigation(),
         ]);
     }
@@ -47,15 +47,30 @@ class HomeSettingController extends Controller
         }
 
         $data['buttons'] = array_values($data['buttons'] ?? []);
-        $data['menu'] = array_values(array_map(
-            fn (array $item) => [...$item, 'children' => array_values($item['children'] ?? [])],
-            $data['menu'] ?? [],
-        ));
+        $data['menu'] = array_values(array_map(function (array $item) {
+            $subopciones = collect($item['children'] ?? []);
+
+            return [
+                'label' => $item['label'],
+                'url' => $item['url'],
+                'visible' => $this->flag($item['visible'] ?? true),
+                'show_children' => $this->flag($item['show_children'] ?? true),
+                // Las subopciones ocultas se guardan por enlace: vale igual para las que se generan solas.
+                'hidden_children' => $subopciones->filter(fn (array $c) => ! $this->flag($c['visible'] ?? true))->pluck('url')->values()->all(),
+                'children' => $subopciones->map(fn (array $c) => ['label' => $c['label'], 'url' => $c['url']])->values()->all(),
+            ];
+        }, $data['menu'] ?? []));
         $data['nav_cta'] = filled($data['nav_cta']['label'] ?? null) ? $data['nav_cta'] : null;
 
         $home->update($data);
 
         return back()->with('status', 'Cambios guardados.');
+    }
+
+    /** Un interruptor del panel: llega como true/false o como "1"/"0". */
+    private function flag(mixed $valor): bool
+    {
+        return filter_var($valor, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? true;
     }
 
     private function storeFile(UploadedFile $file, string $folder): string

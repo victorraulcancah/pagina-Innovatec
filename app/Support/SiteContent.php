@@ -15,7 +15,8 @@ class SiteContent
     public static function forPage(HomeSetting $home): array
     {
         $text = $home->content();
-        $items = SectionItem::query()->orderBy('sort')->orderBy('id')->get()->groupBy('section');
+        // Lo oculto desde el panel no sale en el sitio (ni en el menú, el pie, la portada o su propia página).
+        $items = SectionItem::query()->where('visible', true)->orderBy('sort')->orderBy('id')->get()->groupBy('section');
 
         $list = fn (string $section, callable $map): array => ($items[$section] ?? new Collection)
             ->map($map)->values()->all();

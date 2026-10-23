@@ -45,7 +45,7 @@ class SiteContentSeeder extends Seeder
             ['title' => 'Servicios', 'url' => '/servicios', 'image' => 'photos/data-center.jpg'],
         ]);
 
-        $this->seedList('solution', $this->solutions());
+        $this->seedList('solution', $this->ordenar($this->solutions()));
         $this->seedList('service', $this->services());
         $this->seedList('case', $this->cases());
         $this->seedList('certification', $this->certifications());
@@ -65,6 +65,7 @@ class SiteContentSeeder extends Seeder
         $this->upgradeLinks();
         $this->upgradeToDivisions();
         $this->addHomeToMenu();
+        $this->reorderSolutions();
         $this->seedWhatsapp();
         $this->seedBlog();
     }
@@ -279,6 +280,49 @@ class SiteContentSeeder extends Seeder
 
         unset($images['soluciones'], $images['servicios']);
         $home->update(['page_images' => $images]);
+    }
+
+    /** El orden en que se muestran las soluciones (por nombre). */
+    private const ORDEN_SOLUCIONES = ['Networking', 'Infraestructura TI', 'Ciberseguridad', 'Seguridad Electrónica', 'Comunicaciones Unificadas'];
+
+    /**
+     * @param  list<array<string, mixed>>  $soluciones
+     * @return list<array<string, mixed>>
+     */
+    private function ordenar(array $soluciones): array
+    {
+        usort($soluciones, fn (array $a, array $b) => array_search($a['title'], self::ORDEN_SOLUCIONES, true) <=> array_search($b['title'], self::ORDEN_SOLUCIONES, true));
+
+        return $soluciones;
+    }
+
+    /**
+     * Una sola vez: pone las soluciones en el orden pedido (Networking, Infraestructura TI, Ciberseguridad, Seguridad
+     * Electrónica y Comunicaciones Unificadas), pero solo si siguen en el orden con que se cargaron: si el administrador
+     * ya las reordenó a su gusto, no se toca.
+     */
+    private function reorderSolutions(): void
+    {
+        $home = HomeSetting::current();
+        $sections = $home->sections ?? [];
+
+        if ($sections['meta']['orden_soluciones'] ?? false) {
+            return;
+        }
+
+        $sections['meta']['orden_soluciones'] = true;
+        $home->update(['sections' => $sections]);
+
+        $items = SectionItem::query()->where('section', 'solution')->orderBy('sort')->orderBy('id')->get();
+        $origen = ['Comunicaciones Unificadas', 'Ciberseguridad', 'Networking', 'Infraestructura TI', 'Seguridad Electrónica'];
+
+        if ($items->pluck('title')->all() !== $origen) {
+            return;
+        }
+
+        foreach ($items as $item) {
+            $item->update(['sort' => array_search($item->title, self::ORDEN_SOLUCIONES, true)]);
+        }
     }
 
     /** Número de WhatsApp de la empresa, solo si aún no hay uno cargado. */

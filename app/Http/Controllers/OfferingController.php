@@ -18,7 +18,7 @@ class OfferingController extends Controller
         $section = self::KINDS[$kind] ?? abort(404);
 
         abort_unless(
-            SectionItem::query()->where('section', $section)->where('slug', $slug)->exists(),
+            SectionItem::query()->where('section', $section)->where('slug', $slug)->where('visible', true)->exists(),
             404,
         );
 

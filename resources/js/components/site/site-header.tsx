@@ -246,16 +246,18 @@ export function SiteHeader({ home }: { home: HomeContent }) {
                             {home.navCta.label}
                         </a>
                     )}
+                    {home.showPanelLink !== false && (
                     <a
                         href="/admin"
-                        className="inline-flex min-h-10 items-center gap-2 rounded-full px-3 text-sm text-white transition-colors hover:text-white max-sm:hidden"
+                        className="inline-flex min-h-10 items-center gap-2 rounded-full bg-night px-3 text-sm font-medium text-white ring-1 ring-signal/60 shadow-[0_8px_20px_-12px_rgba(5,11,26,0.9)] transition-[box-shadow,transform] duration-300 ease-out-expo hover:-translate-y-px hover:ring-signal max-sm:hidden"
                     >
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                             <circle cx="8" cy="5.5" r="2.7" stroke="currentColor" strokeWidth="1.3" />
                             <path d="M2.5 14c.6-2.6 2.8-4 5.5-4s4.9 1.4 5.5 4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
                         </svg>
                         <span className="lg:max-xl:sr-only">Panel</span>
                     </a>
+                    )}
                     <button
                         type="button"
                         className="-mr-2 p-2 text-white lg:hidden"
@@ -330,9 +332,11 @@ export function SiteHeader({ home }: { home: HomeContent }) {
                                 {home.navCta.label}
                             </a>
                         )}
-                        <a href="/admin" className="text-sm text-white underline underline-offset-4">
-                            Panel de administración
-                        </a>
+                        {home.showPanelLink !== false && (
+                            <a href="/admin" className="text-sm text-white underline underline-offset-4">
+                                Panel de administración
+                            </a>
+                        )}
                     </div>
                 </nav>
             )}

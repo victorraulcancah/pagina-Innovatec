@@ -1,7 +1,7 @@
 import { Head, useForm } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import { AdminLayout, type AdminPage } from '@/components/admin/admin-layout';
-import { Field, Section, SmallButton, TextArea, TextInput } from '@/components/admin/fields';
+import { Field, Section, SmallButton, TextArea, TextInput, Toggle } from '@/components/admin/fields';
 import { ItemList } from '@/components/admin/item-list';
 import { MediaPicker, move } from '@/components/admin/media-picker';
 import type { OfferingRow } from '@/types';
@@ -21,6 +21,8 @@ type ListDef = {
     label: string;
     itemLabel: string;
     max: number;
+    /** Cada elemento se puede mostrar u ocultar con un interruptor. */
+    toggle?: boolean;
     fields: FieldDef[];
 };
 
@@ -44,6 +46,7 @@ type ServerItem = {
     rows: OfferingRow[];
     imageUrl: string | null;
     gallery: GalleryItem[];
+    visible?: boolean;
 };
 
 type Item = Omit<ServerItem, 'id'> & {
@@ -78,6 +81,7 @@ const blankItem = (): Item => ({
     rows: [],
     imageUrl: null,
     gallery: [],
+    visible: true,
     image: null,
     remove_image: false,
     gallery_files: [],
@@ -226,9 +230,12 @@ export default function SectionEditor({ page, config, pages, texts, lists, image
             (item.body || item.url || (hasRows && item.rows.length ? `${item.rows.length} elementos incluidos` : '')) +
             (brands ? ` · ${brands} marcas` : '');
 
+        const shown = list.toggle && item.visible === false ? 'Oculta · ' : '';
+        const subtitle = shown + text;
+
         return {
             title: item.title,
-            subtitle: text.length > 110 ? `${text.slice(0, 110)}…` : text,
+            subtitle: subtitle.length > 110 ? `${subtitle.slice(0, 110)}…` : subtitle,
             thumb: hasImage ? (item.image || item.remove_image ? null : item.imageUrl) : undefined,
         };
     };
@@ -301,6 +308,18 @@ export default function SectionEditor({ page, config, pages, texts, lists, image
                                     errorAt={(i) => hasErrorAt(list.section, i)}
                                     canAccept={(draft) => draft.title.trim() !== ''}
                                     renderForm={(draft, patch, index) => renderFields(list, draft, patch, index)}
+                                    rowExtra={
+                                        list.toggle
+                                            ? (item, update) => (
+                                                  <Toggle
+                                                      compact
+                                                      checked={item.visible !== false}
+                                                      onChange={(visible) => update({ visible })}
+                                                      label={item.visible === false ? 'Oculta: pulsa para mostrarla en el sitio' : 'Visible: pulsa para ocultarla del sitio'}
+                                                  />
+                                              )
+                                            : undefined
+                                    }
                                 />
                                 {err(`lists.${list.section}`) && (
                                     <p role="alert" className="text-xs text-red-700">

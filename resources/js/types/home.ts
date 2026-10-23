@@ -4,9 +4,9 @@ export type HeroButton = {
     variant: 'primary' | 'outline';
 };
 
-export type MenuChild = { label: string; url: string };
+export type MenuChild = { label: string; url: string; visible?: boolean };
 
-export type MenuItem = MenuChild & { children: MenuChild[] };
+export type MenuItem = { label: string; url: string; children: MenuChild[]; visible?: boolean; show_children?: boolean };
 
 export type HomeContent = {
     brandName: string;
@@ -18,6 +18,7 @@ export type HomeContent = {
     buttons: HeroButton[];
     menu: MenuItem[];
     navCta: MenuChild | null;
+    showPanelLink: boolean;
     sections: SiteSections;
 };
 
