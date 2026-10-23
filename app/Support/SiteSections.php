@@ -396,6 +396,10 @@ class SiteSections
                     'gallery' => [
                         $rules["$base.*.gallery_keep"] = ['nullable', 'array', 'max:30'],
                         $rules["$base.*.gallery_keep.*"] = ['string', 'max:255'],
+                        $rules["$base.*.gallery_keep_names"] = ['nullable', 'array', 'max:30'],
+                        $rules["$base.*.gallery_keep_names.*"] = ['nullable', 'string', 'max:60'],
+                        $rules["$base.*.gallery_new_names"] = ['nullable', 'array', 'max:30'],
+                        $rules["$base.*.gallery_new_names.*"] = ['nullable', 'string', 'max:60'],
                         $rules["$base.*.gallery_files"] = ['nullable', 'array', 'max:30'],
                         $rules["$base.*.gallery_files.*"] = ['image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
                     ],

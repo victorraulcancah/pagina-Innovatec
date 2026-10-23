@@ -54,6 +54,8 @@ type Item = Omit<ServerItem, 'id'> & {
     image: File | null;
     remove_image: boolean;
     gallery_files: File[];
+    /** Nombre (bajo el logo) de cada archivo nuevo, en el mismo orden que gallery_files. */
+    gallery_new_names: string[];
 };
 
 type EditorForm = {
@@ -85,10 +87,11 @@ const blankItem = (): Item => ({
     image: null,
     remove_image: false,
     gallery_files: [],
+    gallery_new_names: [],
 });
 
 const clean = (items: Item[]): Item[] =>
-    items.map((i) => ({ ...i, image: null, remove_image: false, gallery_files: [] }));
+    items.map((i) => ({ ...i, image: null, remove_image: false, gallery_files: [], gallery_new_names: [] }));
 
 export default function SectionEditor({ page, config, pages, texts, lists, images }: Props) {
     const form = useForm<EditorForm>({
@@ -124,11 +127,16 @@ export default function SectionEditor({ page, config, pages, texts, lists, image
             lists: Object.fromEntries(
                 Object.entries(d.lists).map(([section, items]) => [
                     section,
-                    items.map(({ imageUrl: _preview, gallery, gallery_files, image, ...rest }) => ({
+                    items.map(({ imageUrl: _preview, gallery, gallery_files, gallery_new_names, image, ...rest }) => ({
                         ...rest,
                         ...(image ? { image } : {}),
                         ...(gallery.length || gallery_files.length
-                            ? { gallery_keep: gallery.map((g) => g.path), gallery_files }
+                            ? {
+                                  gallery_keep: gallery.map((g) => g.path),
+                                  gallery_keep_names: gallery.map((g) => g.name),
+                                  gallery_files,
+                                  gallery_new_names,
+                              }
                             : {}),
                     })),
                 ]),
@@ -185,8 +193,9 @@ export default function SectionEditor({ page, config, pages, texts, lists, image
                         label={f.label}
                         existing={draft.gallery}
                         added={draft.gallery_files}
+                        addedNames={draft.gallery_new_names}
                         error={err(`${errKey}_files`)}
-                        onChange={(gallery, gallery_files) => patch({ gallery, gallery_files })}
+                        onChange={(gallery, gallery_files, gallery_new_names) => patch({ gallery, gallery_files, gallery_new_names })}
                     />
                 );
             }
@@ -403,60 +412,100 @@ function PairsEditor({
     );
 }
 
-/** Logos de marcas: los ya guardados (se pueden quitar) y los nuevos por subir. */
+/** El nombre por defecto de un logo nuevo: el del archivo, sin la extensión. */
+const nameFromFile = (file: File) => file.name.replace(/\.[^.]+$/, '');
+
+const nameInput =
+    'mt-1.5 block w-full rounded border border-slate-300 bg-white px-2 py-1 text-xs text-slate-900 focus:border-signal-deep focus:outline-none focus:ring-1 focus:ring-signal-deep/40';
+
+/** Logos de marcas: los ya guardados (se pueden quitar y renombrar) y los nuevos por subir. */
 function GalleryEditor({
     label,
     existing,
     added,
+    addedNames,
     error,
     onChange,
 }: {
     label: string;
     existing: GalleryItem[];
     added: File[];
+    addedNames: string[];
     error?: string;
-    onChange: (existing: GalleryItem[], added: File[]) => void;
+    onChange: (existing: GalleryItem[], added: File[], addedNames: string[]) => void;
 }) {
+    const nameOf = (i: number) => addedNames[i] ?? nameFromFile(added[i]);
+
     return (
         <div>
             <span className="mb-2 block text-sm font-medium text-slate-800">{label}</span>
             {existing.length + added.length > 0 && (
-                <ul className="mb-3 grid grid-cols-3 gap-2 sm:grid-cols-4">
-                    {existing.map((g) => (
-                        <li key={g.path} className="group relative flex aspect-[3/2] items-center justify-center rounded-md bg-white p-2 ring-1 ring-slate-200">
-                            <img src={g.url} alt={g.name} className="max-h-full max-w-full object-contain" />
-                            <button
-                                type="button"
-                                aria-label={`Quitar ${g.name}`}
-                                onClick={() => onChange(existing.filter((x) => x.path !== g.path), added)}
-                                className="absolute -right-1.5 -top-1.5 flex size-6 items-center justify-center rounded-full bg-red-600 text-xs text-white shadow"
-                            >
-                                ×
-                            </button>
-                        </li>
-                    ))}
-                    {added.map((f, i) => (
-                        <li key={`${f.name}-${i}`} className="relative flex aspect-[3/2] items-center justify-center rounded-md bg-emerald-50 p-2 text-center text-[11px] text-emerald-800 ring-1 ring-emerald-200">
-                            <span className="line-clamp-2 break-all">{f.name}</span>
-                            <button
-                                type="button"
-                                aria-label={`Quitar ${f.name}`}
-                                onClick={() => onChange(existing, added.filter((_, k) => k !== i))}
-                                className="absolute -right-1.5 -top-1.5 flex size-6 items-center justify-center rounded-full bg-red-600 text-xs text-white shadow"
-                            >
-                                ×
-                            </button>
-                        </li>
-                    ))}
-                </ul>
+                <>
+                    <p className="mb-2 text-xs text-slate-500">El texto bajo cada logo es el nombre que se ve en el sitio: puedes cambiarlo.</p>
+                    <ul className="mb-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                        {existing.map((g) => (
+                            <li key={g.path} className="relative">
+                                <div className="flex aspect-[3/2] items-center justify-center rounded-md bg-white p-2 ring-1 ring-slate-200">
+                                    <img src={g.url} alt={g.name} className="max-h-full max-w-full object-contain" />
+                                </div>
+                                <input
+                                    type="text"
+                                    value={g.name}
+                                    maxLength={60}
+                                    aria-label={`Nombre de ${g.name}`}
+                                    placeholder="Nombre"
+                                    onChange={(ev) => onChange(existing.map((x) => (x.path === g.path ? { ...x, name: ev.target.value } : x)), added, addedNames)}
+                                    className={nameInput}
+                                />
+                                <button
+                                    type="button"
+                                    aria-label={`Quitar ${g.name}`}
+                                    onClick={() => onChange(existing.filter((x) => x.path !== g.path), added, addedNames)}
+                                    className="absolute -right-1.5 -top-1.5 flex size-6 items-center justify-center rounded-full bg-red-600 text-xs text-white shadow"
+                                >
+                                    ×
+                                </button>
+                            </li>
+                        ))}
+                        {added.map((f, i) => (
+                            <li key={`${f.name}-${i}`} className="relative">
+                                <div className="flex aspect-[3/2] items-center justify-center rounded-md bg-emerald-50 p-2 text-center text-[11px] text-emerald-800 ring-1 ring-emerald-200">
+                                    <span className="line-clamp-2 break-all">Nuevo: {f.name}</span>
+                                </div>
+                                <input
+                                    type="text"
+                                    value={nameOf(i)}
+                                    maxLength={60}
+                                    aria-label={`Nombre de ${f.name}`}
+                                    placeholder="Nombre"
+                                    onChange={(ev) => {
+                                        const names = added.map((_, k) => nameOf(k));
+                                        names[i] = ev.target.value;
+                                        onChange(existing, added, names);
+                                    }}
+                                    className={nameInput}
+                                />
+                                <button
+                                    type="button"
+                                    aria-label={`Quitar ${f.name}`}
+                                    onClick={() => onChange(existing, added.filter((_, k) => k !== i), added.map((_, k) => nameOf(k)).filter((_, k) => k !== i))}
+                                    className="absolute -right-1.5 -top-1.5 flex size-6 items-center justify-center rounded-full bg-red-600 text-xs text-white shadow"
+                                >
+                                    ×
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                </>
             )}
             <input
                 type="file"
                 multiple
                 accept="image/jpeg,image/png,image/webp"
-                onChange={(e) => {
-                    onChange(existing, [...added, ...Array.from(e.target.files ?? [])]);
-                    e.target.value = '';
+                onChange={(ev) => {
+                    const files = Array.from(ev.target.files ?? []);
+                    onChange(existing, [...added, ...files], [...added.map((_, k) => nameOf(k)), ...files.map(nameFromFile)]);
+                    ev.target.value = '';
                 }}
                 className="block w-full text-sm text-slate-600 file:mr-3 file:cursor-pointer file:rounded-lg file:border file:border-slate-300 file:bg-white file:px-3 file:py-2 file:text-xs file:font-medium file:text-slate-700 hover:file:bg-slate-100"
             />

@@ -181,18 +181,32 @@ class SectionController extends Controller
     private function syncGallery(Request $request, SectionItem $item, string $prefix, array $row): ?array
     {
         $current = collect($item->gallery ?? []);
-        $keepPaths = collect($row['gallery_keep'] ?? []);
+        $keepPaths = collect($row['gallery_keep'] ?? [])->values();
+        // El nombre que se ve bajo cada logo: el del panel, y si lo dejan vacío, el que ya tenía.
+        $nombres = $keepPaths->mapWithKeys(fn ($path, $i) => [$path => trim((string) ($row['gallery_keep_names'][$i] ?? ''))]);
 
-        $kept = $current->filter(fn ($g) => $keepPaths->contains($g['path']))->values();
+        $kept = $current->filter(fn ($g) => $keepPaths->contains($g['path']))
+            ->map(fn ($g) => ['path' => $g['path'], 'name' => ($nombres[$g['path']] ?? '') !== '' ? Str::limit($nombres[$g['path']], 60, '') : $g['name']])
+            ->values();
         $current->reject(fn ($g) => $keepPaths->contains($g['path']))
             ->each(fn ($g) => $this->deleteFile($g['path']));
 
-        $added = collect($request->file("$prefix.gallery_files", []))
-            ->filter(fn ($f) => $f instanceof UploadedFile)
-            ->map(fn (UploadedFile $f) => [
+        $nuevos = array_values(array_filter(
+            (array) $request->file("$prefix.gallery_files", []),
+            fn ($f) => $f instanceof UploadedFile,
+        ));
+        $nombresNuevos = array_values($row['gallery_new_names'] ?? []);
+
+        $added = collect($nuevos)->map(function (UploadedFile $f, int $i) use ($nombresNuevos) {
+            $escrito = trim((string) ($nombresNuevos[$i] ?? ''));
+
+            return [
                 'path' => $this->storeFile($f, 'brands'),
-                'name' => Str::of($f->getClientOriginalName())->beforeLast('.')->limit(60, '')->toString(),
-            ]);
+                'name' => $escrito !== ''
+                    ? Str::limit($escrito, 60, '')
+                    : Str::of($f->getClientOriginalName())->beforeLast('.')->limit(60, '')->toString(),
+            ];
+        });
 
         return $kept->concat($added)->values()->all() ?: null;
     }
