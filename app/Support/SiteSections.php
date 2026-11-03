@@ -253,7 +253,7 @@ class SiteSections
             ],
             'aliados' => [
                 'label' => 'Panel de aliados',
-                'description' => 'Herramientas y certificaciones del equipo. Se muestran en un carrusel en la portada y en la página Nosotros.',
+                'description' => 'Herramientas y certificaciones del equipo. Se muestran en un carrusel en la portada, en su página (/aliados) y en Nosotros. Para quitarlas del sitio, oculta «Panel de Aliados» en el menú de navegación (Inicio).',
                 'groups' => ['allies' => 'Título y descripción', 'allies_carousel' => 'Carrusel de la portada'],
                 'texts' => [
                     ['group' => 'allies', 'key' => 'title', 'label' => 'Título', 'type' => 'text', 'max' => 80, 'required' => true],
@@ -281,7 +281,9 @@ class SiteSections
                         ['value' => '0', 'label' => 'Ocultar'],
                     ]],
                 ],
-                'images' => [],
+                'images' => [
+                    ['key' => 'image_aliados', 'slot' => 'aliados', 'label' => 'Imagen de la página Panel de aliados', 'hint' => 'JPG, PNG o WebP. Se muestra en la cabecera. Sin imagen se muestra la malla animada.'],
+                ],
                 'lists' => [
                     ['section' => 'certification', 'label' => 'Herramientas y certificaciones', 'itemLabel' => 'Herramienta o certificación', 'max' => 16, 'toggle' => true, 'fields' => [
                         ['key' => 'title', 'label' => 'Nombre', 'type' => 'text', 'max' => 80],

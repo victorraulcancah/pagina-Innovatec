@@ -181,7 +181,7 @@ export default function HomeEditor({
                         <Section title="Menú de navegación" description="Las opciones Soluciones (/soluciones) y Servicios (/servicios) muestran solas sus páginas en el desplegable; las demás pueden llevar un submenú propio.">
                             <ItemList<MenuItem>
                                 items={data.menu}
-                                max={8}
+                                max={9}
                                 itemLabel="Opción"
                                 blank={() => ({ label: '', url: '', children: [], visible: true, show_children: true })}
                                 onChange={(items) => setData('menu', items)}

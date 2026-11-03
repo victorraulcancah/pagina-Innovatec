@@ -6,7 +6,7 @@ use App\Models\HomeSetting;
 use Inertia\Inertia;
 use Inertia\Response;
 
-/** Páginas públicas de contenido: Nosotros, Experiencia, Clientes y Contacto. */
+/** Páginas públicas de contenido: Nosotros, Experiencia, Aliados, Clientes y Contacto. */
 class PageController extends Controller
 {
     public function about(): Response
@@ -27,6 +27,11 @@ class PageController extends Controller
     public function experience(): Response
     {
         return $this->render('experience');
+    }
+
+    public function allies(): Response
+    {
+        return $this->render('allies');
     }
 
     public function clients(): Response

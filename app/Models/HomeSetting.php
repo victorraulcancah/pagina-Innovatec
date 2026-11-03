@@ -79,6 +79,7 @@ class HomeSetting extends Model
                 ]],
                 ['label' => 'División Telcos', 'url' => '/division-telcos', 'children' => []],
                 ['label' => 'Casos de Éxito', 'url' => '/experiencia', 'children' => []],
+                ['label' => 'Panel de Aliados', 'url' => '/aliados', 'children' => []],
                 ['label' => 'Blog', 'url' => '/blog', 'children' => []],
                 ['label' => 'Contacto', 'url' => '/contacto', 'children' => []],
             ],

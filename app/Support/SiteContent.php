@@ -69,6 +69,7 @@ class SiteContent
             ],
             'allies' => [
                 ...$text['allies'],
+                'imageUrl' => $home->pageImageUrl('aliados'),
                 'carousel' => [
                     'rows' => (int) $text['allies_carousel']['rows'] === 2 ? 2 : 1,
                     'perView' => (int) $text['allies_carousel']['per_view'] === 3 ? 3 : 4,

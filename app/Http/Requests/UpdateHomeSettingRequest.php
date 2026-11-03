@@ -34,7 +34,7 @@ class UpdateHomeSettingRequest extends FormRequest
             'buttons.*.url' => ['required', 'string', 'max:255', 'regex:'.self::URL_RULE],
             'buttons.*.variant' => ['required', 'in:primary,outline'],
 
-            'menu' => ['array', 'max:8'],
+            'menu' => ['array', 'max:9'],
             'menu.*.label' => ['required', 'string', 'max:40'],
             'menu.*.url' => ['required', 'string', 'max:255', 'regex:'.self::URL_RULE],
             'menu.*.visible' => ['boolean'],

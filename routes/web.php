@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', HomeController::class)->name('home');
 Route::get('nosotros', [PageController::class, 'about'])->middleware('page.visible:/nosotros')->name('about');
 Route::get('experiencia', [PageController::class, 'experience'])->middleware('page.visible:/experiencia')->name('experience');
+Route::get('aliados', [PageController::class, 'allies'])->middleware('page.visible:/aliados')->name('allies');
 Route::get('clientes', [PageController::class, 'clients'])->middleware('page.visible:/clientes')->name('clients');
 Route::get('contacto', [PageController::class, 'contact'])->middleware('page.visible:/contacto')->name('contact');
 Route::middleware('page.visible:/blog')->group(function () {

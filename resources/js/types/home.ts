@@ -69,6 +69,7 @@ export type SiteSections = {
     allies: {
         title: string;
         intro: string;
+        imageUrl: string | null;
         carousel: {
             rows: 1 | 2;
             perView: 3 | 4;

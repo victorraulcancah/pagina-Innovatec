@@ -25,7 +25,7 @@ class PublicPagesTest extends TestCase
 
     public function test_every_public_page_renders(): void
     {
-        foreach (['/', '/nosotros', '/experiencia', '/clientes', '/contacto', '/division-enterprise', '/division-telcos', '/blog'] as $url) {
+        foreach (['/', '/nosotros', '/experiencia', '/aliados', '/clientes', '/contacto', '/division-enterprise', '/division-telcos', '/blog'] as $url) {
             $this->get($url)->assertOk();
         }
 

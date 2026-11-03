@@ -46,7 +46,7 @@ class MenuVisibilityTest extends TestCase
     public function test_every_menu_option_is_visible_by_default(): void
     {
         $this->get('/')->assertInertia(fn (Assert $page) => $page
-            ->has('home.menu', 7)
+            ->has('home.menu', 8)
             ->where('home.menu.0.visible', true)
             ->where('home.showPanelLink', true));
     }
@@ -56,25 +56,25 @@ class MenuVisibilityTest extends TestCase
         $this->admin()->post('/admin/inicio', $this->payload(['menu' => $this->ocultar('/blog')]))->assertSessionHasNoErrors();
 
         $this->get('/')->assertInertia(fn (Assert $page) => $page
-            ->has('home.menu', 6)
+            ->has('home.menu', 7)
             ->where('home.menu', fn ($menu) => ! collect($menu)->contains('url', '/blog')));
 
         // El panel la sigue viendo (oculta) para poder volver a mostrarla.
         $this->admin()->get('/admin')->assertInertia(fn (Assert $page) => $page
-            ->has('home.menu', 7)
+            ->has('home.menu', 8)
             ->where('home.menu', fn ($menu) => collect($menu)->firstWhere('url', '/blog')['visible'] === false));
     }
 
     public function test_a_hidden_option_can_be_shown_again(): void
     {
         $this->admin()->post('/admin/inicio', $this->payload(['menu' => $this->ocultar('/nosotros')]))->assertSessionHasNoErrors();
-        $this->get('/')->assertInertia(fn (Assert $page) => $page->has('home.menu', 6));
+        $this->get('/')->assertInertia(fn (Assert $page) => $page->has('home.menu', 7));
 
         $mostrar = array_map(fn (array $m) => [...$m, 'visible' => true], HomeSetting::current()->menu);
         $this->admin()->post('/admin/inicio', $this->payload(['menu' => $mostrar]))->assertSessionHasNoErrors();
 
         $this->get('/')->assertInertia(fn (Assert $page) => $page
-            ->has('home.menu', 7)
+            ->has('home.menu', 8)
             ->where('home.menu', fn ($menu) => collect($menu)->contains('url', '/nosotros')));
     }
 
@@ -83,7 +83,7 @@ class MenuVisibilityTest extends TestCase
         $antes = array_map(fn (array $m) => collect($m)->except('visible')->all(), HomeSetting::current()->menu);
         HomeSetting::current()->update(['menu' => $antes]);
 
-        $this->get('/')->assertInertia(fn (Assert $page) => $page->has('home.menu', 7)->where('home.menu.2.visible', true));
+        $this->get('/')->assertInertia(fn (Assert $page) => $page->has('home.menu', 8)->where('home.menu.2.visible', true));
     }
 
     public function test_the_panel_link_can_be_hidden_and_shown(): void
@@ -122,7 +122,7 @@ class MenuVisibilityTest extends TestCase
 
     public function test_every_public_page_of_the_menu_closes_when_hidden(): void
     {
-        foreach (['/nosotros', '/division-enterprise', '/division-telcos', '/experiencia', '/blog', '/contacto'] as $url) {
+        foreach (['/nosotros', '/division-enterprise', '/division-telcos', '/experiencia', '/aliados', '/blog', '/contacto'] as $url) {
             HomeSetting::current()->update(['menu' => HomeSetting::defaults()['menu']]);
             $this->get($url)->assertOk();
 
@@ -162,7 +162,7 @@ class MenuVisibilityTest extends TestCase
         HomeSetting::current()->update(['menu' => $this->ocultar('/')]);
 
         $this->get('/')->assertOk()->assertInertia(fn (Assert $page) => $page
-            ->has('home.menu', 6)
+            ->has('home.menu', 7)
             ->where('home.hiddenPages', []));
     }
 

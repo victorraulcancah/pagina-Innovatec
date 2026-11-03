@@ -7,6 +7,7 @@ use App\Models\SectionItem;
 use App\Models\User;
 use Database\Seeders\SiteContentSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
@@ -61,6 +62,59 @@ class CertificationsTest extends TestCase
         $this->get('/nosotros')->assertInertia(fn (Assert $p) => $p
             ->has('home.sections.allies.items', 1)
             ->where('home.sections.allies.items.0.name', 'Una'));
+    }
+
+    public function test_the_allies_have_their_own_page_and_menu_option(): void
+    {
+        SectionItem::query()->create(['section' => 'certification', 'title' => 'Cisco CCNA', 'sort' => 0]);
+
+        $this->get('/aliados')->assertOk()->assertInertia(fn (Assert $p) => $p
+            ->component('allies')
+            ->where('home.sections.allies.title', 'Panel de aliados')
+            ->where('home.sections.allies.items.0.name', 'Cisco CCNA')
+            ->where('home.menu', fn ($menu) => collect($menu)->firstWhere('url', '/aliados')['label'] === 'Panel de Aliados'));
+    }
+
+    public function test_the_allies_page_can_have_its_own_header_image(): void
+    {
+        Storage::fake('public');
+
+        $this->admin()->post('/admin/aliados', [
+            'texts' => ['allies' => ['title' => 'Panel de aliados']],
+            'image_aliados' => UploadedFile::fake()->image('cabecera.jpg'),
+        ])->assertSessionHasNoErrors();
+
+        $this->get('/aliados')->assertInertia(fn (Assert $p) => $p
+            ->whereNot('home.sections.allies.imageUrl', null));
+    }
+
+    public function test_hiding_the_allies_option_closes_the_page_but_keeps_the_panel(): void
+    {
+        HomeSetting::current()->update(['menu' => array_map(
+            fn (array $m) => [...$m, 'visible' => $m['url'] !== '/aliados'],
+            HomeSetting::current()->menu,
+        )]);
+
+        $this->get('/aliados')->assertNotFound();
+        $this->get('/')->assertInertia(fn (Assert $p) => $p->where('home.hiddenPages', ['/aliados']));
+        $this->admin()->get('/admin/aliados')->assertOk();
+    }
+
+    public function test_the_migration_adds_the_option_to_an_existing_menu_only_once(): void
+    {
+        $sinAliados = array_values(array_filter(HomeSetting::defaults()['menu'], fn (array $m) => $m['url'] !== '/aliados'));
+        HomeSetting::current()->update(['menu' => $sinAliados]);
+
+        $migration = require database_path('migrations/2026_11_03_000002_add_allies_page_to_menu.php');
+        $migration->up();
+        $migration->up();
+
+        $urls = array_column(HomeSetting::current()->fresh()->menu, 'url');
+        $this->assertSame(1, count(array_keys($urls, '/aliados', true)));
+        $this->assertSame(array_search('/experiencia', $urls, true) + 1, array_search('/aliados', $urls, true));
+
+        $migration->down();
+        $this->assertNotContains('/aliados', array_column(HomeSetting::current()->fresh()->menu, 'url'));
     }
 
     public function test_the_allies_carousel_has_defaults_and_is_configurable(): void

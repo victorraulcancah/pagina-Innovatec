@@ -43,7 +43,7 @@ export default function Home({ home, latestPosts }: { home: HomeContent; latestP
             {shows('/division-telcos') && <TelcosTeaser telcos={s.telcos} />}
 
             {shows('/experiencia') && <ExperienceTeaser experience={s.experience} />}
-            <AlliesTeaser allies={s.allies} />
+            {shows('/aliados') && <AlliesTeaser allies={s.allies} />}
             {shows('/clientes') && <ClientsTeaser clients={s.clients} />}
 
             {shows('/blog') && latestPosts.length > 0 && (

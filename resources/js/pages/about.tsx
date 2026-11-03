@@ -247,7 +247,7 @@ export default function About({ home }: { home: HomeContent }) {
             )}
 
             {/* Certificaciones */}
-            {allies.items.length > 0 && (
+            {linkIsVisible(home, '/aliados') && allies.items.length > 0 && (
                 <Phased className="bg-night-2 py-20 lg:py-28">
                     <div aria-hidden="true" className="ent-glow absolute -right-32 bottom-0 size-[28rem] rounded-full bg-signal-deep/45 blur-3xl" />
                     <div className={`${sectionShell} relative`}>
