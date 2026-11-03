@@ -166,17 +166,10 @@ function LineSection({ line, index }: { line: Offering; index: number }) {
                         }`}
                         style={d(100)}
                     >
-                        <div className="flex flex-wrap items-end justify-between gap-3">
-                            <div>
-                                <h3 className={`font-display text-lg uppercase leading-snug sm:text-xl ${light ? 'text-night' : 'text-white'}`}>
-                                    Marcas con las que trabajamos
-                                </h3>
-                                <span className={`ent-line mt-3 block h-[3px] w-16 rounded-full ${light ? 'bg-signal-deep' : 'bg-signal'}`} />
-                            </div>
-                            <span className={`text-sm font-medium ${light ? 'text-[#2b3d66]' : 'text-white'}`}>
-                                {logos.length} {logos.length === 1 ? 'marca' : 'marcas'}
-                            </span>
-                        </div>
+                        <h3 className={`font-display text-lg uppercase leading-snug sm:text-xl ${light ? 'text-night' : 'text-white'}`}>
+                            Marcas con las que trabajamos
+                        </h3>
+                        <span className={`ent-line mt-3 block h-[3px] w-16 rounded-full ${light ? 'bg-signal-deep' : 'bg-signal'}`} />
 
                         <ul className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
                             {logos.map((logo, k) => (
