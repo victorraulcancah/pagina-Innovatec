@@ -66,7 +66,10 @@ class SiteContent
                     'imageUrl' => $i->imageUrl(),
                     'gallery' => collect($i->galleryItems())->map(fn ($g) => ['name' => $g['name'], 'url' => $g['url']])->all(),
                 ]),
-                'certifications' => $list('certification', fn (SectionItem $i) => [
+            ],
+            'allies' => [
+                ...$text['allies'],
+                'items' => $list('certification', fn (SectionItem $i) => [
                     'id' => $i->id,
                     'name' => $i->title,
                     'description' => $i->body,

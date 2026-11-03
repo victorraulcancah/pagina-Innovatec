@@ -44,7 +44,11 @@ class SiteSections
             ],
             'experience' => [
                 'title' => 'Casos de éxito',
-                'intro' => 'Contamos con ingenieros especializados y certificados por los principales fabricantes. Estos son algunos de nuestros proyectos.',
+                'intro' => 'Estos son algunos de los proyectos que hemos realizado para nuestros clientes.',
+            ],
+            'allies' => [
+                'title' => 'Panel de aliados',
+                'intro' => 'Las herramientas y certificaciones de los principales fabricantes que respaldan el trabajo de nuestro equipo técnico.',
             ],
             'clients' => [
                 'title' => 'Clientes que nos',
@@ -222,7 +226,7 @@ class SiteSections
             ],
             'experiencia' => [
                 'label' => 'Casos de éxito',
-                'description' => 'Proyectos realizados, certificaciones del equipo y clientes.',
+                'description' => 'Proyectos realizados para nuestros clientes.',
                 'groups' => ['experience' => 'Texto'],
                 'texts' => [
                     ['group' => 'experience', 'key' => 'title', 'label' => 'Título', 'type' => 'text', 'max' => 80, 'required' => true],
@@ -238,16 +242,28 @@ class SiteSections
                         ['key' => 'image', 'label' => 'Logo del cliente o foto del proyecto', 'type' => 'image'],
                         ['key' => 'gallery', 'label' => 'Tecnologías usadas (logos)', 'type' => 'gallery'],
                     ]],
-                    ['section' => 'certification', 'label' => 'Certificaciones', 'itemLabel' => 'Certificación', 'max' => 16, 'toggle' => true, 'fields' => [
-                        ['key' => 'title', 'label' => 'Nombre de la certificación', 'type' => 'text', 'max' => 80],
+                ],
+            ],
+            'aliados' => [
+                'label' => 'Panel de aliados',
+                'description' => 'Herramientas y certificaciones del equipo. Se muestran en la portada y en la página Nosotros.',
+                'groups' => ['allies' => 'Texto'],
+                'texts' => [
+                    ['group' => 'allies', 'key' => 'title', 'label' => 'Título', 'type' => 'text', 'max' => 80, 'required' => true],
+                    ['group' => 'allies', 'key' => 'intro', 'label' => 'Texto', 'type' => 'textarea', 'max' => 300],
+                ],
+                'images' => [],
+                'lists' => [
+                    ['section' => 'certification', 'label' => 'Herramientas y certificaciones', 'itemLabel' => 'Herramienta o certificación', 'max' => 16, 'toggle' => true, 'fields' => [
+                        ['key' => 'title', 'label' => 'Nombre', 'type' => 'text', 'max' => 80],
                         ['key' => 'body', 'label' => 'Descripción (opcional)', 'type' => 'textarea', 'max' => 160],
-                        ['key' => 'image', 'label' => 'Insignia', 'type' => 'image'],
+                        ['key' => 'image', 'label' => 'Insignia o logo', 'type' => 'image'],
                     ]],
                 ],
             ],
             'clientes' => [
                 'label' => 'Clientes',
-                'description' => 'Las empresas que confían en PROINNOVATEC: cada una con su logo, su nombre y, si quieres, un texto breve. La portada muestra las primeras ocho.',
+                'description' => 'Las empresas que confían en PROINNOVATEC: cada una con su logo, su nombre y, si quieres, un texto breve. La portada las muestra todas en un carrusel.',
                 'groups' => ['clients' => 'Título'],
                 'texts' => [
                     ['group' => 'clients', 'key' => 'title', 'label' => 'Título', 'type' => 'text', 'max' => 80, 'required' => true],

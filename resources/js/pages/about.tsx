@@ -1,6 +1,6 @@
 import { Fragment, type CSSProperties } from 'react';
 import { CtaBand } from '@/components/site/cta-band';
-import { CertificationGrid } from '@/components/site/experience-section';
+import { AllyGrid } from '@/components/site/allies-section';
 import { LineVisual } from '@/components/site/line-visual';
 import { LogoMarquee } from '@/components/site/logo-marquee';
 import { PageHero } from '@/components/site/page-hero';
@@ -109,7 +109,7 @@ function splitStory(story: string) {
 }
 
 export default function About({ home }: { home: HomeContent }) {
-    const { about, experience, solutions, clients } = home.sections;
+    const { about, allies, solutions, clients } = home.sections;
     const image = about.imageUrl ?? about.cards[0]?.imageUrl ?? null;
     const story = splitStory(about.story);
     const lines = (text: string) => text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
@@ -246,13 +246,13 @@ export default function About({ home }: { home: HomeContent }) {
             )}
 
             {/* Certificaciones */}
-            {experience.certifications.length > 0 && (
+            {allies.items.length > 0 && (
                 <Phased className="bg-night-2 py-20 lg:py-28">
                     <div aria-hidden="true" className="ent-glow absolute -right-32 bottom-0 size-[28rem] rounded-full bg-signal-deep/45 blur-3xl" />
                     <div className={`${sectionShell} relative`}>
                         <Title>Certificaciones de nuestro equipo</Title>
                         <div className="mt-12">
-                            <CertificationGrid items={experience.certifications} />
+                            <AllyGrid items={allies.items} />
                         </div>
                     </div>
                 </Phased>

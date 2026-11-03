@@ -1,6 +1,5 @@
 import type { CSSProperties } from 'react';
 import { CtaBand } from '@/components/site/cta-band';
-import { CertificationGrid } from '@/components/site/experience-section';
 import { LogoMarquee } from '@/components/site/logo-marquee';
 import { PageHero } from '@/components/site/page-hero';
 import { Phased, sectionShell } from '@/components/site/reveal';
@@ -42,7 +41,6 @@ export default function Experience({ home }: { home: HomeContent }) {
 
     const jumps = [
         e.cases.length > 0 && { id: 'proyectos', label: 'Proyectos' },
-        e.certifications.length > 0 && { id: 'certificaciones', label: 'Certificaciones' },
         clientLogos.length > 0 && { id: 'clientes', label: 'Clientes' },
     ].filter(Boolean) as { id: string; label: string }[];
 
@@ -126,20 +124,6 @@ export default function Experience({ home }: { home: HomeContent }) {
                                 </li>
                             ))}
                         </ul>
-                    </div>
-                </Phased>
-            )}
-
-            {/* Certificaciones: fichas que aparecen con escala */}
-            {e.certifications.length > 0 && (
-                <Phased className="scroll-mt-20 bg-night-2 py-16 lg:py-24">
-                    <span id="certificaciones" className="absolute -top-20" />
-                    <div aria-hidden="true" className="ent-glow absolute -right-32 bottom-0 size-[28rem] rounded-full bg-signal-deep/45 blur-3xl" />
-                    <div className={`${sectionShell} relative`}>
-                        <Title>Certificaciones</Title>
-                        <div className="mt-12">
-                            <CertificationGrid items={e.certifications} />
-                        </div>
                     </div>
                 </Phased>
             )}

@@ -24,11 +24,11 @@ class SectionAdminTest extends TestCase
 
     public function test_every_section_page_requires_login_and_renders_for_admin(): void
     {
-        foreach (['nosotros', 'enterprise', 'telcos', 'experiencia', 'clientes', 'contacto', 'empresa'] as $page) {
+        foreach (['nosotros', 'enterprise', 'telcos', 'experiencia', 'aliados', 'clientes', 'contacto', 'empresa'] as $page) {
             $this->get("/admin/$page")->assertRedirect('/admin/login');
         }
 
-        foreach (['nosotros', 'enterprise', 'telcos', 'experiencia', 'clientes', 'contacto', 'empresa'] as $page) {
+        foreach (['nosotros', 'enterprise', 'telcos', 'experiencia', 'aliados', 'clientes', 'contacto', 'empresa'] as $page) {
             $this->admin()->get("/admin/$page")->assertInertia(fn (Assert $p) => $p
                 ->component('admin/section-editor')->where('page', $page));
         }

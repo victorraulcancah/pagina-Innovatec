@@ -1,4 +1,5 @@
 import { AboutSection } from '@/components/site/about-section';
+import { AlliesTeaser } from '@/components/site/allies-section';
 import { ClientsTeaser } from '@/components/site/clients-section';
 import { CtaBand } from '@/components/site/cta-band';
 import { ExperienceTeaser } from '@/components/site/experience-section';
@@ -54,6 +55,7 @@ export default function Home({ home, latestPosts }: { home: HomeContent; latestP
             </section>
 
             <ExperienceTeaser experience={s.experience} />
+            <AlliesTeaser allies={s.allies} />
             <ClientsTeaser clients={s.clients} />
 
             {latestPosts.length > 0 && (

@@ -35,6 +35,12 @@ const icons: Record<string, ReactNode> = {
             <path d="M7.5 12l-1 5 3.5-2 3.5 2-1-5" />
         </>
     ),
+    aliados: (
+        <>
+            <circle cx="7.5" cy="10" r="4.5" />
+            <circle cx="12.5" cy="10" r="4.5" />
+        </>
+    ),
     clientes: (
         <>
             <path d="M4 17V6.5L10 3l6 3.5V17" />
