@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Http\Middleware\AuthenticateAdmin;
+use App\Models\HomeSetting;
 use App\Models\SectionItem;
 use App\Models\User;
 use Database\Seeders\SiteContentSeeder;

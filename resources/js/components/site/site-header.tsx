@@ -223,8 +223,8 @@ export function SiteHeader({ home }: { home: HomeContent }) {
                     />
                 </a>
 
-                <nav aria-label="Principal" className="hidden justify-center lg:flex">
-                    <ul ref={navRef} className="relative flex items-center gap-4 xl:gap-9">
+                <nav aria-label="Principal" className="hidden justify-center xl:flex">
+                    <ul ref={navRef} className="relative flex items-center gap-5 min-[1366px]:gap-6">
                         {indicator && (
                             <span
                                 aria-hidden="true"
@@ -242,7 +242,7 @@ export function SiteHeader({ home }: { home: HomeContent }) {
                     </ul>
                 </nav>
 
-                <div className="flex items-center justify-end gap-3 max-lg:col-start-3">
+                <div className="flex items-center justify-end gap-3 max-xl:col-start-3">
                     {navCta && (
                         <a href={navCta.url} className={`${pillClass} max-sm:hidden`}>
                             {navCta.label}
@@ -257,12 +257,12 @@ export function SiteHeader({ home }: { home: HomeContent }) {
                             <circle cx="8" cy="5.5" r="2.7" stroke="currentColor" strokeWidth="1.3" />
                             <path d="M2.5 14c.6-2.6 2.8-4 5.5-4s4.9 1.4 5.5 4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
                         </svg>
-                        <span className="lg:max-xl:sr-only">Panel</span>
+                        <span>Panel</span>
                     </a>
                     )}
                     <button
                         type="button"
-                        className="-mr-2 p-2 text-white lg:hidden"
+                        className="-mr-2 p-2 text-white xl:hidden"
                         aria-expanded={menuOpen}
                         aria-controls="mobile-menu"
                         aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
@@ -290,7 +290,7 @@ export function SiteHeader({ home }: { home: HomeContent }) {
                 <nav
                     id="mobile-menu"
                     aria-label="Principal móvil"
-                    className="menu-panel fixed inset-x-0 bottom-0 top-[76px] overflow-y-auto bg-night px-6 pb-10 pt-4 lg:hidden"
+                    className="menu-panel fixed inset-x-0 bottom-0 top-[76px] overflow-y-auto bg-night px-6 pb-10 pt-4 xl:hidden"
                 >
                     <ul className="divide-y divide-white/10">
                         {home.menu.map((item, i) => (
