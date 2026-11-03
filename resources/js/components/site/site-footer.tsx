@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { linkIsVisible } from '@/lib/hidden-pages';
 import { whatsappUrl } from '@/lib/whatsapp';
 import type { HomeContent } from '@/types';
+import { MagusCredit } from './magus-credit';
 import { sectionShell } from './reveal';
 import { SocialLinks } from './social-links';
 
@@ -125,14 +126,17 @@ export function SiteFooter({ home }: { home: HomeContent }) {
             </div>
 
             <div className="border-t border-white/10">
-                <div className={`${sectionShell} flex flex-col gap-2 py-6 text-xs text-white sm:flex-row sm:items-center sm:justify-between`}>
-                    <p>
-                        {rights}
-                        {legal && <span className="ml-2">{legal}</span>}
-                    </p>
-                    <a href="#top" className={link}>
-                        Volver arriba ↑
-                    </a>
+                <div className={`${sectionShell} flex flex-col gap-5 pt-6 pb-24 text-xs text-white sm:pb-6 lg:flex-row lg:items-center lg:justify-between`}>
+                    <div className="space-y-2">
+                        <p>
+                            {rights}
+                            {legal && <span className="ml-2">{legal}</span>}
+                        </p>
+                        <a href="#top" className={`${link} inline-block`}>
+                            Volver arriba ↑
+                        </a>
+                    </div>
+                    <MagusCredit />
                 </div>
             </div>
         </footer>
