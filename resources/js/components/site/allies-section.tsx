@@ -1,24 +1,70 @@
 import type { CSSProperties } from 'react';
 import type { SiteSections } from '@/types';
+import { Carousel } from './carousel';
 import { Phased, SectionHeading, sectionShell } from './reveal';
 
 type Allies = SiteSections['allies'];
+type Ally = Allies['items'][number];
 
 /**
- * Herramientas y certificaciones: cada una con su insignia, su nombre y, si se escribió, una descripción.
+ * Una herramienta o certificación: su insignia, su nombre y, si se escribió, una descripción.
  * `compact` deja solo insignia y nombre (para la portada).
  */
-export function AllyGrid({
-    items,
+function AllyCard({
+    ally,
     compact = false,
 }: {
-    items: Allies['items'];
+    ally: Ally;
     compact?: boolean;
 }) {
     return (
-        <ul
-            className={`grid gap-4 ${compact ? 'sm:grid-cols-2 lg:grid-cols-4' : 'md:grid-cols-2'}`}
+        <article
+            className={`inc-card group relative flex h-full items-center gap-4 overflow-hidden rounded-xl bg-white/[0.07] p-4 ring-1 ring-white/15 hover:bg-white/[0.11] sm:gap-5 ${
+                compact ? '' : 'sm:p-5'
+            }`}
         >
+            <span
+                className={`flex shrink-0 items-center justify-center rounded-lg bg-white p-2 shadow-[0_10px_20px_-12px_rgba(5,11,26,0.8)] ring-1 ring-night/10 transition-transform duration-500 ease-out-expo group-hover:scale-105 group-hover:-rotate-2 ${
+                    compact ? 'size-16' : 'size-24'
+                }`}
+            >
+                {ally.imageUrl ? (
+                    <img
+                        src={ally.imageUrl}
+                        alt=""
+                        loading="lazy"
+                        className="max-h-full max-w-full object-contain"
+                    />
+                ) : (
+                    <span className="text-center text-[10px] leading-tight font-semibold text-night">
+                        {ally.name}
+                    </span>
+                )}
+            </span>
+            <div className="min-w-0">
+                <h3
+                    className={`leading-snug font-semibold text-white ${compact ? 'text-sm' : 'text-base'}`}
+                >
+                    {ally.name}
+                </h3>
+                {!compact && ally.description && (
+                    <p className="mt-1.5 text-sm leading-relaxed text-white">
+                        {ally.description}
+                    </p>
+                )}
+            </div>
+            <span
+                aria-hidden="true"
+                className="inc-bar absolute inset-x-0 bottom-0 h-[3px] bg-signal"
+            />
+        </article>
+    );
+}
+
+/** Rejilla con todas las herramientas y certificaciones, con su descripción (para la página Nosotros). */
+export function AllyGrid({ items }: { items: Allies['items'] }) {
+    return (
+        <ul className="grid gap-4 md:grid-cols-2">
             {items.map((ally, i) => (
                 <li
                     key={ally.id}
@@ -29,53 +75,14 @@ export function AllyGrid({
                         } as CSSProperties
                     }
                 >
-                    <article
-                        className={`inc-card group relative flex h-full items-center gap-4 overflow-hidden rounded-xl bg-white/[0.07] p-4 ring-1 ring-white/15 hover:bg-white/[0.11] sm:gap-5 ${
-                            compact ? '' : 'sm:p-5'
-                        }`}
-                    >
-                        <span
-                            className={`flex shrink-0 items-center justify-center rounded-lg bg-white p-2 shadow-[0_10px_20px_-12px_rgba(5,11,26,0.8)] ring-1 ring-night/10 transition-transform duration-500 ease-out-expo group-hover:scale-105 group-hover:-rotate-2 ${
-                                compact ? 'size-16' : 'size-24'
-                            }`}
-                        >
-                            {ally.imageUrl ? (
-                                <img
-                                    src={ally.imageUrl}
-                                    alt=""
-                                    loading="lazy"
-                                    className="max-h-full max-w-full object-contain"
-                                />
-                            ) : (
-                                <span className="text-center text-[10px] leading-tight font-semibold text-night">
-                                    {ally.name}
-                                </span>
-                            )}
-                        </span>
-                        <div className="min-w-0">
-                            <h3
-                                className={`leading-snug font-semibold text-white ${compact ? 'text-sm' : 'text-base'}`}
-                            >
-                                {ally.name}
-                            </h3>
-                            {!compact && ally.description && (
-                                <p className="mt-1.5 text-sm leading-relaxed text-white">
-                                    {ally.description}
-                                </p>
-                            )}
-                        </div>
-                        <span
-                            aria-hidden="true"
-                            className="inc-bar absolute inset-x-0 bottom-0 h-[3px] bg-signal"
-                        />
-                    </article>
+                    <AllyCard ally={ally} />
                 </li>
             ))}
         </ul>
     );
 }
 
-/** Versión de portada: título, texto y todas las herramientas y certificaciones. */
+/** Versión de portada: título, texto y el carrusel con todas las herramientas y certificaciones. */
 export function AlliesTeaser({ allies }: { allies: Allies }) {
     if (allies.items.length === 0) {
         return null;
@@ -97,7 +104,12 @@ export function AlliesTeaser({ allies }: { allies: Allies }) {
                     )}
                 </div>
                 <div className="mt-14">
-                    <AllyGrid items={allies.items} compact />
+                    <Carousel
+                        items={allies.items}
+                        label={allies.title}
+                        itemLabel="Aliado"
+                        renderItem={(ally) => <AllyCard ally={ally} compact />}
+                    />
                 </div>
             </div>
         </Phased>

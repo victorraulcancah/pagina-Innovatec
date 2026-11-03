@@ -181,7 +181,7 @@ class SiteSections
             ],
             'telcos' => [
                 'label' => 'División Telcos',
-                'description' => 'Página de la división para operadoras y proveedores de telecomunicaciones.',
+                'description' => 'Página de la división para operadoras y proveedores de telecomunicaciones. El título, los textos y los servicios también se muestran en la portada.',
                 'groups' => ['telcos' => 'Textos de la página'],
                 'texts' => [
                     ['group' => 'telcos', 'key' => 'title', 'label' => 'Título', 'type' => 'text', 'max' => 80, 'required' => true],

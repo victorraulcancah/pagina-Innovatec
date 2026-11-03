@@ -7,6 +7,7 @@ import { Hero } from '@/components/site/hero';
 import { Reveal, SectionHeading, sectionShell } from '@/components/site/reveal';
 import { SiteLayout } from '@/components/site/site-layout';
 import { SolutionCards } from '@/components/site/solution-cards';
+import { TelcosTeaser } from '@/components/site/telcos-services';
 import { PostCard } from '@/components/site/post-card';
 import type { BlogCard, HomeContent } from '@/types';
 
@@ -37,22 +38,7 @@ export default function Home({ home, latestPosts }: { home: HomeContent; latestP
                 </section>
             )}
 
-            <section className="bg-night py-24 lg:py-28">
-                <div className={`${sectionShell} grid items-center gap-10 lg:grid-cols-[1fr_auto] lg:gap-20`}>
-                    <Reveal>
-                        <SectionHeading title={s.telcos.title} />
-                        <p className="mt-5 max-w-[52ch] text-base leading-relaxed text-white sm:text-lg">{s.telcos.subtitle}</p>
-                    </Reveal>
-                    <Reveal delay={100}>
-                        <a
-                            href="/division-telcos"
-                            className="inline-flex min-h-12 items-center rounded-full border border-white/70 px-8 text-sm font-medium text-white transition-colors hover:border-white hover:bg-white hover:text-night"
-                        >
-                            {s.telcos.home_button_label || 'Conoce la división'}
-                        </a>
-                    </Reveal>
-                </div>
-            </section>
+            <TelcosTeaser telcos={s.telcos} />
 
             <ExperienceTeaser experience={s.experience} />
             <AlliesTeaser allies={s.allies} />
