@@ -50,6 +50,13 @@ class SiteSections
                 'title' => 'Panel de aliados',
                 'intro' => 'Las herramientas y certificaciones de los principales fabricantes que respaldan el trabajo de nuestro equipo técnico.',
             ],
+            'allies_carousel' => [
+                'rows' => '1',
+                'autoplay' => '1',
+                'speed' => '2',
+                'per_view' => '4',
+                'descriptions' => '1',
+            ],
             'clients' => [
                 'title' => 'Clientes que nos',
                 'accent' => 'respaldan',
@@ -246,11 +253,33 @@ class SiteSections
             ],
             'aliados' => [
                 'label' => 'Panel de aliados',
-                'description' => 'Herramientas y certificaciones del equipo. Se muestran en la portada y en la página Nosotros.',
-                'groups' => ['allies' => 'Texto'],
+                'description' => 'Herramientas y certificaciones del equipo. Se muestran en un carrusel en la portada y en la página Nosotros.',
+                'groups' => ['allies' => 'Título y descripción', 'allies_carousel' => 'Carrusel de la portada'],
                 'texts' => [
                     ['group' => 'allies', 'key' => 'title', 'label' => 'Título', 'type' => 'text', 'max' => 80, 'required' => true],
-                    ['group' => 'allies', 'key' => 'intro', 'label' => 'Texto', 'type' => 'textarea', 'max' => 300],
+                    ['group' => 'allies', 'key' => 'intro', 'label' => 'Descripción breve', 'type' => 'textarea', 'max' => 300, 'hint' => 'Se muestra bajo el título. Déjala vacía para no mostrarla.'],
+                    ['group' => 'allies_carousel', 'key' => 'rows', 'label' => 'Filas', 'type' => 'select', 'max' => 1, 'hint' => 'Con dos filas caben el doble: si todas las tarjetas entran en pantalla, el carrusel se queda quieto porque no hay nada más que mostrar.', 'options' => [
+                        ['value' => '1', 'label' => 'Una fila'],
+                        ['value' => '2', 'label' => 'Dos filas'],
+                    ]],
+                    ['group' => 'allies_carousel', 'key' => 'per_view', 'label' => 'Tarjetas por fila en pantalla grande', 'type' => 'select', 'max' => 1, 'hint' => 'En tablets y celulares se ajusta solo.', 'options' => [
+                        ['value' => '3', 'label' => '3 tarjetas'],
+                        ['value' => '4', 'label' => '4 tarjetas'],
+                    ]],
+                    ['group' => 'allies_carousel', 'key' => 'autoplay', 'label' => 'Movimiento automático', 'type' => 'select', 'max' => 1, 'hint' => 'Si lo desactivas, se mueve solo con las flechas o deslizando.', 'options' => [
+                        ['value' => '1', 'label' => 'Activado'],
+                        ['value' => '0', 'label' => 'Desactivado'],
+                    ]],
+                    ['group' => 'allies_carousel', 'key' => 'speed', 'label' => 'Velocidad del movimiento automático', 'type' => 'select', 'max' => 1, 'options' => [
+                        ['value' => '1', 'label' => 'Muy rápido (cada segundo)'],
+                        ['value' => '2', 'label' => 'Rápido (cada 2 segundos)'],
+                        ['value' => '4', 'label' => 'Normal (cada 4 segundos)'],
+                        ['value' => '6', 'label' => 'Lento (cada 6 segundos)'],
+                    ]],
+                    ['group' => 'allies_carousel', 'key' => 'descriptions', 'label' => 'Descripción en cada tarjeta', 'type' => 'select', 'max' => 1, 'hint' => 'Muestra bajo cada nombre la descripción que escribas al editarlo.', 'options' => [
+                        ['value' => '1', 'label' => 'Mostrar'],
+                        ['value' => '0', 'label' => 'Ocultar'],
+                    ]],
                 ],
                 'images' => [],
                 'lists' => [
@@ -382,6 +411,7 @@ class SiteSections
                 'string',
                 ...($t['type'] === 'email' ? ['email'] : []),
                 ...($t['type'] === 'url' ? ['regex:'.self::URL_PATTERN] : []),
+                ...($t['type'] === 'select' ? ['in:'.implode(',', array_column($t['options'], 'value'))] : []),
                 'max:'.$t['max'],
             ];
         }

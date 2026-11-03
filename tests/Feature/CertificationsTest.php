@@ -63,6 +63,49 @@ class CertificationsTest extends TestCase
             ->where('home.sections.allies.items.0.name', 'Una'));
     }
 
+    public function test_the_allies_carousel_has_defaults_and_is_configurable(): void
+    {
+        $this->get('/')->assertInertia(fn (Assert $p) => $p
+            ->where('home.sections.allies.carousel', [
+                'rows' => 1,
+                'perView' => 4,
+                'autoplay' => true,
+                'intervalMs' => 2000,
+                'showDescriptions' => true,
+            ]));
+
+        $this->admin()->post('/admin/aliados', [
+            'texts' => [
+                'allies' => ['title' => 'Aliados', 'intro' => 'Con quienes trabajamos.'],
+                'allies_carousel' => ['rows' => '2', 'per_view' => '3', 'autoplay' => '0', 'speed' => '6', 'descriptions' => '0'],
+            ],
+        ])->assertSessionHasNoErrors();
+
+        $this->get('/')->assertInertia(fn (Assert $p) => $p
+            ->where('home.sections.allies.title', 'Aliados')
+            ->where('home.sections.allies.carousel', [
+                'rows' => 2,
+                'perView' => 3,
+                'autoplay' => false,
+                'intervalMs' => 6000,
+                'showDescriptions' => false,
+            ]));
+
+        // El panel muestra lo guardado, con sus opciones para elegir.
+        $this->admin()->get('/admin/aliados')->assertInertia(fn (Assert $p) => $p
+            ->where('texts.allies_carousel.rows', '2')
+            ->where('config.texts', fn ($texts) => count(collect($texts)->firstWhere('key', 'rows')['options']) === 2));
+    }
+
+    public function test_the_allies_carousel_only_accepts_its_options(): void
+    {
+        foreach (['rows' => '3', 'per_view' => '9', 'autoplay' => '5', 'speed' => '3', 'descriptions' => '7'] as $key => $value) {
+            $this->admin()->post('/admin/aliados', [
+                'texts' => ['allies' => ['title' => 'Aliados'], 'allies_carousel' => [$key => $value]],
+            ])->assertSessionHasErrors("texts.allies_carousel.$key");
+        }
+    }
+
     public function test_the_allies_panel_is_separate_from_the_success_cases(): void
     {
         $cert = SectionItem::query()->create(['section' => 'certification', 'title' => 'Cisco CCNA', 'sort' => 0]);

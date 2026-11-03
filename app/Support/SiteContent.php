@@ -69,6 +69,13 @@ class SiteContent
             ],
             'allies' => [
                 ...$text['allies'],
+                'carousel' => [
+                    'rows' => (int) $text['allies_carousel']['rows'] === 2 ? 2 : 1,
+                    'perView' => (int) $text['allies_carousel']['per_view'] === 3 ? 3 : 4,
+                    'autoplay' => $text['allies_carousel']['autoplay'] !== '0',
+                    'intervalMs' => max(1, (int) $text['allies_carousel']['speed']) * 1000,
+                    'showDescriptions' => $text['allies_carousel']['descriptions'] !== '0',
+                ],
                 'items' => $list('certification', fn (SectionItem $i) => [
                     'id' => $i->id,
                     'name' => $i->title,

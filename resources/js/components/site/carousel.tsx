@@ -9,17 +9,24 @@ import {
 const AUTOPLAY_MS = 2000;
 const RESUME_AFTER_TOUCH_MS = 4000;
 
+const COLUMNS = {
+    3: 'md:auto-cols-[calc((100%-2rem)/3)]',
+    4: 'md:auto-cols-[calc((100%-2rem)/3)] lg:auto-cols-[calc((100%-3rem)/4)]',
+};
+
 const d = (ms: number) => ({ ['--d' as string]: `${ms}ms` }) as CSSProperties;
 
 /** Avanza o retrocede una ficha; al llegar a un extremo vuelve por el otro. */
 function slide(track: HTMLElement, direction: 1 | -1) {
-    const [first, second] = Array.from(track.children) as HTMLElement[];
+    const cards = Array.from(track.children) as HTMLElement[];
+    // La primera tarjeta de la siguiente columna: con dos filas, la segunda tarjeta está justo debajo de la primera.
+    const next = cards.find((card) => card.offsetLeft > cards[0].offsetLeft);
 
-    if (!first || !second) {
+    if (!next) {
         return;
     }
 
-    const step = second.offsetLeft - first.offsetLeft;
+    const step = next.offsetLeft - cards[0].offsetLeft;
     const max = track.scrollWidth - track.clientWidth;
     const left = track.scrollLeft;
     const target =
@@ -76,19 +83,28 @@ function CarouselArrow({
 }
 
 /**
- * Carrusel automático: se desliza solo y en bucle mientras está en pantalla. Se detiene al pasar el puntero
- * o enfocarlo con teclado, y unos segundos si alguien lo toca. Con "reducir movimiento" solo se mueve a mano.
+ * Carrusel: se desliza solo y en bucle mientras está en pantalla (`autoplay`, cada `intervalMs`). Se detiene al pasar
+ * el puntero o enfocarlo con teclado, y unos segundos si alguien lo toca. Con "reducir movimiento" solo se mueve a mano.
+ * `rows` son las filas y `perView` las tarjetas por fila en pantalla grande.
  */
 export function Carousel<T extends { id: number }>({
     items,
     label,
     itemLabel,
     renderItem,
+    rows = 1,
+    perView = 4,
+    autoplay = true,
+    intervalMs = AUTOPLAY_MS,
 }: {
     items: T[];
     label: string;
     itemLabel: string;
     renderItem: (item: T) => ReactNode;
+    rows?: 1 | 2;
+    perView?: 3 | 4;
+    autoplay?: boolean;
+    intervalMs?: number;
 }) {
     const rootRef = useRef<HTMLDivElement>(null);
     const trackRef = useRef<HTMLUListElement>(null);
@@ -118,26 +134,27 @@ export function Carousel<T extends { id: number }>({
         resize.observe(track);
         seen.observe(track);
 
-        const timer = window.matchMedia('(prefers-reduced-motion: reduce)')
-            .matches
-            ? undefined
-            : window.setInterval(() => {
-                  if (
-                      inView &&
-                      Date.now() >= pausedUntil.current &&
-                      !document.hidden &&
-                      !root.matches(':hover, :has(:focus-visible)')
-                  ) {
-                      slide(track, 1);
-                  }
-              }, AUTOPLAY_MS);
+        const timer =
+            !autoplay ||
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches
+                ? undefined
+                : window.setInterval(() => {
+                      if (
+                          inView &&
+                          Date.now() >= pausedUntil.current &&
+                          !document.hidden &&
+                          !root.matches(':hover, :has(:focus-visible)')
+                      ) {
+                          slide(track, 1);
+                      }
+                  }, intervalMs);
 
         return () => {
             resize.disconnect();
             seen.disconnect();
             window.clearInterval(timer);
         };
-    }, []);
+    }, [autoplay, intervalMs]);
 
     const move = (direction: 1 | -1) => {
         if (trackRef.current) {
@@ -157,12 +174,12 @@ export function Carousel<T extends { id: number }>({
         >
             <ul
                 ref={trackRef}
-                className="-mx-1 -mt-2 -mb-10 flex snap-x snap-mandatory scroll-px-1 [scrollbar-width:none] gap-4 overflow-x-auto px-1 pt-2 pb-10 [&::-webkit-scrollbar]:hidden"
+                className={`-mx-1 -mt-2 -mb-10 grid snap-x snap-mandatory scroll-px-1 [scrollbar-width:none] auto-cols-[78%] grid-flow-col [justify-content:safe_center] gap-4 overflow-x-auto px-1 pt-2 pb-10 sm:auto-cols-[calc((100%-1rem)/2)] [&::-webkit-scrollbar]:hidden ${COLUMNS[perView]} ${rows === 2 ? 'grid-rows-2' : ''}`}
             >
                 {items.map((item, i) => (
                     <li
                         key={item.id}
-                        className="ent-pop w-[78%] shrink-0 snap-start first:ml-auto last:mr-auto sm:w-[calc((100%-1rem)/2)] md:w-[calc((100%-2rem)/3)] lg:w-[calc((100%-3rem)/4)]"
+                        className="ent-pop snap-start"
                         style={d(150 + Math.min(i, 4) * 70)}
                     >
                         {renderItem(item)}

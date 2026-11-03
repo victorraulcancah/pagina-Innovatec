@@ -8,14 +8,16 @@ type Ally = Allies['items'][number];
 
 /**
  * Una herramienta o certificación: su insignia, su nombre y, si se escribió, una descripción.
- * `compact` deja solo insignia y nombre (para la portada).
+ * `compact` la hace más pequeña (para la portada) y `showDescription` decide si se ve la descripción.
  */
 function AllyCard({
     ally,
     compact = false,
+    showDescription = true,
 }: {
     ally: Ally;
     compact?: boolean;
+    showDescription?: boolean;
 }) {
     return (
         <article
@@ -47,8 +49,10 @@ function AllyCard({
                 >
                     {ally.name}
                 </h3>
-                {!compact && ally.description && (
-                    <p className="mt-1.5 text-sm leading-relaxed text-white">
+                {showDescription && ally.description && (
+                    <p
+                        className={`mt-1.5 leading-relaxed text-white ${compact ? 'text-xs' : 'text-sm'}`}
+                    >
                         {ally.description}
                     </p>
                 )}
@@ -108,7 +112,19 @@ export function AlliesTeaser({ allies }: { allies: Allies }) {
                         items={allies.items}
                         label={allies.title}
                         itemLabel="Aliado"
-                        renderItem={(ally) => <AllyCard ally={ally} compact />}
+                        rows={allies.carousel.rows}
+                        perView={allies.carousel.perView}
+                        autoplay={allies.carousel.autoplay}
+                        intervalMs={allies.carousel.intervalMs}
+                        renderItem={(ally) => (
+                            <AllyCard
+                                ally={ally}
+                                compact
+                                showDescription={
+                                    allies.carousel.showDescriptions
+                                }
+                            />
+                        )}
                     />
                 </div>
             </div>

@@ -69,6 +69,13 @@ export type SiteSections = {
     allies: {
         title: string;
         intro: string;
+        carousel: {
+            rows: 1 | 2;
+            perView: 3 | 4;
+            autoplay: boolean;
+            intervalMs: number;
+            showDescriptions: boolean;
+        };
         items: { id: number; name: string; description: string | null; imageUrl: string | null }[];
     };
     clients: {

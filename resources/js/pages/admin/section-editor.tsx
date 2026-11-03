@@ -1,7 +1,7 @@
 import { Head, useForm } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import { AdminLayout, type AdminPage } from '@/components/admin/admin-layout';
-import { Field, Section, SmallButton, TextArea, TextInput, Toggle } from '@/components/admin/fields';
+import { Field, Section, Select, SmallButton, TextArea, TextInput, Toggle } from '@/components/admin/fields';
 import { ItemList } from '@/components/admin/item-list';
 import { MediaPicker, move } from '@/components/admin/media-picker';
 import type { OfferingRow } from '@/types';
@@ -9,9 +9,10 @@ import type { OfferingRow } from '@/types';
 type FieldDef = {
     key: string;
     label: string;
-    type: 'text' | 'textarea' | 'url' | 'image' | 'pairs' | 'email' | 'gallery';
+    type: 'text' | 'textarea' | 'url' | 'image' | 'pairs' | 'email' | 'gallery' | 'select';
     max?: number;
     hint?: string;
+    options?: { value: string; label: string }[];
 };
 
 type TextDef = FieldDef & { group: string };
@@ -271,6 +272,17 @@ export default function SectionEditor({ page, config, pages, texts, lists, image
                                                     value={data.texts[group]?.[t.key] ?? ''}
                                                     onChange={(e) => setText(group, t.key, e.target.value)}
                                                 />
+                                            ) : t.type === 'select' ? (
+                                                <Select
+                                                    value={data.texts[group]?.[t.key] ?? ''}
+                                                    onChange={(e) => setText(group, t.key, e.target.value)}
+                                                >
+                                                    {t.options?.map((option) => (
+                                                        <option key={option.value} value={option.value}>
+                                                            {option.label}
+                                                        </option>
+                                                    ))}
+                                                </Select>
                                             ) : (
                                                 <TextInput
                                                     type={t.type === 'email' ? 'email' : 'text'}
