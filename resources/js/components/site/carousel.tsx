@@ -6,8 +6,8 @@ import {
     type ReactNode,
 } from 'react';
 
-const AUTOPLAY_MS = 4000;
-const RESUME_AFTER_TOUCH_MS = 8000;
+const AUTOPLAY_MS = 2000;
+const RESUME_AFTER_TOUCH_MS = 4000;
 
 const d = (ms: number) => ({ ['--d' as string]: `${ms}ms` }) as CSSProperties;
 
