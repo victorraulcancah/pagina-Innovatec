@@ -212,8 +212,8 @@ export default function HomeEditor({
                                         <Toggle
                                             checked={d.visible !== false}
                                             onChange={(visible) => patch({ visible })}
-                                            label="Mostrar en el menú"
-                                            hint="Si la ocultas, deja de verse en la barra de menú y en el pie de página, pero no se borra: puedes volver a mostrarla."
+                                            label="Mostrar en el sitio"
+                                            hint="Si la ocultas, desaparece de todo el sitio: el menú, el pie de página, su sección en la portada, los botones que llevan a ella y la propia página. No se borra: puedes volver a mostrarla. (Inicio solo se quita del menú.)"
                                         />
                                         <SubmenuEditor
                                             items={d.children}

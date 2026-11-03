@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { linkIsVisible } from '@/lib/hidden-pages';
 import type { HeroButton, HomeContent } from '@/types';
 import { KineticTitle } from './kinetic-title';
 import { NetworkMesh } from './network-mesh';
@@ -27,6 +28,7 @@ const buttonStyles: Record<HeroButton['variant'], string> = {
 };
 
 export function Hero({ home }: { home: HomeContent }) {
+    const buttons = home.buttons.filter((button) => linkIsVisible(home, button.url));
     const reducedMotion = usePrefersReducedMotion();
     const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -95,12 +97,12 @@ export function Hero({ home }: { home: HomeContent }) {
                     </p>
                 )}
 
-                {home.buttons.length > 0 && (
+                {buttons.length > 0 && (
                     <div
                         className="animate-rise mt-9 flex flex-wrap gap-3"
                         style={{ ['--delay' as string]: '520ms' }}
                     >
-                        {home.buttons.map((button, i) => (
+                        {buttons.map((button, i) => (
                             <a
                                 key={`${button.label}-${i}`}
                                 href={button.url}

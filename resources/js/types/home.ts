@@ -19,6 +19,7 @@ export type HomeContent = {
     menu: MenuItem[];
     navCta: MenuChild | null;
     showPanelLink: boolean;
+    hiddenPages: string[];
     sections: SiteSections;
 };
 

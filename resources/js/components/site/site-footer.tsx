@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { linkIsVisible } from '@/lib/hidden-pages';
 import { whatsappUrl } from '@/lib/whatsapp';
 import type { HomeContent } from '@/types';
 import { sectionShell } from './reveal';
@@ -18,6 +19,9 @@ const link =
 
 export function SiteFooter({ home }: { home: HomeContent }) {
     const { contact, footer, solutions, social, company } = home.sections;
+    const showsEnterprise = linkIsVisible(home, '/division-enterprise');
+    const showsTelcos = linkIsVisible(home, '/division-telcos');
+    const navCta = home.navCta && linkIsVisible(home, home.navCta.url) ? home.navCta : null;
     const web = contact.website.replace(/^https?:\/\//, '');
     const rights =
         footer.copyright || `© ${new Date().getFullYear()} ${home.brandName}. Todos los derechos reservados.`;
@@ -44,34 +48,42 @@ export function SiteFooter({ home }: { home: HomeContent }) {
                             </a>
                         </li>
                     ))}
-                    {home.navCta && (
+                    {navCta && (
                         <li>
-                            <a href={home.navCta.url} className={link}>
-                                {home.navCta.label}
+                            <a href={navCta.url} className={link}>
+                                {navCta.label}
                             </a>
                         </li>
                     )}
                 </Column>
 
-                <Column title="Divisiones">
-                    <li>
-                        <a href="/division-enterprise" className={link}>
-                            División Enterprise
-                        </a>
-                    </li>
-                    {solutions.items.map((item) => (
-                        <li key={`s-${item.id}`} className="pl-3">
-                            <a href={item.url} className={link}>
-                                {item.title}
-                            </a>
-                        </li>
-                    ))}
-                    <li>
-                        <a href="/division-telcos" className={link}>
-                            División Telcos
-                        </a>
-                    </li>
-                </Column>
+                {(showsEnterprise || showsTelcos) && (
+                    <Column title="Divisiones">
+                        {showsEnterprise && (
+                            <>
+                                <li>
+                                    <a href="/division-enterprise" className={link}>
+                                        División Enterprise
+                                    </a>
+                                </li>
+                                {solutions.items.map((item) => (
+                                    <li key={`s-${item.id}`} className="pl-3">
+                                        <a href={item.url} className={link}>
+                                            {item.title}
+                                        </a>
+                                    </li>
+                                ))}
+                            </>
+                        )}
+                        {showsTelcos && (
+                            <li>
+                                <a href="/division-telcos" className={link}>
+                                    División Telcos
+                                </a>
+                            </li>
+                        )}
+                    </Column>
+                )}
 
                 <Column title="Contacto">
                     {contact.email && (

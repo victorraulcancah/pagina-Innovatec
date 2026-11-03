@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Http\Middleware\AuthenticateAdmin;
+use App\Models\BlogCategory;
 use App\Models\HomeSetting;
 use App\Models\SectionItem;
 use App\Models\User;
@@ -99,6 +100,88 @@ class MenuVisibilityTest extends TestCase
         HomeSetting::current()->update(['show_panel_link' => false]);
 
         $this->get('/admin/login')->assertOk();
+    }
+
+    public function test_a_hidden_option_is_announced_to_the_site_and_closes_its_page(): void
+    {
+        $this->admin()->post('/admin/inicio', $this->payload(['menu' => $this->ocultar('/experiencia')]))->assertSessionHasNoErrors();
+
+        $this->get('/')->assertOk()->assertInertia(fn (Assert $page) => $page->where('home.hiddenPages', ['/experiencia']));
+        $this->get('/experiencia')->assertNotFound();
+        $this->get('/nosotros')->assertOk();
+
+        // Se edita igual desde el panel, y al volver a mostrarla la página regresa.
+        $this->admin()->get('/admin/experiencia')->assertOk();
+
+        $mostrar = array_map(fn (array $m) => [...$m, 'visible' => true], HomeSetting::current()->menu);
+        $this->admin()->post('/admin/inicio', $this->payload(['menu' => $mostrar]))->assertSessionHasNoErrors();
+
+        $this->get('/experiencia')->assertOk();
+        $this->get('/')->assertInertia(fn (Assert $page) => $page->where('home.hiddenPages', []));
+    }
+
+    public function test_every_public_page_of_the_menu_closes_when_hidden(): void
+    {
+        foreach (['/nosotros', '/division-enterprise', '/division-telcos', '/experiencia', '/blog', '/contacto'] as $url) {
+            HomeSetting::current()->update(['menu' => HomeSetting::defaults()['menu']]);
+            $this->get($url)->assertOk();
+
+            HomeSetting::current()->update(['menu' => $this->ocultar($url)]);
+            $this->get($url)->assertNotFound();
+        }
+    }
+
+    public function test_the_clients_page_closes_only_if_it_is_a_hidden_menu_option(): void
+    {
+        $this->get('/clientes')->assertOk();
+
+        $menu = [...HomeSetting::current()->menu, ['label' => 'Clientes', 'url' => '/clientes', 'children' => [], 'visible' => false]];
+        HomeSetting::current()->update(['menu' => $menu]);
+
+        $this->get('/clientes')->assertNotFound();
+    }
+
+    public function test_hiding_a_parent_page_also_closes_what_lives_inside_it(): void
+    {
+        $this->conSoluciones();
+        BlogCategory::query()->create(['name' => 'Noticias', 'slug' => 'noticias', 'sort' => 0]);
+
+        $this->get('/soluciones/redes')->assertOk();
+        $this->get('/blog/noticias')->assertOk();
+
+        HomeSetting::current()->update(['menu' => $this->ocultar('/division-enterprise')]);
+        $this->get('/soluciones/redes')->assertNotFound();
+
+        HomeSetting::current()->update(['menu' => $this->ocultar('/blog')]);
+        $this->get('/soluciones/redes')->assertOk();
+        $this->get('/blog/noticias')->assertNotFound();
+    }
+
+    public function test_hiding_home_only_removes_its_menu_option(): void
+    {
+        HomeSetting::current()->update(['menu' => $this->ocultar('/')]);
+
+        $this->get('/')->assertOk()->assertInertia(fn (Assert $page) => $page
+            ->has('home.menu', 6)
+            ->where('home.hiddenPages', []));
+    }
+
+    public function test_a_page_with_another_visible_option_stays_open(): void
+    {
+        $menu = [...HomeSetting::current()->menu, ['label' => 'Escríbenos', 'url' => '/contacto', 'children' => [], 'visible' => false]];
+        HomeSetting::current()->update(['menu' => $menu]);
+
+        $this->get('/contacto')->assertOk();
+        $this->assertSame([], HomeSetting::current()->hiddenPages());
+    }
+
+    public function test_hiding_only_a_submenu_option_does_not_close_any_page(): void
+    {
+        $this->conSoluciones();
+        $this->admin()->post('/admin/inicio', $this->enterprise([], ['/soluciones/seguridad']))->assertSessionHasNoErrors();
+
+        $this->assertSame([], HomeSetting::current()->hiddenPages());
+        $this->get('/soluciones/seguridad')->assertOk();
     }
 
     /** Las soluciones de Enterprise (su submenú se arma solo) y el menú actual con ese submenú marcado como se pida. */

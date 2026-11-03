@@ -1,6 +1,9 @@
+import { usePage } from '@inertiajs/react';
+import { linkIsVisible } from '@/lib/hidden-pages';
+import type { HomeContent } from '@/types';
 import { Reveal, SectionHeading, sectionShell } from './reveal';
 
-/** Cierre de página con una acción clara hacia Contacto. */
+/** Cierre de página con una acción clara hacia Contacto. Si esa página está oculta, no se muestra. */
 export function CtaBand({
     title,
     text,
@@ -12,6 +15,12 @@ export function CtaBand({
     href?: string;
     label?: string;
 }) {
+    const { home } = usePage<{ home: HomeContent }>().props;
+
+    if (!linkIsVisible(home, href)) {
+        return null;
+    }
+
     return (
         <section className="bg-night py-20 sm:py-24">
             <div className={`${sectionShell} flex flex-col items-start justify-between gap-8 border-t border-white/15 pt-14 lg:flex-row lg:items-center`}>

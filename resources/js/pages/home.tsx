@@ -9,17 +9,19 @@ import { SiteLayout } from '@/components/site/site-layout';
 import { SolutionCards } from '@/components/site/solution-cards';
 import { TelcosTeaser } from '@/components/site/telcos-services';
 import { PostCard } from '@/components/site/post-card';
+import { linkIsVisible } from '@/lib/hidden-pages';
 import type { BlogCard, HomeContent } from '@/types';
 
 export default function Home({ home, latestPosts }: { home: HomeContent; latestPosts: BlogCard[] }) {
     const s = home.sections;
+    const shows = (url: string) => linkIsVisible(home, url);
 
     return (
         <SiteLayout home={home} title="Inicio" description={home.subtitle ?? home.title}>
             <Hero home={home} />
-            <AboutSection about={s.about} />
+            {shows('/nosotros') && <AboutSection about={{ ...s.about, cards: s.about.cards.filter((card) => shows(card.url)) }} />}
 
-            {s.solutions.items.length > 0 && (
+            {shows('/division-enterprise') && s.solutions.items.length > 0 && (
                 <section className="bg-night-2 py-24 lg:py-32">
                     <div className={sectionShell}>
                         <Reveal className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
@@ -38,13 +40,13 @@ export default function Home({ home, latestPosts }: { home: HomeContent; latestP
                 </section>
             )}
 
-            <TelcosTeaser telcos={s.telcos} />
+            {shows('/division-telcos') && <TelcosTeaser telcos={s.telcos} />}
 
-            <ExperienceTeaser experience={s.experience} />
+            {shows('/experiencia') && <ExperienceTeaser experience={s.experience} />}
             <AlliesTeaser allies={s.allies} />
-            <ClientsTeaser clients={s.clients} />
+            {shows('/clientes') && <ClientsTeaser clients={s.clients} />}
 
-            {latestPosts.length > 0 && (
+            {shows('/blog') && latestPosts.length > 0 && (
                 <section className="bg-night py-24 lg:py-32">
                     <div className={sectionShell}>
                         <Reveal className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">

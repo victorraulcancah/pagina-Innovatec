@@ -18,20 +18,22 @@ use App\Support\SiteSections;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
-Route::get('nosotros', [PageController::class, 'about'])->name('about');
-Route::get('experiencia', [PageController::class, 'experience'])->name('experience');
-Route::get('clientes', [PageController::class, 'clients'])->name('clients');
-Route::get('contacto', [PageController::class, 'contact'])->name('contact');
-Route::get('blog', [BlogController::class, 'index'])->name('blog');
-Route::get('blog/{category}', [BlogController::class, 'index'])->name('blog.category');
-Route::get('blog/{category}/{slug}', [BlogController::class, 'show'])->name('blog.post');
+Route::get('nosotros', [PageController::class, 'about'])->middleware('page.visible:/nosotros')->name('about');
+Route::get('experiencia', [PageController::class, 'experience'])->middleware('page.visible:/experiencia')->name('experience');
+Route::get('clientes', [PageController::class, 'clients'])->middleware('page.visible:/clientes')->name('clients');
+Route::get('contacto', [PageController::class, 'contact'])->middleware('page.visible:/contacto')->name('contact');
+Route::middleware('page.visible:/blog')->group(function () {
+    Route::get('blog', [BlogController::class, 'index'])->name('blog');
+    Route::get('blog/{category}', [BlogController::class, 'index'])->name('blog.category');
+    Route::get('blog/{category}/{slug}', [BlogController::class, 'show'])->name('blog.post');
+});
 Route::post('contacto', [ContactMessageController::class, 'store'])->middleware('throttle:5,1')->name('contact.store');
-Route::get('division-enterprise', [PageController::class, 'enterprise'])->name('enterprise');
-Route::get('division-telcos', [PageController::class, 'telcos'])->name('telcos');
+Route::get('division-enterprise', [PageController::class, 'enterprise'])->middleware('page.visible:/division-enterprise')->name('enterprise');
+Route::get('division-telcos', [PageController::class, 'telcos'])->middleware('page.visible:/division-telcos')->name('telcos');
 // Direcciones anteriores: ahora todo vive en la División Enterprise.
 Route::redirect('soluciones', '/division-enterprise', 301);
 Route::redirect('servicios', '/division-enterprise', 301);
-Route::get('{kind}/{slug}', [OfferingController::class, 'show'])->whereIn('kind', ['soluciones', 'servicios'])->name('offering');
+Route::get('{kind}/{slug}', [OfferingController::class, 'show'])->whereIn('kind', ['soluciones', 'servicios'])->middleware('page.visible:/division-enterprise')->name('offering');
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('login', [AuthController::class, 'create'])->name('login');

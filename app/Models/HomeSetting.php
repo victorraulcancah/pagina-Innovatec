@@ -151,8 +151,23 @@ class HomeSetting extends Model
             'menu' => $this->menuWithOfferings($sections, $paraPanel),
             'navCta' => $this->nav_cta,
             'showPanelLink' => (bool) $this->show_panel_link,
+            'hiddenPages' => $this->hiddenPages(),
             'sections' => $sections,
         ];
+    }
+
+    /**
+     * Las páginas cuya opción principal del menú está oculta: dejan de existir en todo el sitio (menú, secciones de
+     * la portada, botones y la propia página). Inicio es la excepción: ocultarla solo quita su opción del menú.
+     *
+     * @return list<string>
+     */
+    public function hiddenPages(): array
+    {
+        $menu = collect($this->menu ?? []);
+        $visibles = $menu->filter(fn (array $item) => $item['visible'] ?? true)->pluck('url');
+
+        return $menu->pluck('url')->diff($visibles)->reject(fn (string $url) => $url === '/')->unique()->values()->all();
     }
 
     /**

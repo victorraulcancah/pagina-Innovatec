@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsurePageVisible;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\RequirePermission;
 use Illuminate\Foundation\Application;
@@ -21,7 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
             AddLinkHeadersForPreloadedAssets::class,
         ]);
 
-        $middleware->alias(['permission' => RequirePermission::class]);
+        $middleware->alias(['permission' => RequirePermission::class, 'page.visible' => EnsurePageVisible::class]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

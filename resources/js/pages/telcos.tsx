@@ -6,6 +6,7 @@ import { Pictogram } from '@/components/site/pictogram';
 import { Phased, sectionShell } from '@/components/site/reveal';
 import { SiteLayout } from '@/components/site/site-layout';
 import { Check, TelcosServiceCards } from '@/components/site/telcos-services';
+import { linkIsVisible } from '@/lib/hidden-pages';
 import type { HomeContent } from '@/types';
 
 const valueIcons = ['expertise', 'flexibilidad', 'confianza'];
@@ -128,7 +129,7 @@ export default function Telcos({ home }: { home: HomeContent }) {
                                         ))}
                                     </ul>
                                 )}
-                                {block.url && (
+                                {block.url && linkIsVisible(home, block.url) && (
                                     <div className="ent-rise" style={d(500)}>
                                         <a
                                             href={block.url}

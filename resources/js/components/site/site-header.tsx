@@ -1,5 +1,6 @@
 import { usePage } from '@inertiajs/react';
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { linkIsVisible } from '@/lib/hidden-pages';
 import type { HomeContent, MenuItem } from '@/types';
 
 /** Un ítem está activo en su propia ruta y en las rutas que cuelgan de ella. */
@@ -114,6 +115,7 @@ const LOGO_FRAME =
     'flex items-center rounded-xl bg-night px-3.5 py-2 ring-1 ring-signal/60 shadow-[0_10px_24px_-12px_rgba(5,11,26,0.9)] transition-[box-shadow,transform] duration-300 ease-out-expo hover:-translate-y-px hover:ring-signal hover:shadow-[0_14px_28px_-12px_rgba(6,194,240,0.55)]';
 
 export function SiteHeader({ home }: { home: HomeContent }) {
+    const navCta = home.navCta && linkIsVisible(home, home.navCta.url) ? home.navCta : null;
     const { url } = usePage();
     const [scrolled, setScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
@@ -241,9 +243,9 @@ export function SiteHeader({ home }: { home: HomeContent }) {
                 </nav>
 
                 <div className="flex items-center justify-end gap-3 max-lg:col-start-3">
-                    {home.navCta && (
-                        <a href={home.navCta.url} className={`${pillClass} max-sm:hidden`}>
-                            {home.navCta.label}
+                    {navCta && (
+                        <a href={navCta.url} className={`${pillClass} max-sm:hidden`}>
+                            {navCta.label}
                         </a>
                     )}
                     {home.showPanelLink !== false && (
@@ -323,13 +325,13 @@ export function SiteHeader({ home }: { home: HomeContent }) {
                         ))}
                     </ul>
                     <div className="mt-8 flex flex-wrap items-center gap-4">
-                        {home.navCta && (
+                        {navCta && (
                             <a
-                                href={home.navCta.url}
+                                href={navCta.url}
                                 onClick={() => setMenuOpen(false)}
                                 className={pillClass}
                             >
-                                {home.navCta.label}
+                                {navCta.label}
                             </a>
                         )}
                         {home.showPanelLink !== false && (

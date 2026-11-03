@@ -7,6 +7,7 @@ import { Pictogram } from '@/components/site/pictogram';
 import { Reveal, SectionHeading, sectionShell, useSeen } from '@/components/site/reveal';
 import { SiteLayout } from '@/components/site/site-layout';
 import { SolutionCards } from '@/components/site/solution-cards';
+import { linkIsVisible } from '@/lib/hidden-pages';
 import type { HomeContent, Offering } from '@/types';
 
 const d = (ms: number) => ({ ['--d' as string]: `${ms}ms` }) as CSSProperties;
@@ -210,6 +211,7 @@ function LineSection({ line, index }: { line: Offering; index: number }) {
 export default function Enterprise({ home }: { home: HomeContent }) {
     const { enterprise, solutions, services } = home.sections;
     const next = solutions.items.length % 2 === 0 ? 'bg-night' : 'bg-ice';
+    const ctaUrl = enterprise.cta_url || '/contacto';
 
     return (
         <SiteLayout home={home} title={enterprise.title} description={enterprise.intro}>
@@ -219,12 +221,14 @@ export default function Enterprise({ home }: { home: HomeContent }) {
                 intro={enterprise.intro}
                 imageUrl={enterprise.imageUrl}
                 actions={
-                    <a
-                        href={enterprise.cta_url || '/contacto'}
-                        className="inline-flex min-h-12 items-center rounded-full border border-signal bg-signal px-8 text-sm font-medium text-night transition-colors hover:border-white hover:bg-white"
-                    >
-                        {enterprise.cta_label || 'Contáctanos'}
-                    </a>
+                    linkIsVisible(home, ctaUrl) ? (
+                        <a
+                            href={ctaUrl}
+                            className="inline-flex min-h-12 items-center rounded-full border border-signal bg-signal px-8 text-sm font-medium text-night transition-colors hover:border-white hover:bg-white"
+                        >
+                            {enterprise.cta_label || 'Contáctanos'}
+                        </a>
+                    ) : undefined
                 }
             />
 

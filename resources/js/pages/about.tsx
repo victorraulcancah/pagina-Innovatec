@@ -7,6 +7,7 @@ import { PageHero } from '@/components/site/page-hero';
 import { Phased, sectionShell } from '@/components/site/reveal';
 import { SiteLayout } from '@/components/site/site-layout';
 import { SolutionCards } from '@/components/site/solution-cards';
+import { linkIsVisible } from '@/lib/hidden-pages';
 import type { HomeContent } from '@/types';
 
 const d = (ms: number) => ({ ['--d' as string]: `${ms}ms` }) as CSSProperties;
@@ -230,7 +231,7 @@ export default function About({ home }: { home: HomeContent }) {
             )}
 
             {/* Soluciones */}
-            {solutions.items.length > 0 && (
+            {linkIsVisible(home, '/division-enterprise') && solutions.items.length > 0 && (
                 <Phased className="bg-ice py-20 text-night lg:py-28">
                     <div aria-hidden="true" className="ent-glow absolute -left-32 bottom-0 size-[28rem] rounded-full bg-signal/25 blur-3xl" />
                     <div className={`${sectionShell} relative`}>
