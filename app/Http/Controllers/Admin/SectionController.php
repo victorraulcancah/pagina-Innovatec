@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\HomeSetting;
 use App\Models\SectionItem;
+use App\Support\Analytics;
 use App\Support\SiteSections;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -71,6 +72,11 @@ class SectionController extends Controller
     {
         $config = $this->config($page);
         $data = $request->validate(SiteSections::rules($page));
+
+        // El ID de Analytics se guarda limpio: solo «G-XXXXXXXXXX», aunque se pegue el código completo de Google.
+        if (isset($data['texts']['analytics']['ga_id'])) {
+            $data['texts']['analytics']['ga_id'] = Analytics::normalizeOrFail((string) $data['texts']['analytics']['ga_id']);
+        }
 
         DB::transaction(function () use ($request, $config, $data) {
             $home = HomeSetting::current();

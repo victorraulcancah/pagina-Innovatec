@@ -107,6 +107,9 @@ class SiteSections
                 'tagline' => 'Integración de soluciones de Tecnologías de la Información y Comunicaciones.',
                 'copyright' => '',
             ],
+            'analytics' => [
+                'ga_id' => '',
+            ],
         ];
     }
 
@@ -334,6 +337,7 @@ class SiteSections
                     'contact' => 'Contacto',
                     'social' => 'Redes sociales',
                     'footer' => 'Pie de página',
+                    'analytics' => 'Analítica',
                 ],
                 'texts' => [
                     ['group' => 'company', 'key' => 'name', 'label' => 'Nombre comercial', 'type' => 'text', 'max' => 80, 'required' => true, 'hint' => 'Se usa en el logo (texto alternativo), el pie de página y el título de las pestañas.'],
@@ -352,6 +356,7 @@ class SiteSections
                     ['group' => 'social', 'key' => 'tiktok', 'label' => 'TikTok', 'type' => 'url', 'max' => 255],
                     ['group' => 'footer', 'key' => 'tagline', 'label' => 'Frase bajo el logo', 'type' => 'textarea', 'max' => 200],
                     ['group' => 'footer', 'key' => 'copyright', 'label' => 'Texto de derechos', 'type' => 'text', 'max' => 160, 'hint' => 'Déjalo vacío para usar "© año Nombre. Todos los derechos reservados."'],
+                    ['group' => 'analytics', 'key' => 'ga_id', 'label' => 'ID de medición de Google Analytics 4', 'type' => 'text', 'max' => 600, 'hint' => 'Empieza con G- (por ejemplo G-XXXXXXXXXX). Lo encuentras en Analytics: Administrar → Flujos de datos → tu sitio → «ID de medición». Si pegas el código completo de Google, se queda solo con el ID. Si lo dejas vacío se usa el del servidor. No mide el panel ni a quien tiene la sesión iniciada, y respeta «no me sigas» del navegador.'],
                 ],
                 'images' => [
                     ['key' => 'image_logo', 'slot' => 'logo', 'label' => 'Logo', 'hint' => 'PNG, WebP o JPG con fondo transparente y letras claras (se ve sobre fondo oscuro). Sin logo se usa el de PROINNOVATEC.'],

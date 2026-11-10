@@ -46,4 +46,33 @@ class AnalyticsTest extends TestCase
         $this->withUnencryptedCookies([AuthenticateAdmin::COOKIE => 'x'])
             ->get('/nosotros')->assertOk()->assertDontSee('googletagmanager.com', false);
     }
+
+    public function test_the_id_saved_in_the_panel_wins_over_the_env_and_is_stored_clean(): void
+    {
+        config(['services.google_analytics.id' => 'G-ENVIRON123']);
+        $token = auth('api')->login(\App\Models\User::factory()->create());
+
+        $this->withUnencryptedCookies([AuthenticateAdmin::COOKIE => $token])->post('/admin/empresa', [
+            'texts' => [
+                'company' => ['name' => 'PROINNOVATEC'],
+                'analytics' => ['ga_id' => '<script async src="https://www.googletagmanager.com/gtag/js?id=g-f1qbjpgqw2"></script>'],
+            ],
+        ])->assertSessionHasNoErrors();
+
+        $this->assertSame('G-F1QBJPGQW2', \App\Models\HomeSetting::current()->content()['analytics']['ga_id']);
+        $this->assertSame('G-F1QBJPGQW2', \App\Support\Analytics::measurementId());
+
+        $this->get('/nosotros')->assertOk()->assertSee('G-F1QBJPGQW2', false)->assertDontSee('G-ENVIRON123', false);
+    }
+
+    public function test_an_empty_panel_field_falls_back_to_the_env_and_junk_is_rejected(): void
+    {
+        config(['services.google_analytics.id' => 'G-ENVIRON123']);
+        $this->assertSame('G-ENVIRON123', \App\Support\Analytics::measurementId());
+
+        $token = auth('api')->login(\App\Models\User::factory()->create());
+        $this->withUnencryptedCookies([AuthenticateAdmin::COOKIE => $token])->post('/admin/empresa', [
+            'texts' => ['company' => ['name' => 'PROINNOVATEC'], 'analytics' => ['ga_id' => 'hola mundo']],
+        ])->assertSessionHasErrors('texts.analytics.ga_id');
+    }
 }

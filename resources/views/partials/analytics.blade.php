@@ -1,12 +1,13 @@
 {{--
-    Google Analytics 4. Solo se carga si hay un ID de medición en .env (GA_MEASUREMENT_ID=G-XXXXXXXXXX), y no mide:
+    Google Analytics 4. Solo se carga si hay un ID de medición (el de «Datos de la empresa» → Analítica o, si falta,
+    GA_MEASUREMENT_ID en el .env), y no mide:
     - el panel de administración,
     - a quien tiene la sesión de administrador iniciada,
     - a quien activó «no me sigas» (Do Not Track o Global Privacy Control) en su navegador.
     El sitio es una SPA (Inertia): la medición mejorada de Analytics cuenta también los cambios de página.
 --}}
 @php
-    $gaId = (string) config('services.google_analytics.id');
+    $gaId = \App\Support\Analytics::measurementId();
     $measure = preg_match('/^G-[A-Z0-9]{4,14}$/', $gaId)
         && ! str_starts_with((string) ($page['component'] ?? ''), 'admin')
         && ! request()->hasCookie(\App\Http\Middleware\AuthenticateAdmin::COOKIE);
