@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    // ID de medición de Google Analytics 4 (G-XXXXXXXXXX). Vacío = no se mide nada.
+    'google_analytics' => [
+        'id' => env('GA_MEASUREMENT_ID'),
+    ],
+
 ];

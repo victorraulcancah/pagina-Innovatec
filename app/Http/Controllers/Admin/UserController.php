@@ -36,6 +36,7 @@ class UserController extends Controller
                 'roleName' => $u->role?->name ?? '—',
                 'roleSuper' => (bool) $u->role?->is_super,
                 'active' => $u->active,
+                'twoFactor' => $u->hasTwoFactor(),
                 'isSelf' => $u->is($me),
                 // Si quien mira puede modificar a esta persona (no tiene más permisos que él).
                 'editable' => $u->is($me) || $this->dentroDeMisPermisos($me, $u->role),
@@ -129,6 +130,25 @@ class UserController extends Controller
         $user->delete();
 
         return back()->with('status', 'Usuario eliminado.');
+    }
+
+    /** Para quien perdió el celular y sus códigos de respaldo. La propia se gestiona en Mi cuenta, con un código. */
+    public function resetTwoFactor(Request $request, User $user): RedirectResponse
+    {
+        $request->validate(
+            ['current_password' => ['required', 'current_password:api']],
+            ['current_password.current_password' => 'Tu contraseña actual no es correcta.'],
+        );
+
+        if ($user->is($request->user())) {
+            throw ValidationException::withMessages(['user' => 'Tu propia verificación se desactiva en Mi cuenta.']);
+        }
+
+        $this->exigirUsuarioModificable($request, $user);
+
+        $user->clearTwoFactor();
+
+        return back()->with('status', 'Verificación en dos pasos quitada.');
     }
 
     /** Un rol (o usuario con ese rol) está al alcance de quien mira si no da permisos que él no tiene. */

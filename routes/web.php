@@ -7,6 +7,8 @@ use App\Http\Controllers\Admin\HomeSettingController;
 use App\Http\Controllers\Admin\MessageController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SectionController;
+use App\Http\Controllers\Admin\TwoFactorChallengeController;
+use App\Http\Controllers\Admin\TwoFactorSettingsController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ContactMessageController;
@@ -39,12 +41,21 @@ Route::get('{kind}/{slug}', [OfferingController::class, 'show'])->whereIn('kind'
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('login', [AuthController::class, 'create'])->name('login');
     Route::post('login', [AuthController::class, 'store'])->middleware('throttle:6,1')->name('login.store');
+    Route::get('login/codigo', [TwoFactorChallengeController::class, 'create'])->name('login.code');
+    Route::post('login/codigo', [TwoFactorChallengeController::class, 'store'])->middleware('throttle:two-factor-code')->name('login.code.store');
 
     Route::middleware(AuthenticateAdmin::class)->group(function () {
         // Mi cuenta y salir: cualquier usuario activo.
         Route::get('/', [HomeSettingController::class, 'edit'])->name('home');
         Route::get('cuenta', [AccountController::class, 'edit'])->name('account');
         Route::post('cuenta', [AccountController::class, 'update'])->name('account.update');
+        Route::middleware('throttle:two-factor-settings')->prefix('cuenta/mfa')->name('account.mfa.')->group(function () {
+            Route::post('iniciar', [TwoFactorSettingsController::class, 'start'])->name('start');
+            Route::post('confirmar', [TwoFactorSettingsController::class, 'confirm'])->name('confirm');
+            Route::post('cancelar', [TwoFactorSettingsController::class, 'cancel'])->name('cancel');
+            Route::post('codigos', [TwoFactorSettingsController::class, 'regenerateCodes'])->name('codes');
+            Route::post('desactivar', [TwoFactorSettingsController::class, 'disable'])->name('disable');
+        });
         Route::post('logout', [AuthController::class, 'destroy'])->name('logout');
 
         Route::middleware('permission:pages.inicio')->post('inicio', [HomeSettingController::class, 'update'])->name('home.update');
@@ -71,6 +82,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::middleware('permission:users.view')->get('usuarios', [UserController::class, 'index'])->name('users');
         Route::middleware('permission:users.create')->post('usuarios', [UserController::class, 'store'])->name('users.store');
         Route::middleware('permission:users.edit')->post('usuarios/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::middleware(['permission:users.edit', 'throttle:two-factor-settings'])->post('usuarios/{user}/mfa', [UserController::class, 'resetTwoFactor'])->name('users.mfa');
         Route::middleware('permission:users.delete')->delete('usuarios/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 
         Route::middleware('permission:roles.view')->get('roles', [RoleController::class, 'index'])->name('roles');

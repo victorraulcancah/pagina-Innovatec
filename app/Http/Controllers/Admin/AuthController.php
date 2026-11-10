@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\AuthenticateAdmin;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -12,7 +13,8 @@ use Inertia\Response;
 
 /**
  * Login del panel con JWT guardado en una cookie httpOnly: el token nunca
- * queda al alcance del JavaScript de la página.
+ * queda al alcance del JavaScript de la página. Si la cuenta usa verificación
+ * en dos pasos, el token no se crea hasta validar también el código.
  */
 class AuthController extends Controller
 {
@@ -32,23 +34,40 @@ class AuthController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        $token = auth('api')->attempt($credentials);
-
-        if (! $token) {
+        if (! auth('api')->attempt($credentials, false)) {
             throw ValidationException::withMessages([
                 'email' => 'Correo o contraseña incorrectos.',
             ]);
         }
 
-        if (! auth('api')->user()->active) {
-            auth('api')->logout();
+        /** @var User $user */
+        $user = auth('api')->getLastAttempted();
 
+        if (! $user->active) {
             throw ValidationException::withMessages([
                 'email' => 'Tu cuenta está desactivada. Consulta con un administrador.',
             ]);
         }
 
-        return redirect(auth('api')->user()->landingPath())->withCookie(
+        if ($user->hasTwoFactor()) {
+            $request->session()->regenerate();
+            $request->session()->put(TwoFactorChallengeController::PENDING, [
+                'user' => $user->id,
+                'expires' => now()->addMinutes(TwoFactorChallengeController::PENDING_MINUTES)->timestamp,
+            ]);
+
+            return redirect()->route('admin.login.code');
+        }
+
+        return $this->signIn($request, $user);
+    }
+
+    /** Crea el token y entra al panel: solo se llega aquí con todos los pasos del login cumplidos. */
+    public function signIn(Request $request, User $user): RedirectResponse
+    {
+        $token = auth('api')->login($user);
+
+        return redirect($user->landingPath())->withCookie(
             cookie(
                 name: AuthenticateAdmin::COOKIE,
                 value: $token,

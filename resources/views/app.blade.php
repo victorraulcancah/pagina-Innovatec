@@ -25,6 +25,8 @@
 
         @fonts
 
+        @include('partials.analytics')
+
         @viteReactRefresh
         @vite(['resources/css/app.css', 'resources/js/app.tsx', "resources/js/pages/{$page['component']}.tsx"])
         <x-inertia::head>

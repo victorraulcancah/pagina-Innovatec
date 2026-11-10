@@ -2,8 +2,17 @@ import { Head, useForm } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import { AdminLayout, type AdminPage } from '@/components/admin/admin-layout';
 import { Field, Section, TextInput } from '@/components/admin/fields';
+import { TwoFactorSection, type TwoFactorState } from '@/components/admin/two-factor-section';
 
-export default function Account({ pages, account }: { pages: AdminPage[]; account: { name: string; email: string } }) {
+export default function Account({
+    pages,
+    account,
+    twoFactor,
+}: {
+    pages: AdminPage[];
+    account: { name: string; email: string };
+    twoFactor: TwoFactorState;
+}) {
     const form = useForm({
         name: account.name,
         email: account.email,
@@ -24,7 +33,7 @@ export default function Account({ pages, account }: { pages: AdminPage[]; accoun
         <>
             <Head title="Mi cuenta" />
             <AdminLayout pages={pages} current="cuenta">
-                <form onSubmit={submit} className="mx-auto max-w-5xl px-6 pb-32 pt-10">
+                <form onSubmit={submit} className="mx-auto max-w-5xl px-6 pt-10">
                     <h1 className="text-2xl font-semibold tracking-tight">Mi cuenta</h1>
                     <p className="mt-2 max-w-prose text-sm text-slate-600">
                         Tus datos de acceso al panel. Para cambiar cualquier dato debes confirmar tu contraseña actual.
@@ -71,6 +80,10 @@ export default function Account({ pages, account }: { pages: AdminPage[]; accoun
                         </div>
                     </div>
                 </form>
+
+                <div className="mx-auto max-w-5xl px-6 pb-32">
+                    <TwoFactorSection state={twoFactor} />
+                </div>
             </AdminLayout>
         </>
     );

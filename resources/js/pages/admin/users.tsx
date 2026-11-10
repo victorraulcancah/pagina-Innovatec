@@ -13,6 +13,7 @@ type AdminUser = {
     roleName: string;
     roleSuper: boolean;
     active: boolean;
+    twoFactor: boolean;
     isSelf: boolean;
     editable: boolean;
     created: string | null;
@@ -87,6 +88,11 @@ export default function Users({
                                             </span>
                                             <span className="block truncate text-sm text-slate-500">{u.email}</span>
                                         </span>
+                                        {u.twoFactor && (
+                                            <span title="Verificación en dos pasos activa" className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-900">
+                                                MFA
+                                            </span>
+                                        )}
                                         <span className={`rounded-full px-3 py-1 text-xs font-semibold ${u.roleSuper ? 'bg-night text-white' : 'bg-slate-200 text-slate-800'}`}>
                                             {u.roleName}
                                         </span>
@@ -242,6 +248,46 @@ function UserEditor({ user, roles, can, onClose }: { user: AdminUser | null; rol
                     </Field>
                 </div>
             </form>
+
+            {user?.twoFactor && !self && <ResetTwoFactor user={user} />}
         </Modal>
+    );
+}
+
+/** Para quien perdió el celular y sus códigos de respaldo: pide la contraseña de quien lo hace. */
+function ResetTwoFactor({ user }: { user: AdminUser }) {
+    const form = useForm({ current_password: '' });
+    const errors = form.errors as Record<string, string | undefined>;
+
+    const submit = () => {
+        form.post(`/admin/usuarios/${user.id}/mfa`, {
+            preserveScroll: true,
+            onFinish: () => form.reset(),
+        });
+    };
+
+    return (
+        <div className="mt-6 space-y-3 border-t border-slate-200 pt-5">
+            <p className="text-sm font-medium text-slate-900">Verificación en dos pasos activa</p>
+            <p className="text-sm text-slate-600">
+                Quítala solo si esta persona perdió el celular y sus códigos de respaldo, y confirma antes que realmente es ella.
+            </p>
+            {errors.user && (
+                <p role="alert" className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
+                    {errors.user}
+                </p>
+            )}
+            <Field label="Tu contraseña actual" error={form.errors.current_password}>
+                <TextInput
+                    type="password"
+                    autoComplete="current-password"
+                    value={form.data.current_password}
+                    onChange={(e) => form.setData('current_password', e.target.value)}
+                />
+            </Field>
+            <SmallButton danger disabled={form.processing || !form.data.current_password} onClick={submit}>
+                Quitar verificación en dos pasos
+            </SmallButton>
+        </div>
     );
 }
