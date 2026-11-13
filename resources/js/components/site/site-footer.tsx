@@ -2,7 +2,6 @@ import type { ReactNode } from 'react';
 import { linkIsVisible } from '@/lib/hidden-pages';
 import { whatsappUrl } from '@/lib/whatsapp';
 import type { HomeContent } from '@/types';
-import { MagusCredit } from './magus-credit';
 import { sectionShell } from './reveal';
 import { SocialLinks } from './social-links';
 
@@ -136,7 +135,6 @@ export function SiteFooter({ home }: { home: HomeContent }) {
                             Volver arriba ↑
                         </a>
                     </div>
-                    <MagusCredit />
                 </div>
             </div>
         </footer>
