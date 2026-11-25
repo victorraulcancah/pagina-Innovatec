@@ -66,7 +66,7 @@ class PublicPagesTest extends TestCase
         $this->assertCount(2, $items[0]->gallery);
         Storage::disk('public')->assertExists($items[0]->gallery[0]['path']);
 
-        // Quitar un logo y renombrar no cambia el slug.
+        // Quitar un logo, y renombrar cambia la dirección con el título (la anterior redirige: ver OfferingSlugTest).
         $keep = $items[0]->gallery[0]['path'];
         $removed = $items[0]->gallery[1]['path'];
 
@@ -76,7 +76,7 @@ class PublicPagesTest extends TestCase
         ]))->assertSessionHasNoErrors();
 
         $fresh = $items[0]->fresh();
-        $this->assertSame('redes', $fresh->slug);
+        $this->assertSame('redes-y-wifi', $fresh->slug);
         $this->assertCount(1, $fresh->gallery);
         Storage::disk('public')->assertMissing($removed);
     }

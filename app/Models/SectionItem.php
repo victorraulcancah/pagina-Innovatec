@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
  * @property int $id
  * @property string $section
  * @property string|null $slug
+ * @property list<string>|null $previous_slugs Direcciones anteriores (redirigen a la actual).
  * @property string $title
  * @property string|null $body
  * @property list<array{title: string, description: string|null}>|null $rows
@@ -28,7 +29,7 @@ class SectionItem extends Model
 {
     protected function casts(): array
     {
-        return ['rows' => 'array', 'gallery' => 'array', 'visible' => 'boolean'];
+        return ['rows' => 'array', 'gallery' => 'array', 'previous_slugs' => 'array', 'visible' => 'boolean'];
     }
 
     public function imageUrl(): ?string

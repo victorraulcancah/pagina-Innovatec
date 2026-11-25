@@ -65,6 +65,13 @@ class SiteLinks
             return true;
         }
 
+        // Dirección anterior de una solución o servicio renombrado: redirige a la actual.
+        if (preg_match('#^/(soluciones|servicios)/([^/]+)$#', $path, $m)) {
+            $section = array_search($m[1], OfferingSlugs::PREFIXES, true);
+
+            return OfferingSlugs::findByPrevious($section, $m[2])?->visible ?? false;
+        }
+
         // Una entrada concreta del blog: /blog/{categoría}/{entrada}.
         if (preg_match('#^/blog/([^/]+)/([^/]+)$#', $path, $m)) {
             return BlogPost::query()->published()->where('slug', $m[2])

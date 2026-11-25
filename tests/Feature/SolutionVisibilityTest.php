@@ -9,6 +9,7 @@ use App\Models\User;
 use Database\Seeders\SiteContentSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
@@ -26,7 +27,7 @@ class SolutionVisibilityTest extends TestCase
     private function soluciones(array $titulos = ['Redes', 'Seguridad', 'Telefonía']): array
     {
         return array_map(fn (string $t, int $i) => SectionItem::query()->create([
-            'section' => 'solution', 'slug' => strtolower($t), 'title' => $t, 'sort' => $i,
+            'section' => 'solution', 'slug' => Str::slug($t), 'title' => $t, 'sort' => $i,
         ]), $titulos, array_keys($titulos));
     }
 
@@ -65,7 +66,7 @@ class SolutionVisibilityTest extends TestCase
         // El submenú de Enterprise (se arma solo) tampoco la lista.
         $menu = HomeSetting::current()->toPageData()['menu'];
         $enterprise = collect($menu)->firstWhere('url', '/division-enterprise');
-        $this->assertSame(['/soluciones/redes', '/soluciones/telefonía'], array_column($enterprise['children'], 'url'));
+        $this->assertSame(['/soluciones/redes', '/soluciones/telefonia'], array_column($enterprise['children'], 'url'));
 
         // Su página de detalle deja de existir mientras esté oculta.
         $this->get('/soluciones/seguridad')->assertNotFound();

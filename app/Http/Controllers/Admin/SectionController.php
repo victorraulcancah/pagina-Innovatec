@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\HomeSetting;
 use App\Models\SectionItem;
 use App\Support\Analytics;
+use App\Support\OfferingSlugs;
 use App\Support\SiteSections;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -145,7 +146,7 @@ class SectionController extends Controller
             $item->rows = array_values($row['rows'] ?? []) ?: null;
 
             if (in_array($section, self::WITH_SLUG, true) && ! $item->slug) {
-                $item->slug = $this->uniqueSlug($section, $item->title, $item->id);
+                $item->slug = OfferingSlugs::unique($section, $item->title, $item->id);
             }
 
             if ($keys->contains('image')) {
@@ -166,6 +167,11 @@ class SectionController extends Controller
 
             $item->save();
             $keep[] = $item->id;
+
+            // Si le cambiaron el título, la dirección cambia con él (la anterior redirige a la nueva).
+            if (in_array($section, self::WITH_SLUG, true)) {
+                OfferingSlugs::syncWithTitle($item);
+            }
         }
 
         $existing->except($keep)->each(function (SectionItem $item) {
@@ -215,20 +221,6 @@ class SectionController extends Controller
         });
 
         return $kept->concat($added)->values()->all() ?: null;
-    }
-
-    private function uniqueSlug(string $section, string $title, ?int $ignoreId): string
-    {
-        $base = Str::slug($title) ?: 'item';
-        $slug = $base;
-        $n = 2;
-
-        while (SectionItem::query()->where('section', $section)->where('slug', $slug)
-            ->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))->exists()) {
-            $slug = $base.'-'.$n++;
-        }
-
-        return $slug;
     }
 
     /**
