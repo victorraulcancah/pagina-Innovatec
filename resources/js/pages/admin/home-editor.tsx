@@ -32,6 +32,21 @@ const MAX_VIDEO_MB = 100;
 /** Una página del sitio que existe: el menú solo puede enlazar a estas. */
 type SiteLink = { group: string; label: string; url: string };
 
+/**
+ * La página de una opción que ya existe: se muestra, pero no se cambia. Para enlazar otra página se agrega una opción
+ * nueva; así un enlace guardado nunca termina apuntando a algo que no existe.
+ */
+function FixedPage({ url, links }: { url: string; links: SiteLink[] }) {
+    const link = links.find((l) => l.url === url);
+
+    return (
+        <p className="flex min-h-11 flex-col justify-center rounded-lg bg-slate-100 px-3 py-2 text-sm ring-1 ring-slate-200">
+            <span className="font-medium text-slate-900">{link ? link.label : 'Página que no existe'}</span>
+            <span className={`text-xs ${link ? 'text-slate-500' : 'text-red-700'}`}>{url}</span>
+        </p>
+    );
+}
+
 /** Lista para elegir la página de una opción del menú: así nunca queda un enlace a una página que no existe. */
 function PageSelect({
     value,
@@ -43,7 +58,6 @@ function PageSelect({
     onChange: (url: string, link: SiteLink | undefined) => void;
 }) {
     const groups = [...new Set(links.map((l) => l.group))];
-    const known = links.some((l) => l.url === value);
 
     return (
         <Select
@@ -53,7 +67,6 @@ function PageSelect({
             <option value="" disabled>
                 Elige una página…
             </option>
-            {value && !known && <option value={value}>{value} (no está en la lista)</option>}
             {groups.map((group) => (
                 <optgroup key={group} label={group}>
                     {links
@@ -247,13 +260,19 @@ export default function HomeEditor({
                                             <Field label="Texto" error={i === null ? undefined : err(`menu.${i}.label`)}>
                                                 <TextInput value={d.label} maxLength={40} onChange={(e) => patch({ label: e.target.value })} />
                                             </Field>
-                                            <Field label="Página" error={i === null ? undefined : err(`menu.${i}.url`)}>
-                                                <PageSelect
-                                                    value={d.url}
-                                                    links={links}
-                                                    onChange={(url, link) => patch({ url, label: d.label.trim() ? d.label : (link?.label ?? '') })}
-                                                />
-                                            </Field>
+                                            {i === null ? (
+                                                <Field label="Página" hint="Después de agregarla, la página ya no se cambia.">
+                                                    <PageSelect
+                                                        value={d.url}
+                                                        links={links}
+                                                        onChange={(url, link) => patch({ url, label: d.label.trim() ? d.label : (link?.label ?? '') })}
+                                                    />
+                                                </Field>
+                                            ) : (
+                                                <Field label="Página" error={err(`menu.${i}.url`)} hint="No se cambia. Para otra página, agrega una opción nueva.">
+                                                    <FixedPage url={d.url} links={links} />
+                                                </Field>
+                                            )}
                                         </div>
                                         <Toggle
                                             checked={d.visible !== false}
@@ -402,11 +421,16 @@ function SubmenuEditor({
                                 <TextInput value={child.label} maxLength={60} onChange={(e) => patch(j, { label: e.target.value })} />
                             </Field>
                             <Field label="Página">
-                                <PageSelect
-                                    value={child.url}
-                                    links={links}
-                                    onChange={(url, link) => patch(j, { url, label: child.label.trim() ? child.label : (link?.label ?? '') })}
-                                />
+                                {/* Una subopción nueva elige su página; una vez elegida queda fija (para otra, se quita y se agrega). */}
+                                {child.url === '' ? (
+                                    <PageSelect
+                                        value={child.url}
+                                        links={links}
+                                        onChange={(url, link) => patch(j, { url, label: child.label.trim() ? child.label : (link?.label ?? '') })}
+                                    />
+                                ) : (
+                                    <FixedPage url={child.url} links={links} />
+                                )}
                             </Field>
                             <div className="flex flex-wrap items-center gap-2 sm:col-span-2">
                                 <SmallButton disabled={j === 0} onClick={() => onChange(move(items, j, j - 1))}>↑</SmallButton>

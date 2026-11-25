@@ -105,4 +105,21 @@ class MenuLinksTest extends TestCase
         $this->admin()->post('/admin/inicio', $this->payload(['nav_cta' => ['label' => 'Ir', 'url' => '/division-services']]))
             ->assertSessionHasErrors('nav_cta.url');
     }
+
+    public function test_the_cleanup_migration_removes_menu_options_to_missing_pages(): void
+    {
+        $home = HomeSetting::current();
+        $menu = $home->menu;
+        $i = collect($menu)->search(fn ($m) => $m['url'] === '/nosotros');
+        $menu[$i]['children'] = [['label' => 'Prueba', 'url' => '/prueba'], ['label' => 'Contacto', 'url' => '/contacto']];
+        $menu[] = ['label' => 'División Services', 'url' => '/division-services', 'children' => [['label' => 'Prueba', 'url' => '/prueba']]];
+        $home->update(['menu' => $menu]);
+
+        (require database_path('migrations/2026_11_25_000001_remove_menu_links_to_missing_pages.php'))->up();
+
+        $menu = HomeSetting::current()->menu;
+        $this->assertNotContains('/division-services', array_column($menu, 'url'));
+        $this->assertSame(['/contacto'], array_column(collect($menu)->firstWhere('url', '/nosotros')['children'], 'url'));
+        $this->assertCount(8, $menu);
+    }
 }
