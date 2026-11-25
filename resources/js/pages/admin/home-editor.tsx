@@ -29,12 +29,54 @@ type EditorData = {
 
 const MAX_VIDEO_MB = 100;
 
+/** Una página del sitio que existe: el menú solo puede enlazar a estas. */
+type SiteLink = { group: string; label: string; url: string };
+
+/** Lista para elegir la página de una opción del menú: así nunca queda un enlace a una página que no existe. */
+function PageSelect({
+    value,
+    links,
+    onChange,
+}: {
+    value: string;
+    links: SiteLink[];
+    onChange: (url: string, link: SiteLink | undefined) => void;
+}) {
+    const groups = [...new Set(links.map((l) => l.group))];
+    const known = links.some((l) => l.url === value);
+
+    return (
+        <Select
+            value={value}
+            onChange={(e) => onChange(e.target.value, links.find((l) => l.url === e.target.value))}
+        >
+            <option value="" disabled>
+                Elige una página…
+            </option>
+            {value && !known && <option value={value}>{value} (no está en la lista)</option>}
+            {groups.map((group) => (
+                <optgroup key={group} label={group}>
+                    {links
+                        .filter((l) => l.group === group)
+                        .map((l) => (
+                            <option key={l.url} value={l.url}>
+                                {l.label}
+                            </option>
+                        ))}
+                </optgroup>
+            ))}
+        </Select>
+    );
+}
+
 export default function HomeEditor({
     home,
     pages,
+    links,
 }: {
     home: HomeContent;
     pages: AdminPage[];
+    links: SiteLink[];
 }) {
     const form = useForm<EditorData>({
         title: home.title,
@@ -178,7 +220,7 @@ export default function HomeEditor({
                             />
                         </Section>
 
-                        <Section title="Menú de navegación" description="Las opciones Soluciones (/soluciones) y Servicios (/servicios) muestran solas sus páginas en el desplegable; las demás pueden llevar un submenú propio.">
+                        <Section title="Menú de navegación" description="Cada opción lleva a una página del sitio, que se elige de la lista. División Enterprise y Blog arman solos su submenú; las demás pueden llevar uno propio.">
                             <ItemList<MenuItem>
                                 items={data.menu}
                                 max={9}
@@ -205,8 +247,12 @@ export default function HomeEditor({
                                             <Field label="Texto" error={i === null ? undefined : err(`menu.${i}.label`)}>
                                                 <TextInput value={d.label} maxLength={40} onChange={(e) => patch({ label: e.target.value })} />
                                             </Field>
-                                            <Field label="Enlace" error={i === null ? undefined : err(`menu.${i}.url`)}>
-                                                <TextInput value={d.url} placeholder="/nosotros o #seccion" onChange={(e) => patch({ url: e.target.value })} />
+                                            <Field label="Página" error={i === null ? undefined : err(`menu.${i}.url`)}>
+                                                <PageSelect
+                                                    value={d.url}
+                                                    links={links}
+                                                    onChange={(url, link) => patch({ url, label: d.label.trim() ? d.label : (link?.label ?? '') })}
+                                                />
                                             </Field>
                                         </div>
                                         <Toggle
@@ -219,6 +265,7 @@ export default function HomeEditor({
                                             items={d.children}
                                             onChange={(children) => patch({ children })}
                                             parentUrl={d.url}
+                                            links={links}
                                             show={d.show_children !== false}
                                             onShowChange={(show_children) => patch({ show_children })}
                                         />
@@ -299,12 +346,14 @@ function SubmenuEditor({
     items,
     onChange,
     parentUrl,
+    links,
     show,
     onShowChange,
 }: {
     items: MenuChild[];
     onChange: (items: MenuChild[]) => void;
     parentUrl: string;
+    links: SiteLink[];
     show: boolean;
     onShowChange: (value: boolean) => void;
 }) {
@@ -352,8 +401,12 @@ function SubmenuEditor({
                             <Field label="Texto">
                                 <TextInput value={child.label} maxLength={60} onChange={(e) => patch(j, { label: e.target.value })} />
                             </Field>
-                            <Field label="Enlace">
-                                <TextInput value={child.url} placeholder="#seccion" onChange={(e) => patch(j, { url: e.target.value })} />
+                            <Field label="Página">
+                                <PageSelect
+                                    value={child.url}
+                                    links={links}
+                                    onChange={(url, link) => patch(j, { url, label: child.label.trim() ? child.label : (link?.label ?? '') })}
+                                />
                             </Field>
                             <div className="flex flex-wrap items-center gap-2 sm:col-span-2">
                                 <SmallButton disabled={j === 0} onClick={() => onChange(move(items, j, j - 1))}>↑</SmallButton>
