@@ -131,7 +131,7 @@ export function TelcosTeaser({ telcos }: { telcos: Telcos }) {
                         )}
                     </div>
                     <a
-                        href="/division-telcos"
+                        href="/division-services"
                         className="inline-flex min-h-12 shrink-0 items-center self-start rounded-full border border-white/70 px-8 text-sm font-medium text-white transition-colors hover:border-white hover:bg-white hover:text-night lg:self-auto"
                     >
                         {telcos.home_button_label || 'Conoce la división'}

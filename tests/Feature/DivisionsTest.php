@@ -31,14 +31,14 @@ class DivisionsTest extends TestCase
             ->where('home.menu.1.label', 'Nosotros')
             ->where('home.menu.2.label', 'División Enterprise')
             ->where('home.menu.2.children.0.url', '/soluciones/redes')
-            ->where('home.menu.3.label', 'División Telcos')
+            ->where('home.menu.3.label', 'División Services')
             ->where('home.menu.4.url', '/experiencia'));
     }
 
     public function test_admin_manages_the_telcos_page_content(): void
     {
         $this->admin()->post('/admin/telcos', [
-            'texts' => ['telcos' => ['title' => 'División Telcos', 'subtitle' => 'Aliado técnico', 'cta_title' => '¿Hablamos?']],
+            'texts' => ['telcos' => ['title' => 'División Services', 'subtitle' => 'Aliado técnico', 'cta_title' => '¿Hablamos?']],
             'lists' => [
                 'telcos_service' => [[
                     'title' => 'Consultoría',
@@ -48,7 +48,7 @@ class DivisionsTest extends TestCase
             ],
         ])->assertSessionHasNoErrors();
 
-        $this->get('/division-telcos')->assertInertia(fn (Assert $p) => $p
+        $this->get('/division-services')->assertInertia(fn (Assert $p) => $p
             ->component('telcos')
             ->where('home.sections.telcos.subtitle', 'Aliado técnico')
             ->where('home.sections.telcos.services.0.title', 'Consultoría')
@@ -69,7 +69,7 @@ class DivisionsTest extends TestCase
         Storage::fake('public');
 
         $this->admin()->post('/admin/telcos', [
-            'texts' => ['telcos' => ['title' => 'División Telcos']],
+            'texts' => ['telcos' => ['title' => 'División Services']],
             'image_telcos' => UploadedFile::fake()->image('cabecera.jpg'),
             'lists' => [
                 'telcos_service' => [['title' => 'Implementación', 'image' => UploadedFile::fake()->image('servicio.jpg')]],
@@ -86,7 +86,7 @@ class DivisionsTest extends TestCase
             ],
         ])->assertSessionHasNoErrors();
 
-        $this->get('/division-telcos')->assertInertia(function (Assert $p) {
+        $this->get('/division-services')->assertInertia(function (Assert $p) {
             $p->component('telcos')
                 ->whereNot('home.sections.telcos.imageUrl', null)
                 ->whereNot('home.sections.telcos.services.0.imageUrl', null)
@@ -126,7 +126,7 @@ class DivisionsTest extends TestCase
         ])->assertSessionHasErrors('texts.enterprise.cta_url');
 
         $this->admin()->post('/admin/telcos', [
-            'texts' => ['telcos' => ['title' => 'División Telcos', 'home_button_label' => 'Ver Telcos']],
+            'texts' => ['telcos' => ['title' => 'División Services', 'home_button_label' => 'Ver Telcos']],
         ])->assertSessionHasNoErrors();
 
         $this->get('/')->assertInertia(fn (Assert $p) => $p

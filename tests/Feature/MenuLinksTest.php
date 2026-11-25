@@ -102,7 +102,7 @@ class MenuLinksTest extends TestCase
 
     public function test_the_navbar_button_to_a_missing_page_is_rejected(): void
     {
-        $this->admin()->post('/admin/inicio', $this->payload(['nav_cta' => ['label' => 'Ir', 'url' => '/division-services']]))
+        $this->admin()->post('/admin/inicio', $this->payload(['nav_cta' => ['label' => 'Ir', 'url' => '/division-otra']]))
             ->assertSessionHasErrors('nav_cta.url');
     }
 
@@ -112,13 +112,13 @@ class MenuLinksTest extends TestCase
         $menu = $home->menu;
         $i = collect($menu)->search(fn ($m) => $m['url'] === '/nosotros');
         $menu[$i]['children'] = [['label' => 'Prueba', 'url' => '/prueba'], ['label' => 'Contacto', 'url' => '/contacto']];
-        $menu[] = ['label' => 'División Services', 'url' => '/division-services', 'children' => [['label' => 'Prueba', 'url' => '/prueba']]];
+        $menu[] = ['label' => 'División Otra', 'url' => '/division-otra', 'children' => [['label' => 'Prueba', 'url' => '/prueba']]];
         $home->update(['menu' => $menu]);
 
         (require database_path('migrations/2026_11_25_000001_remove_menu_links_to_missing_pages.php'))->up();
 
         $menu = HomeSetting::current()->menu;
-        $this->assertNotContains('/division-services', array_column($menu, 'url'));
+        $this->assertNotContains('/division-otra', array_column($menu, 'url'));
         $this->assertSame(['/contacto'], array_column(collect($menu)->firstWhere('url', '/nosotros')['children'], 'url'));
         $this->assertCount(8, $menu);
     }

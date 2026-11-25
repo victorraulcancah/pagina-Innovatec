@@ -32,7 +32,9 @@ Route::middleware('page.visible:/blog')->group(function () {
 });
 Route::post('contacto', [ContactMessageController::class, 'store'])->middleware('throttle:5,1')->name('contact.store');
 Route::get('division-enterprise', [PageController::class, 'enterprise'])->middleware('page.visible:/division-enterprise')->name('enterprise');
-Route::get('division-telcos', [PageController::class, 'telcos'])->middleware('page.visible:/division-telcos')->name('telcos');
+Route::get('division-services', [PageController::class, 'telcos'])->middleware('page.visible:/division-services')->name('telcos');
+// Dirección anterior de la División Services.
+Route::redirect('division-telcos', '/division-services', 301);
 // Direcciones anteriores: ahora todo vive en la División Enterprise.
 Route::redirect('soluciones', '/division-enterprise', 301);
 Route::redirect('servicios', '/division-enterprise', 301);

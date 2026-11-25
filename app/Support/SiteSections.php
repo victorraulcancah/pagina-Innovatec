@@ -93,7 +93,7 @@ class SiteSections
                 'cta_url' => '/contacto',
             ],
             'telcos' => [
-                'title' => 'División Telcos',
+                'title' => 'División Services',
                 'subtitle' => 'Aliado técnico de operadoras y proveedores de telecomunicaciones',
                 'intro' => 'Potenciamos a las operadoras con servicios especializados y soporte técnico, para soluciones TIC eficientes y confiables.',
                 'partner_title' => 'Tu partner técnico para el éxito en TIC',
@@ -190,7 +190,7 @@ class SiteSections
                 ],
             ],
             'telcos' => [
-                'label' => 'División Telcos',
+                'label' => 'División Services',
                 'description' => 'Página de la división para operadoras y proveedores de telecomunicaciones. El título, los textos y los servicios también se muestran en la portada.',
                 'groups' => ['telcos' => 'Textos de la página'],
                 'texts' => [

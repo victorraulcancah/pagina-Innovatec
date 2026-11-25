@@ -17,7 +17,7 @@ class SiteLinks
         '/' => 'Inicio',
         '/nosotros' => 'Nosotros',
         '/division-enterprise' => 'División Enterprise',
-        '/division-telcos' => 'División Telcos',
+        '/division-services' => 'División Services',
         '/experiencia' => 'Casos de éxito',
         '/aliados' => 'Panel de aliados',
         '/clientes' => 'Clientes',

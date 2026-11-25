@@ -423,7 +423,7 @@ class SiteContentSeeder extends Seeder
         SectionItem::query()->where('section', 'about_card')->get()->each(function (SectionItem $card) {
             [$title, $url] = match ($card->url) {
                 '/soluciones' => ['División Enterprise', '/division-enterprise'],
-                '/servicios' => ['División Telcos', '/division-telcos'],
+                '/servicios' => ['División Services', '/division-services'],
                 default => [$card->title, $card->url],
             };
 

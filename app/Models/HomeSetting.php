@@ -77,7 +77,7 @@ class HomeSetting extends Model
                     ['label' => 'Infraestructura TI', 'url' => '/soluciones/infraestructura-ti'],
                     ['label' => 'Seguridad Electrónica', 'url' => '/soluciones/seguridad-electronica'],
                 ]],
-                ['label' => 'División Telcos', 'url' => '/division-telcos', 'children' => []],
+                ['label' => 'División Services', 'url' => '/division-services', 'children' => []],
                 ['label' => 'Casos de Éxito', 'url' => '/experiencia', 'children' => []],
                 ['label' => 'Panel de Aliados', 'url' => '/aliados', 'children' => []],
                 ['label' => 'Blog', 'url' => '/blog', 'children' => []],

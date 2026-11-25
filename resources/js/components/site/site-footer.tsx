@@ -20,7 +20,7 @@ const link =
 export function SiteFooter({ home }: { home: HomeContent }) {
     const { contact, footer, social, company } = home.sections;
     // Las divisiones salen del menú (solo trae las opciones visibles): mismo nombre y mismo submenú que en la barra.
-    const divisions = ['/division-enterprise', '/division-telcos']
+    const divisions = ['/division-enterprise', '/division-services']
         .map((url) => home.menu.find((item) => item.url === url))
         .filter((item) => item !== undefined);
     const navCta = home.navCta && linkIsVisible(home, home.navCta.url) ? home.navCta : null;

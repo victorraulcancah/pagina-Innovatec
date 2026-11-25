@@ -122,7 +122,7 @@ class MenuVisibilityTest extends TestCase
 
     public function test_every_public_page_of_the_menu_closes_when_hidden(): void
     {
-        foreach (['/nosotros', '/division-enterprise', '/division-telcos', '/experiencia', '/aliados', '/blog', '/contacto'] as $url) {
+        foreach (['/nosotros', '/division-enterprise', '/division-services', '/experiencia', '/aliados', '/blog', '/contacto'] as $url) {
             HomeSetting::current()->update(['menu' => HomeSetting::defaults()['menu']]);
             $this->get($url)->assertOk();
 
