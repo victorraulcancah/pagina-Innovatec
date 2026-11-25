@@ -18,9 +18,11 @@ const link =
     'link-line transition-colors hover:text-signal focus-visible:text-signal';
 
 export function SiteFooter({ home }: { home: HomeContent }) {
-    const { contact, footer, solutions, social, company } = home.sections;
-    const showsEnterprise = linkIsVisible(home, '/division-enterprise');
-    const showsTelcos = linkIsVisible(home, '/division-telcos');
+    const { contact, footer, social, company } = home.sections;
+    // Las divisiones salen del menú (solo trae las opciones visibles): mismo nombre y mismo submenú que en la barra.
+    const divisions = ['/division-enterprise', '/division-telcos']
+        .map((url) => home.menu.find((item) => item.url === url))
+        .filter((item) => item !== undefined);
     const navCta = home.navCta && linkIsVisible(home, home.navCta.url) ? home.navCta : null;
     const web = contact.website.replace(/^https?:\/\//, '');
     const rights =
@@ -57,31 +59,26 @@ export function SiteFooter({ home }: { home: HomeContent }) {
                     )}
                 </Column>
 
-                {(showsEnterprise || showsTelcos) && (
+                {divisions.length > 0 && (
                     <Column title="Divisiones">
-                        {showsEnterprise && (
-                            <>
-                                <li>
-                                    <a href="/division-enterprise" className={link}>
-                                        División Enterprise
-                                    </a>
-                                </li>
-                                {solutions.items.map((item) => (
-                                    <li key={`s-${item.id}`} className="pl-3">
-                                        <a href={item.url} className={link}>
-                                            {item.title}
-                                        </a>
-                                    </li>
-                                ))}
-                            </>
-                        )}
-                        {showsTelcos && (
-                            <li>
-                                <a href="/division-telcos" className={link}>
-                                    División Telcos
+                        {divisions.map((division) => (
+                            <li key={division.url}>
+                                <a href={division.url} className={link}>
+                                    {division.label}
                                 </a>
+                                {division.children.length > 0 && (
+                                    <ul className="mt-3 space-y-3 pl-3">
+                                        {division.children.map((child, i) => (
+                                            <li key={`${child.url}-${i}`}>
+                                                <a href={child.url} className={link}>
+                                                    {child.label}
+                                                </a>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
                             </li>
-                        )}
+                        ))}
                     </Column>
                 )}
 
