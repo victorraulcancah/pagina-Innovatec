@@ -9,7 +9,7 @@ import type { OfferingRow } from '@/types';
 type FieldDef = {
     key: string;
     label: string;
-    type: 'text' | 'textarea' | 'url' | 'image' | 'pairs' | 'email' | 'gallery' | 'select';
+    type: 'text' | 'textarea' | 'url' | 'image' | 'file' | 'pairs' | 'email' | 'gallery' | 'select';
     max?: number;
     hint?: string;
     options?: { value: string; label: string }[];
@@ -46,6 +46,8 @@ type ServerItem = {
     label: string;
     rows: OfferingRow[];
     imageUrl: string | null;
+    /** PDF guardado (documentos legales). */
+    fileUrl: string | null;
     gallery: GalleryItem[];
     visible?: boolean;
 };
@@ -54,6 +56,8 @@ type Item = Omit<ServerItem, 'id'> & {
     id: number | null;
     image: File | null;
     remove_image: boolean;
+    file: File | null;
+    remove_file: boolean;
     gallery_files: File[];
     /** Nombre (bajo el logo) de cada archivo nuevo, en el mismo orden que gallery_files. */
     gallery_new_names: string[];
@@ -83,16 +87,19 @@ const blankItem = (): Item => ({
     label: '',
     rows: [],
     imageUrl: null,
+    fileUrl: null,
     gallery: [],
     visible: true,
     image: null,
     remove_image: false,
+    file: null,
+    remove_file: false,
     gallery_files: [],
     gallery_new_names: [],
 });
 
 const clean = (items: Item[]): Item[] =>
-    items.map((i) => ({ ...i, image: null, remove_image: false, gallery_files: [], gallery_new_names: [] }));
+    items.map((i) => ({ ...i, image: null, remove_image: false, file: null, remove_file: false, gallery_files: [], gallery_new_names: [] }));
 
 export default function SectionEditor({ page, config, pages, texts, lists, images }: Props) {
     const form = useForm<EditorForm>({
@@ -128,9 +135,10 @@ export default function SectionEditor({ page, config, pages, texts, lists, image
             lists: Object.fromEntries(
                 Object.entries(d.lists).map(([section, items]) => [
                     section,
-                    items.map(({ imageUrl: _preview, gallery, gallery_files, gallery_new_names, image, ...rest }) => ({
+                    items.map(({ imageUrl: _preview, fileUrl: _saved, gallery, gallery_files, gallery_new_names, image, file, ...rest }) => ({
                         ...rest,
                         ...(image ? { image } : {}),
+                        ...(file ? { file } : {}),
                         ...(gallery.length || gallery_files.length
                             ? {
                                   gallery_keep: gallery.map((g) => g.path),
@@ -187,6 +195,24 @@ export default function SectionEditor({ page, config, pages, texts, lists, image
                 );
             }
 
+            if (f.type === 'file') {
+                return (
+                    <MediaPicker
+                        key={f.key}
+                        label={f.label}
+                        hint="PDF, hasta 10 MB."
+                        accept="application/pdf"
+                        kind="pdf"
+                        currentUrl={draft.fileUrl}
+                        file={draft.file}
+                        removed={draft.remove_file}
+                        error={err(errKey)}
+                        onFile={(file) => patch({ file })}
+                        onRemove={(v) => patch({ remove_file: v })}
+                    />
+                );
+            }
+
             if (f.type === 'gallery') {
                 return (
                     <GalleryEditor
@@ -218,7 +244,7 @@ export default function SectionEditor({ page, config, pages, texts, lists, image
             return (
                 <Field key={f.key} label={f.label} error={err(errKey)}>
                     {f.type === 'textarea' ? (
-                        <TextArea rows={4} maxLength={f.max} value={draft[column]} onChange={(e) => patch({ [column]: e.target.value })} />
+                        <TextArea rows={(f.max ?? 0) > 2000 ? 14 : 4} maxLength={f.max} value={draft[column]} onChange={(e) => patch({ [column]: e.target.value })} />
                     ) : (
                         <TextInput
                             maxLength={f.max}
@@ -241,7 +267,8 @@ export default function SectionEditor({ page, config, pages, texts, lists, image
             (brands ? ` · ${brands} marcas` : '');
 
         const shown = list.toggle && item.visible === false ? 'Oculta · ' : '';
-        const subtitle = shown + text;
+        const pdf = list.fields.some((f) => f.type === 'file') ? (item.file ? 'PDF nuevo sin guardar. ' : item.fileUrl && !item.remove_file ? 'Con PDF. ' : '') : '';
+        const subtitle = shown + pdf + text;
 
         return {
             title: item.title,

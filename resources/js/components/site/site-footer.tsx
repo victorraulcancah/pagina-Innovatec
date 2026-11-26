@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { linkIsVisible } from '@/lib/hidden-pages';
 import { whatsappUrl } from '@/lib/whatsapp';
 import type { HomeContent } from '@/types';
+import { LegalLinks } from './legal-links';
 import { sectionShell } from './reveal';
 import { SocialLinks } from './social-links';
 
@@ -18,7 +19,7 @@ const link =
     'link-line transition-colors hover:text-signal focus-visible:text-signal';
 
 export function SiteFooter({ home }: { home: HomeContent }) {
-    const { contact, footer, social, company } = home.sections;
+    const { contact, footer, social, company, legal: documents } = home.sections;
     // Las divisiones salen del menú (solo trae las opciones visibles): mismo nombre y mismo submenú que en la barra.
     const divisions = ['/division-enterprise', '/division-services']
         .map((url) => home.menu.find((item) => item.url === url))
@@ -131,6 +132,10 @@ export function SiteFooter({ home }: { home: HomeContent }) {
                         <a href="#top" className={`${link} inline-block`}>
                             Volver arriba ↑
                         </a>
+                    </div>
+                    {/* El margen derecho deja libre el botón flotante de WhatsApp. */}
+                    <div className="lg:pr-20">
+                        <LegalLinks docs={documents} className={link} />
                     </div>
                 </div>
             </div>

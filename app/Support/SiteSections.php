@@ -363,7 +363,14 @@ class SiteSections
                     ['key' => 'image_favicon', 'slot' => 'favicon', 'label' => 'Favicon (ícono de la pestaña)', 'hint' => 'Imagen cuadrada, PNG o WebP, de al menos 64 × 64 px.'],
                     ['key' => 'image_og', 'slot' => 'og', 'label' => 'Imagen al compartir en redes', 'hint' => 'Se ve al compartir el sitio por WhatsApp, Facebook o LinkedIn. Recomendado: 1200 × 630 px.'],
                 ],
-                'lists' => [],
+                'lists' => [[
+                    'section' => 'legal_doc', 'label' => 'Términos y políticas', 'itemLabel' => 'Documento', 'max' => 8, 'toggle' => true,
+                    'fields' => [
+                        ['key' => 'title', 'label' => 'Nombre del documento', 'type' => 'text', 'max' => 80],
+                        ['key' => 'body', 'label' => 'Texto (deja una línea en blanco entre párrafos)', 'type' => 'textarea', 'max' => 40000],
+                        ['key' => 'file', 'label' => 'PDF del documento (opcional)', 'type' => 'file'],
+                    ],
+                ]],
             ],
         ];
     }
@@ -441,6 +448,10 @@ class SiteSections
                     'text' => $rules[$key] = [($f['optional'] ?? false) ? 'nullable' : 'required', 'string', 'max:'.$f['max']],
                     'textarea' => $rules[$key] = ['nullable', 'string', 'max:'.$f['max']],
                     'url' => $rules[$key] = ['nullable', 'string', 'max:255', 'regex:'.self::URL_PATTERN],
+                    'file' => [
+                        $rules[$key] = ['nullable', 'file', 'mimes:pdf', 'max:10240'],
+                        $rules["$base.*.remove_{$f['key']}"] = ['boolean'],
+                    ],
                     'image' => [
                         $rules[$key] = ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
                         $rules["$base.*.remove_{$f['key']}"] = ['boolean'],

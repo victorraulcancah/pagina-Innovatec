@@ -49,6 +49,7 @@ class SectionController extends Controller
                     'label' => $i->label ?? '',
                     'rows' => $i->rows ?? [],
                     'imageUrl' => $i->imageUrl(),
+                    'fileUrl' => $i->fileUrl(),
                     'gallery' => $i->galleryItems(),
                     'visible' => $i->visible,
                 ])->all();
@@ -161,6 +162,18 @@ class SectionController extends Controller
                 }
             }
 
+            if ($keys->contains('file')) {
+                $file = $request->file("lists.$section.$index.file");
+
+                if ($file instanceof UploadedFile) {
+                    $this->deleteFile($item->file_path);
+                    $item->file_path = $this->storeFile($file, $section);
+                } elseif ($request->boolean("lists.$section.$index.remove_file")) {
+                    $this->deleteFile($item->file_path);
+                    $item->file_path = null;
+                }
+            }
+
             if ($keys->contains('gallery')) {
                 $item->gallery = $this->syncGallery($request, $item, "lists.$section.$index", $row);
             }
@@ -176,6 +189,7 @@ class SectionController extends Controller
 
         $existing->except($keep)->each(function (SectionItem $item) {
             $this->deleteFile($item->image_path);
+            $this->deleteFile($item->file_path);
             foreach ($item->gallery ?? [] as $g) {
                 $this->deleteFile($g['path']);
             }

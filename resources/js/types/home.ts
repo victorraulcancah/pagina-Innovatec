@@ -124,9 +124,13 @@ export type SiteSections = {
         gallery: { id: number; caption: string; imageUrl: string | null }[];
     };
     footer: { tagline: string; copyright: string };
+    legal: LegalDoc[];
     company: { name: string; legal_name: string; tax_id: string };
     social: { facebook: string; linkedin: string; instagram: string; youtube: string; tiktok: string };
 };
+
+/** Un documento legal (Términos y Condiciones, política de privacidad…). */
+export type LegalDoc = { id: number; title: string; body: string; fileUrl: string | null };
 
 export type BlogCard = {
     id: number;

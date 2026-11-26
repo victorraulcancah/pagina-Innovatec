@@ -129,6 +129,13 @@ class SiteContent
             ],
             'contact' => [...$text['contact'], 'imageUrl' => $home->pageImageUrl('contacto')],
             'footer' => $text['footer'],
+            // Términos y condiciones y políticas: enlaces del pie que abren su texto y su PDF.
+            'legal' => $list('legal_doc', fn (SectionItem $i) => [
+                'id' => $i->id,
+                'title' => $i->title,
+                'body' => $i->body ?? '',
+                'fileUrl' => $i->fileUrl(),
+            ]),
             'company' => $text['company'],
             'social' => $text['social'],
         ];

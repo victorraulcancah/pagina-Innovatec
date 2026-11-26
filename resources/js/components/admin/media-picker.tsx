@@ -47,7 +47,7 @@ export function MediaPicker({
     label: string;
     hint: string;
     accept: string;
-    kind: 'video' | 'image';
+    kind: 'video' | 'image' | 'pdf';
     currentUrl: string | null;
     file: File | null;
     removed: boolean;
@@ -69,7 +69,11 @@ export function MediaPicker({
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
                 <div className="flex aspect-video w-full shrink-0 items-center justify-center overflow-hidden rounded-lg bg-slate-900 sm:w-56">
                     {shown ? (
-                        kind === 'video' ? (
+                        kind === 'pdf' ? (
+                            <a href={shown} target="_blank" rel="noopener noreferrer" className="px-3 text-center text-xs break-all text-white underline">
+                                {file ? `Nuevo: ${file.name}` : 'Ver PDF guardado'}
+                            </a>
+                        ) : kind === 'video' ? (
                             <video key={shown} src={shown} muted loop playsInline controls className="size-full object-cover" />
                         ) : (
                             <img src={shown} alt="" className="size-full object-cover" />

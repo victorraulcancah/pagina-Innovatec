@@ -20,11 +20,12 @@ use Illuminate\Support\Facades\Storage;
  * @property string|null $url
  * @property string|null $label
  * @property string|null $image_path
+ * @property string|null $file_path PDF de un documento legal.
  * @property list<array{path: string, name: string}>|null $gallery
  * @property int $sort
  * @property bool $visible
  */
-#[Fillable(['section', 'slug', 'title', 'body', 'rows', 'url', 'label', 'image_path', 'gallery', 'sort', 'visible'])]
+#[Fillable(['section', 'slug', 'title', 'body', 'rows', 'url', 'label', 'image_path', 'file_path', 'gallery', 'sort', 'visible'])]
 class SectionItem extends Model
 {
     protected function casts(): array
@@ -35,6 +36,11 @@ class SectionItem extends Model
     public function imageUrl(): ?string
     {
         return $this->image_path ? Storage::disk('public')->url($this->image_path) : null;
+    }
+
+    public function fileUrl(): ?string
+    {
+        return $this->file_path ? Storage::disk('public')->url($this->file_path) : null;
     }
 
     /**
