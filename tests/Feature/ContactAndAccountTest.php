@@ -31,6 +31,7 @@ class ContactAndAccountTest extends TestCase
             'email' => 'ana@empresa.pe',
             'phone' => '999 888 777',
             'company' => 'Empresa SAC',
+            'interest' => 'Networking',
             'message' => 'Necesitamos cotizar una red Wi-Fi para tres sedes.',
             ...$overrides,
         ];

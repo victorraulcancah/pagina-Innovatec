@@ -4,10 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\ContactMessage;
 use App\Models\HomeSetting;
+use App\Support\ZohoCrm;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\Rule;
+
+use function Illuminate\Support\defer;
 
 /** Recibe el formulario de la página Contacto. */
 class ContactMessageController extends Controller
@@ -19,6 +23,7 @@ class ContactMessageController extends Controller
             'email' => ['required', 'email', 'max:160'],
             'phone' => ['nullable', 'string', 'max:40'],
             'company' => ['nullable', 'string', 'max:120'],
+            'interest' => ['required', Rule::in(ZohoCrm::INTERESTS)],
             'message' => ['required', 'string', 'min:10', 'max:3000'],
             // Trampa para robots: una persona nunca llena este campo oculto.
             'company_site' => ['nullable', 'string', 'max:255'],
@@ -34,6 +39,8 @@ class ContactMessageController extends Controller
         ]);
 
         $this->notify($message);
+        // Después de responder, para que la persona no espere a Zoho.
+        defer(fn () => ZohoCrm::sendLead($message));
 
         return back()->with('status', 'sent');
     }
@@ -53,7 +60,8 @@ class ContactMessageController extends Controller
                 ."Nombre: {$message->name}\n"
                 ."Correo: {$message->email}\n"
                 .'Teléfono: '.($message->phone ?: '-')."\n"
-                .'Empresa: '.($message->company ?: '-')."\n\n"
+                .'Empresa: '.($message->company ?: '-')."\n"
+                .'Interés: '.($message->interest ?: '-')."\n\n"
                 .$message->message,
                 fn ($mail) => $mail->to($to)->replyTo($message->email, $message->name)
                     ->subject("Contacto web: {$message->name}"),

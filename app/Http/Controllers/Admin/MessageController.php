@@ -20,6 +20,7 @@ class MessageController extends Controller
             'email' => $m->email,
             'phone' => $m->phone,
             'company' => $m->company,
+            'interest' => $m->interest,
             'message' => $m->message,
             'read' => $m->read_at !== null,
             'date' => $m->created_at->format('d/m/Y H:i'),

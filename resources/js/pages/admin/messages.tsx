@@ -10,6 +10,7 @@ type Message = {
     email: string;
     phone: string | null;
     company: string | null;
+    interest: string | null;
     message: string;
     read: boolean;
     date: string;
@@ -110,6 +111,10 @@ export default function Messages({ pages, messages }: { pages: AdminPage[]; mess
                                 <div>
                                     <dt className="text-slate-500">Empresa</dt>
                                     <dd>{open.company || '—'}</dd>
+                                </div>
+                                <div>
+                                    <dt className="text-slate-500">Interés</dt>
+                                    <dd>{open.interest || '—'}</dd>
                                 </div>
                                 <div>
                                     <dt className="text-slate-500">Recibido</dt>

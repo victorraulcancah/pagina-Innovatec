@@ -40,4 +40,12 @@ return [
         'id' => env('GA_MEASUREMENT_ID'),
     ],
 
+    // Formulario web de Zoho CRM: los mensajes de Contacto también llegan allá como Leads. Vacío = no se envía.
+    // Los dos valores son los campos ocultos xnQsjsdp y xmIwtLD del código del formulario web de Zoho.
+    'zoho_crm' => [
+        'url' => env('ZOHO_CRM_WEBFORM_URL', 'https://crm.zoho.com/crm/WebToLeadForm'),
+        'xnqsjsdp' => env('ZOHO_CRM_XNQSJSDP'),
+        'xmiwtld' => env('ZOHO_CRM_XMIWTLD'),
+    ],
+
 ];

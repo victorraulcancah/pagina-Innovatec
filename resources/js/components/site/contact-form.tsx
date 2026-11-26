@@ -4,6 +4,9 @@ import { useState, type FormEvent, type ReactNode } from 'react';
 const input =
     'block w-full rounded-lg border border-white/25 bg-white/5 px-4 py-3 text-base text-white placeholder:text-white/40 transition-colors focus:border-signal focus:outline-none focus:ring-2 focus:ring-signal/30 aria-[invalid=true]:border-red-400';
 
+/** Las mismas opciones que el campo «Interés» del formulario de Zoho CRM (ZohoCrm::INTERESTS). */
+const interests = ['Networking', 'Ciberseguridad', 'Outsourcing TIC', 'Wi-Fi gestionado', 'Telcos', 'Otros'];
+
 function Field({ label, error, children }: { label: string; error?: string; children: ReactNode }) {
     return (
         <label className="block">
@@ -20,7 +23,7 @@ function Field({ label, error, children }: { label: string; error?: string; chil
 
 /** Formulario de la página Contacto: guarda el mensaje y avisa por correo. */
 export function ContactForm() {
-    const form = useForm({ name: '', email: '', phone: '', company: '', message: '', company_site: '' });
+    const form = useForm({ name: '', email: '', phone: '', company: '', interest: '', message: '', company_site: '' });
     const [sent, setSent] = useState(false);
 
     const submit = (e: FormEvent) => {
@@ -68,6 +71,24 @@ export function ContactForm() {
                     <input className={input} value={form.data.company} autoComplete="organization" onChange={(e) => form.setData('company', e.target.value)} />
                 </Field>
             </div>
+            <Field label="Interés *" error={form.errors.interest}>
+                <select
+                    className={`${input} [&>option]:bg-night [&>option]:text-white`}
+                    value={form.data.interest}
+                    required
+                    aria-invalid={!!form.errors.interest || undefined}
+                    onChange={(e) => form.setData('interest', e.target.value)}
+                >
+                    <option value="" disabled>
+                        Elige una opción
+                    </option>
+                    {interests.map((interest) => (
+                        <option key={interest} value={interest}>
+                            {interest}
+                        </option>
+                    ))}
+                </select>
+            </Field>
             <Field label="¿En qué podemos ayudarte? *" error={form.errors.message}>
                 <textarea
                     className={`${input} resize-y`}
