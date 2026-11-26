@@ -1,5 +1,7 @@
 import { useForm } from '@inertiajs/react';
-import { useState, type FormEvent, type ReactNode } from 'react';
+import { Fragment, useState, type FormEvent, type ReactNode } from 'react';
+import type { LegalDoc } from '@/types';
+import { LegalModal } from './legal-links';
 
 const input =
     'block w-full rounded-lg border border-white/25 bg-white/5 px-4 py-3 text-base text-white placeholder:text-white/40 transition-colors focus:border-signal focus:outline-none focus:ring-2 focus:ring-signal/30 aria-[invalid=true]:border-red-400';
@@ -21,10 +23,17 @@ function Field({ label, error, children }: { label: string; error?: string; chil
     );
 }
 
-/** Formulario de la página Contacto: guarda el mensaje y avisa por correo. */
-export function ContactForm() {
-    const form = useForm({ name: '', email: '', phone: '', company: '', interest: '', message: '', company_site: '' });
+/** «A», «A y B», «A, B y C». */
+const joiner = (i: number, total: number) => (i === 0 ? '' : i === total - 1 ? ' y ' : ', ');
+
+/**
+ * Formulario de la página Contacto: guarda el mensaje y avisa por correo. Si hay documentos legales (Términos y
+ * Condiciones, Política de Privacidad…), pide aceptarlos; cada nombre abre su documento.
+ */
+export function ContactForm({ legalDocs }: { legalDocs: LegalDoc[] }) {
+    const form = useForm({ name: '', email: '', phone: '', company: '', interest: '', message: '', terms: false, company_site: '' });
     const [sent, setSent] = useState(false);
+    const [doc, setDoc] = useState<LegalDoc | null>(null);
 
     const submit = (e: FormEvent) => {
         e.preventDefault();
@@ -100,6 +109,47 @@ export function ContactForm() {
                     onChange={(e) => form.setData('message', e.target.value)}
                 />
             </Field>
+
+            {legalDocs.length > 0 && (
+                <div>
+                    <div className="flex items-start gap-3">
+                        <input
+                            id="contact-terms"
+                            type="checkbox"
+                            checked={form.data.terms}
+                            required
+                            aria-invalid={!!form.errors.terms || undefined}
+                            onChange={(e) => form.setData('terms', e.target.checked)}
+                            className="mt-1 size-4 shrink-0 cursor-pointer accent-signal"
+                        />
+                        <p className="text-sm leading-relaxed text-white">
+                            <label htmlFor="contact-terms" className="cursor-pointer">
+                                He leído y acepto lo indicado en{' '}
+                            </label>
+                            {legalDocs.map((d, i) => (
+                                <Fragment key={d.id}>
+                                    {joiner(i, legalDocs.length)}
+                                    <button
+                                        type="button"
+                                        onClick={() => setDoc(d)}
+                                        aria-haspopup="dialog"
+                                        className="cursor-pointer text-signal underline underline-offset-4 hover:text-white"
+                                    >
+                                        {d.title}
+                                    </button>
+                                </Fragment>
+                            ))}
+                            {' *'}
+                        </p>
+                    </div>
+                    {form.errors.terms && (
+                        <span role="alert" className="mt-1.5 block text-sm text-red-300">
+                            {form.errors.terms}
+                        </span>
+                    )}
+                    {doc && <LegalModal doc={doc} onClose={() => setDoc(null)} />}
+                </div>
+            )}
 
             {/* Campo trampa: oculto para personas, los robots suelen llenarlo. */}
             <div className="absolute -left-[9999px] h-0 w-0 overflow-hidden" aria-hidden="true">

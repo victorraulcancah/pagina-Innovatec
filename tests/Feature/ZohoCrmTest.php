@@ -21,6 +21,7 @@ class ZohoCrmTest extends TestCase
             'phone' => '999 888 777',
             'company' => 'Empresa SAC',
             'interest' => 'Ciberseguridad',
+            'terms' => true,
             'message' => 'Necesitamos cotizar una red Wi-Fi para tres sedes.',
             ...$overrides,
         ];

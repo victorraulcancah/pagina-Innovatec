@@ -21,7 +21,7 @@ export default function Contact({ home }: { home: HomeContent }) {
                 <div className={`${sectionShell} grid gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,480px)] lg:gap-20`}>
                     <Reveal>
                         <SectionHeading title="Escríbenos" className="mb-8 !text-[clamp(1.25rem,2.4vw,2rem)]" />
-                        <ContactForm />
+                        <ContactForm legalDocs={home.sections.legal} />
                     </Reveal>
                     <div>
                         <SectionHeading title="Datos de contacto" className="mb-8 !text-[clamp(1.25rem,2.4vw,2rem)]" />

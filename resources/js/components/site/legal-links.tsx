@@ -18,7 +18,7 @@ function Icon({ path }: { path: string }) {
  * Ventana de un documento legal: su texto y, si tiene PDF, un ícono para descargarlo y otro para abrirlo.
  * Con solo PDF se muestra el PDF; sin texto ni PDF avisa que estará disponible pronto.
  */
-function LegalModal({ doc, onClose }: { doc: LegalDoc; onClose: () => void }) {
+export function LegalModal({ doc, onClose }: { doc: LegalDoc; onClose: () => void }) {
     const ref = useRef<HTMLDialogElement>(null);
     const hasText = doc.body.trim() !== '';
     const hasPdf = Boolean(doc.fileUrl);

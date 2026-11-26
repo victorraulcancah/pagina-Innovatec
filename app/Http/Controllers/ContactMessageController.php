@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ContactMessage;
 use App\Models\HomeSetting;
+use App\Models\SectionItem;
 use App\Support\ZohoCrm;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -27,6 +28,10 @@ class ContactMessageController extends Controller
             'message' => ['required', 'string', 'min:10', 'max:3000'],
             // Trampa para robots: una persona nunca llena este campo oculto.
             'company_site' => ['nullable', 'string', 'max:255'],
+            // Si el sitio publica Términos y Condiciones o políticas, hay que aceptarlos para enviar.
+            ...($this->hasLegalDocs() ? ['terms' => ['accepted']] : []),
+        ], [
+            'terms.accepted' => 'Debes aceptar los términos para enviar tu mensaje.',
         ]);
 
         if (filled($data['company_site'] ?? null)) {
@@ -34,7 +39,7 @@ class ContactMessageController extends Controller
         }
 
         $message = ContactMessage::query()->create([
-            ...collect($data)->except('company_site')->all(),
+            ...collect($data)->except(['company_site', 'terms'])->all(),
             'ip' => $request->ip(),
         ]);
 
@@ -43,6 +48,11 @@ class ContactMessageController extends Controller
         defer(fn () => ZohoCrm::sendLead($message));
 
         return back()->with('status', 'sent');
+    }
+
+    private function hasLegalDocs(): bool
+    {
+        return SectionItem::query()->where('section', 'legal_doc')->where('visible', true)->exists();
     }
 
     /** El aviso por correo es secundario: si falla, el mensaje ya quedó guardado en el panel. */
